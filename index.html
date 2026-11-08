@@ -34,32 +34,7 @@
         <h1 id="headline">Descobre o valor das tuas <em>Hot Wheels</em></h1>
         <p class="hero-subtitle" id="subhead">Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.</p>
       </div>
-      <div class="diecast-display" aria-label="Ilustração original de um carro miniatura numa pista de corrida">
-        <div class="display-card"><div class="card-topline">DIE-CAST COLLECTION</div><div class="card-number">68</div><div class="card-window"></div><div class="card-bottomline">1:64 SCALE · COLLECTOR SERIES</div></div>
-        <svg class="showcase-car" viewBox="0 0 820 420" role="img" aria-label="Carro desportivo miniatura azul e laranja">
-          <defs>
-            <linearGradient id="bodyPaint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#2da5ff"/><stop offset=".35" stop-color="#1262c6"/><stop offset=".72" stop-color="#0b2d68"/><stop offset="1" stop-color="#07162f"/></linearGradient>
-            <linearGradient id="glassPaint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b9efff"/><stop offset=".55" stop-color="#3e8fca"/><stop offset="1" stop-color="#122c58"/></linearGradient>
-            <linearGradient id="metalPaint" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f4fbff"/><stop offset=".5" stop-color="#687b91"/><stop offset="1" stop-color="#1b2635"/></linearGradient>
-            <filter id="carShadow" x="-30%" y="-50%" width="160%" height="220%"><feGaussianBlur stdDeviation="13"/></filter>
-          </defs>
-          <ellipse cx="425" cy="346" rx="340" ry="34" fill="#000" opacity=".72" filter="url(#carShadow)"/>
-          <path d="M65 285 105 240 194 216 272 149Q292 130 332 127L487 126Q527 127 557 154L630 221 740 247Q777 256 790 293L775 328 58 328Z" fill="url(#bodyPaint)" stroke="#8bd1ff" stroke-width="5"/>
-          <path d="M265 207 318 151Q332 139 357 139L481 139Q506 141 526 161L573 218Z" fill="url(#glassPaint)" stroke="#d5efff" stroke-width="6"/>
-          <path d="M402 140 397 216M491 144 527 216" stroke="#c5e9ff" stroke-width="5" opacity=".85"/>
-          <path d="M103 258 187 235 255 249 214 273 112 278Z" fill="#f8a43c" opacity=".96"/>
-          <path d="M579 240 638 239 712 264 644 276 591 264Z" fill="#ff6a24"/>
-          <path d="M275 259Q340 214 394 251T510 251Q566 221 626 256L585 282Q532 260 485 285T367 278Q321 267 292 291Z" fill="#ff7b27" opacity=".98"/>
-          <path d="M290 267Q353 230 398 263T502 264Q557 237 604 259" fill="none" stroke="#ffd65b" stroke-width="10"/>
-          <path d="M72 292 758 292" stroke="#d5e6f5" stroke-width="6" opacity=".8"/>
-          <path d="M60 319 788 319" stroke="#080f19" stroke-width="13"/>
-          <path d="M91 285 118 278 135 289 119 302 91 301Z" fill="#fff5c4"/><path d="M725 275 763 286 765 301 731 299Z" fill="#ff4b2f"/>
-          <g><circle cx="242" cy="310" r="65" fill="#070b12" stroke="#acbfd2" stroke-width="9"/><circle cx="242" cy="310" r="33" fill="url(#metalPaint)" stroke="#202d3b" stroke-width="8"/><circle cx="242" cy="310" r="10" fill="#111c2b"/><path d="M242 281v58M213 310h58M221 289l42 42M263 289l-42 42" stroke="#dbe4ed" stroke-width="5"/></g>
-          <g><circle cx="646" cy="310" r="65" fill="#070b12" stroke="#acbfd2" stroke-width="9"/><circle cx="646" cy="310" r="33" fill="url(#metalPaint)" stroke="#202d3b" stroke-width="8"/><circle cx="646" cy="310" r="10" fill="#111c2b"/><path d="M646 281v58M617 310h58M625 289l42 42M667 289l-42 42" stroke="#dbe4ed" stroke-width="5"/></g>
-          <path d="M95 327 777 327" stroke="#ff8b2d" stroke-width="5"/>
-        </svg>
-        <div class="display-reflection"></div>
-      </div>
+      <div class="diecast-display photo-showcase" role="img" aria-label="Fotografia realista de um carro miniatura numa bancada de colecionador"></div>
     </div>
     <div class="search-panel">
       <div class="search-input-wrap"><span class="search-symbol">⌕</span><input id="heroSearch" type="search" placeholder="Pesquisa um modelo Hot Wheels..." aria-label="Pesquisar modelo"></div>
@@ -105,7 +80,7 @@
   <div class="footer-col"><b>Navegação</b><a href="#top" id="footerHome">Início</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="#appWorkspace" data-page="collection">Coleções</a><a href="#guidesSection">Guias</a><a href="#guidesSection">Blog</a></div>
   <div class="footer-col"><b>Ajuda</b><a href="#guidesSection">Perguntas Frequentes (FAQ)</a><a href="#guidesSection">Como Funciona</a><a href="#appWorkspace" data-page="analyse">Planos e Limites</a><a href="#" id="contactLink">Contactar Suporte</a></div>
   <div class="footer-col"><b>Sobre</b><a href="#aboutSection">Quem Somos</a><a href="#" id="termsLink">Termos de Utilização</a><a href="#" id="privacyLink">Política de Privacidade</a><a href="#" id="cookiesLink">Política de Cookies</a></div>
-  <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span>Estimativas informativas · v1.0.0</span></div>
+  <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span id="visitorCounter" class="visitor-counter" role="status" aria-live="polite" title="Um registo por navegador. A mesma pessoa pode contar em mais do que um dispositivo.">Visitantes: a carregar…</span><span>Estimativas informativas · v1.0.0</span></div>
 </footer>
 
 <style id="landing-rebuild">
@@ -211,6 +186,45 @@ body.theme-light #appWorkspace .muted,body.theme-light #appWorkspace .note{color
 body.theme-light #appWorkspace input,body.theme-light #appWorkspace select,body.theme-light #appWorkspace textarea{background:#fff;color:#16243a;border-color:#c4d0df}
 @media(max-width:560px){.header-actions .lang{display:block;width:42px;padding:6px 2px}}
 </style>
+
+<style id="hero-photo-counter">
+.hero-stage{
+  background-color:#050b16;
+  background-image:
+    linear-gradient(90deg,rgba(3,9,20,.14) 0%,rgba(3,9,20,.05) 47%,rgba(3,9,20,.02) 100%),
+    linear-gradient(180deg,rgba(3,9,20,0) 0%,rgba(3,9,20,0) 54%,#061020 86%),
+    url('./assets/hwpc-hero.webp');
+  background-repeat:no-repeat;
+  background-position:center top,center top,center top;
+  background-size:100% auto,100% 100%,100% auto;
+  padding-top:0;
+}
+.hero-stage:before{display:none!important}
+.hero-stage:after{background:repeating-conic-gradient(#152235 0% 25%,#080f1d 0% 50%) 50%/48px 48px;opacity:.38}
+.shelf-glow,.orange-track{display:none!important}
+.stage-inner{grid-template-columns:1fr;min-height:330px;max-width:1280px}
+.hero-message{max-width:49%;padding-top:34px}
+.hero-message h1{font-size:clamp(38px,3.7vw,54px);max-width:660px;text-shadow:0 2px 16px #0007}
+.hero-subtitle{max-width:600px;text-shadow:0 1px 8px #000}
+.diecast-display.photo-showcase{display:none!important}
+.search-panel{margin-top:0}
+.visitor-counter{color:#ffe16b;font-weight:800;white-space:nowrap}
+#visitorCounter[data-state="error"]{color:#a8b8cb;font-weight:500}
+@media(max-width:850px){
+  .stage-inner{min-height:360px}
+  .hero-message{max-width:66%;padding-top:38px}
+  .hero-stage{background-size:100% auto,100% 100%,auto 440px}
+}
+@media(max-width:560px){
+  .hero-stage{background-size:auto 370px,100% 100%,auto 370px;background-position:center top,center top,58% top}
+  .stage-inner{min-height:365px}
+  .hero-message{max-width:100%;padding-top:30px}
+  .hero-message h1{font-size:35px;max-width:80%}
+  .hero-subtitle{max-width:79%;font-size:14px}
+  .visitor-counter{white-space:normal}
+}
+body.theme-light .hero-stage{background-color:#061020}
+</style>
 <script>
 const SUPABASE_URL='https://hvxszwbszrigeznmmkeb.supabase.co',KEY='sb_publishable_onFuWjOv4XdLMoA0enaCgA_OXc1deTF',sb=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,KEY):null;
 const T={
@@ -224,6 +238,32 @@ nl:{headline:'Koop met inzicht.',subhead:'Controleer modellen en beheer je colle
 br:{headline:'Compre com critério.',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Envie fotos nítidas da frente, do verso e dos detalhes. A IA ajuda a identificar o modelo; confira sempre as informações.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
 let lang=localStorage.getItem('hwpc_lang')||'pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],lastEval=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
+
+async function updateVisitorCounter(){
+  const target=$('visitorCounter');
+  if(!target)return;
+  const set=(value,state='ready')=>{target.textContent=value;target.dataset.state=state;};
+  if(!sb){set('Visitantes: indisponível','error');return;}
+  let visitorId;
+  try{
+    visitorId=localStorage.getItem('hwpc_visitor_id');
+    if(!visitorId){
+      visitorId=crypto.randomUUID();
+      localStorage.setItem('hwpc_visitor_id',visitorId);
+    }
+  }catch(e){set('Visitantes: indisponível','error');return;}
+  try{
+    const {data,error}=await sb.rpc('register_site_visitor',{p_visitor_id:visitorId});
+    if(error)throw error;
+    const total=Number(data);
+    if(!Number.isFinite(total)||total<0)throw new Error('Resposta inválida do contador');
+    set('Visitantes: '+total.toLocaleString('pt-PT'));
+  }catch(e){
+    console.error('Visitor counter:',e);
+    set('Visitantes: indisponível','error');
+  }
+}
+
 const $=id=>document.getElementById(id),tr=k=>T[lang][k]||T.pt[k],money=n=>new Intl.NumberFormat(lang==='pt'||lang==='br'?'pt-PT':lang==='de'?'de-DE':lang==='fr'?'fr-FR':lang==='it'?'it-IT':lang==='nl'?'nl-NL':lang==='es'?'es-ES':'en-IE',{style:'currency',currency:'EUR'}).format(Number(n)||0);
 const fields={headline:'headline',subhead:'subhead',tabAnalyse:'analyse',tabCollection:'collection',tabWatch:'watch',photoTitle:'photo',photoHelp:'photoHelp',detailsTitle:'details',modelLabel:'model',yearLabel:'year',typeLabel:'type',conditionLabel:'condition',assessmentTitle:'assessment',askLabel:'ask',shippingLabel:'shipping',minLabel:'min',maxLabel:'max',soldLabel:'sold',certaintyLabel:'certainty',evidenceLabel:'evidence',notesLabel:'notes',evaluate:'evaluate',clear:'clear',itemsLabel:'items',investedLabel:'invested',valueLabel:'value',collectionTitle:'collectionTitle',export:'export',watchTitle:'watchTitle',wantedLabel:'wanted',limitLabel:'limit',addWatch:'add',limits:'limits',authIntro:'authIntro',pwLabel:'pw',login:'login',signup:'signup'};
 function translate(){for(const [id,k] of Object.entries(fields)){if(id==='headline')$(id).innerHTML=tr(k).replace(/(Hot Wheels)/i,'<em>$1</em>');else $(id).textContent=tr(k)}$('language').value=lang;$('authTitle').textContent=tr('login');$('search').placeholder=tr('search');$('authGate').querySelector('h2').textContent=tr('login');render()}
@@ -281,7 +321,7 @@ async function load(){if(!sb||!user)return;const {data,error}=await sb.from('use
 async function save(){if(!sb||!user)return;const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)status('Erro de sincronização: '+error.message);else status(tr('saved'))}
 $('login').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;showGate(false);await load();mergeGuestBackup();$('account').textContent=user.email};
 $('signup').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');const email=$('email').value.trim(),password=$('password').value;if(!email||!password)return status('Preenche o email e a palavra-passe.');if(password.length<8)return status('A palavra-passe deve ter pelo menos 8 caracteres.');guestBackup();if(user?.is_anonymous)await sb.auth.signOut();const {data,error}=await sb.auth.signUp({email,password});if(error){await ensureAnonymousSession();return status(error.message)}if(data.session){user=data.user;showGate(false);await load();mergeGuestBackup();$('account').textContent=user.email}else{user=null;status('Conta criada. Confirma o email e depois inicia sessão; os dados desta sessão ficam guardados neste dispositivo.')}};
-function openAuth(mode='login'){const creating=mode==='signup';$('authTitle').textContent=creating?'Criar conta gratuita':'Entrar na tua conta';$('authIntro').textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';$('login').classList.toggle('hidden',creating);$('signup').classList.toggle('hidden',!creating);$('password').autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('signupTop').onclick=()=>openAuth('signup');$('signupHero').onclick=()=>openAuth('signup');$('account').onclick=async()=>{if(!user||user.is_anonymous){openAuth('login');return}if(confirm('Terminar sessão?')){await save();await sb.auth.signOut();user=null;await ensureAnonymousSession();showGate(false);if(user)await load()}};$('heroAnalyse').onclick=()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar com Gemini” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'};$('heroCamera').onclick=()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}p.click();openWorkspace('analyse');$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'};$('heroSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection').onclick=()=>openWorkspace('collection');$('footerHome').onclick=e=>{e.preventDefault();showHome()};document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle').onclick=()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');localStorage.setItem('hwpc_theme',light?'light':'dark');$('themeToggle').textContent=light?'☀':'☾'};if(localStorage.getItem('hwpc_theme')==='light'){document.body.classList.add('theme-light');$('themeToggle').textContent='☀'}
+function openAuth(mode='login'){const creating=mode==='signup';$('authTitle').textContent=creating?'Criar conta gratuita':'Entrar na tua conta';$('authIntro').textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';$('login').classList.toggle('hidden',creating);$('signup').classList.toggle('hidden',!creating);$('password').autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('signupTop').onclick=()=>openAuth('signup');$('signupHero').onclick=()=>openAuth('signup');$('account').onclick=async()=>{if(!user||user.is_anonymous){openAuth('login');return}if(confirm('Terminar sessão?')){await save();await sb.auth.signOut();user=null;await ensureAnonymousSession();showGate(false);if(user)await load()}};$('heroAnalyse').onclick=()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar com Gemini” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'};$('heroCamera').onclick=()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'};$('heroSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection').onclick=()=>openWorkspace('collection');$('footerHome').onclick=e=>{e.preventDefault();showHome()};document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle').onclick=()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');localStorage.setItem('hwpc_theme',light?'light':'dark');$('themeToggle').textContent=light?'☀':'☾'};if(localStorage.getItem('hwpc_theme')==='light'){document.body.classList.add('theme-light');$('themeToggle').textContent='☀'}
 if(sb){sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;if(!user){await ensureAnonymousSession()}if(user){showGate(false);$('account').textContent=user.is_anonymous?'Visitante':user.email;await load();mergeGuestBackup()}else showGate(false)});sb.auth.onAuthStateChange((event,s)=>{if(event==='SIGNED_OUT'){user=null;showGate(false)}});}else{showGate(false);$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';}
 document.querySelectorAll('[data-photo]').forEach(i=>i.onchange=async()=>{const f=i.files[0];if(!f)return;const idx=+i.dataset.photo;const url=window.URL.createObjectURL(f);photos[idx]=url;photoFiles[idx]=f;const l=i.parentElement;l.innerHTML='';const img=document.createElement('img');img.src=url;l.append(img);l.append(i);});
 function clearForm(){['model','year','ask','min','max','sold','evidence','notes'].forEach(id=>$(id).value='');$('shipping').value=0;$('type').value='unknown';$('certainty').value='inconclusive';$('result').classList.add('hidden');photos=['','',''];photoFiles=[null,null,null];document.querySelectorAll('[data-photo]').forEach(i=>{const l=i.parentElement;l.innerHTML='＋<br>'+['Frente','Verso','Detalhe'][+i.dataset.photo];l.append(i)})}
@@ -323,7 +363,7 @@ function render(){const items=db.items||[],watch=db.watch||[];$('count').textCon
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('search').oninput=render;
 $('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()};
-window.HWPC_MAIN_READY=true;translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.HWPC_MAIN_READY=true;updateVisitorCounter();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 <script>
 (()=> {
