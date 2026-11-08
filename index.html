@@ -869,7 +869,7 @@ function renderAccount(){
       : 'Tens pesquisas ilimitadas. A subscrição renova automaticamente; período atual até '+endDate+'.';
     subscribeButton.classList.add('hidden');
     manageButton.classList.remove('hidden');
-    manageButton.textContent=billingDetails?.cancel_at_period_end?'↻ Reativar renovação':'Cancelar renovação';
+    manageButton.textContent='⚙ Gerir subscrição';
   }else{
     billingTitle.textContent='Desbloqueia o Premium';
     billingDescription.textContent='4,99 €/mês · Pesquisas ilimitadas na análise de modelos e nas vendas concluídas. Renovação automática, cancelável a qualquer momento.';
@@ -964,7 +964,7 @@ async function runBillingAction(action){
   const button=action==='checkout'?$('premiumSubscribeBtn'):$('premiumManageBtn');
   const originalText=button.textContent;
   button.disabled=true;
-  button.textContent=action==='checkout'?'A abrir pagamento…':action==='cancel'?'A cancelar renovação…':'A reativar renovação…';
+  button.textContent=action==='checkout'?'A abrir pagamento…':action==='portal'?'A abrir gestão da subscrição…':action==='cancel'?'A cancelar renovação…':'A reativar renovação…';
   try{
     const {data,error}=await sb.functions.invoke('hw-billing',{body:{action}});
     if(error){
@@ -973,8 +973,8 @@ async function runBillingAction(action){
       throw new Error(message);
     }
     if(data?.error)throw new Error(data.message||'Não foi possível processar o pedido.');
-    if(action==='checkout'){
-      if(!data?.url)throw new Error('O Stripe não devolveu o endereço de pagamento.');
+    if(action==='checkout'||action==='portal'){
+      if(!data?.url)throw new Error(action==='portal'?'A Stripe não devolveu o endereço de gestão da subscrição.':'O Stripe não devolveu o endereço de pagamento.');
       window.location.assign(data.url);
       return;
     }
@@ -992,7 +992,7 @@ async function runBillingAction(action){
   }
 }
 $('premiumSubscribeBtn').onclick=()=>runBillingAction('checkout');
-$('premiumManageBtn').onclick=()=>runBillingAction(billingDetails?.cancel_at_period_end?'resume':'cancel');
+$('premiumManageBtn').onclick=()=>runBillingAction('portal');
 
 function handleSubscriptionReturn(){
   const params=new URLSearchParams(window.location.search);
