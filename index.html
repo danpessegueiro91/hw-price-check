@@ -69,7 +69,7 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
 .account-card{min-width:0;padding:18px;border:1px solid #2b425d;border-radius:15px;background:linear-gradient(145deg,#111f31,#0b1421)}
 .account-card h3{display:flex;align-items:center;gap:9px;margin:0 0 12px;font-size:14px}.account-card h3 span{color:#ffc43d}
 .account-detail-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid #27394f;font-size:11px}.account-detail-row:first-of-type{border-top:0}.account-detail-row span{color:#9fb2c9}.account-detail-row strong{text-align:right;overflow-wrap:anywhere}
-.account-plan-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid #947331;border-radius:99px;background:#362b18;color:#ffd36a;font-size:9px;font-weight:900;letter-spacing:.08em}
+.account-plan-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px solid #947331;border-radius:99px;background:#362b18;color:#ffd36a;font-size:9px;font-weight:900;letter-spacing:.08em}.account-plan-pill.premium{border-color:#e6af28;background:linear-gradient(100deg,#4b3611,#302713);color:#ffe08a;box-shadow:0 0 18px #ffb52e22}
 .account-shortcut{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:8px 11px;border:1px solid #4b6584;border-radius:9px;background:#172a42;color:#e8f0fa;font-size:11px;font-weight:800}.account-shortcut:hover{border-color:#ffbd38;color:#ffd36a}
 .account-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.account-form-card{padding:20px;border:1px solid #2d435d;border-radius:15px;background:linear-gradient(145deg,#122238,#0b1422);margin-bottom:13px}.account-form-card h3{margin:0 0 5px;font-size:15px}.account-form-card>p{margin:0 0 15px;color:#9fb2c9;font-size:11px}
 .account-field{display:grid;gap:6px;margin:12px 0}.account-field label{font-size:10px;font-weight:850;letter-spacing:.07em;color:#c6d3e3;text-transform:uppercase}.account-field input,.account-field select{background:#081421;border-color:#354d69;padding:11px 12px;font-size:12px}.account-field input[readonly]{color:#9cafc7;background:#0d1928}.account-help{margin:5px 0 0;color:#8fa4be;font-size:10px;line-height:1.5}
@@ -201,7 +201,7 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
         <p id="accountStatus" class="account-status" role="status" aria-live="polite"></p>
 
         <section class="account-panel active" data-account-panel="overview">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">O TEU PAINEL</div><h2>Estado da garagem</h2><p>Um resumo rápido da tua conta e atividade de colecionador.</p></div><span class="account-plan-pill">● CONTA ATIVA</span></div>
+          <div class="account-panel-head"><div><div class="account-mini-kicker">O TEU PAINEL</div><h2>Estado da garagem</h2><p>Um resumo rápido da tua conta e atividade de colecionador.</p></div><span class="account-plan-pill" id="accountPlanPill">● CONTA ATIVA</span></div>
           <div class="account-kpis">
             <article class="account-kpi"><div class="account-kpi-top"><span>Plano atual</span><span class="account-kpi-icon">🏁</span></div><strong id="accountPlanValue">Gratuito</strong><small id="accountPlanNote">Acesso de colecionador</small></article>
             <article class="account-kpi"><div class="account-kpi-top"><span>Pesquisas diárias</span><span class="account-kpi-icon">⚡</span></div><strong id="accountQuotaValue">10 / dia</strong><small id="accountQuotaNote">Limite do plano gratuito</small></article>
@@ -587,12 +587,25 @@ $('language').onchange=e=>{lang=e.target.value;localStorage.setItem('hwpc_lang',
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){$('authStatus').textContent=s}
 function showGate(v){$('authGate').classList.toggle('hidden',!v)}
+async function refreshAccountPlan(){
+  if(!sb||!user||user.is_anonymous){latestQuota=null;renderAccount();return}
+  try{
+    const {data,error}=await sb.rpc('get_my_hw_plan');
+    if(error)throw error;
+    updateQuota(data);
+  }catch(error){
+    console.warn('HW Price Check plan lookup:',error);
+    accountNotice('Não foi possível atualizar o estado do plano neste momento.','error');
+  }
+}
 function updateQuota(q){
   if(!q)return;
   latestQuota=q;
-  const label=q.tier==='guest'
-    ? 'Pesquisas gratuitas sem conta: '+q.remaining+' de 3 restantes.'
-    : 'Pesquisas de hoje: '+q.used+' de '+q.limit+'.';
+  const label=q.unlimited
+    ? 'HW Price Check Premium: pesquisas ilimitadas.'
+    : q.tier==='guest'
+      ? 'Pesquisas gratuitas sem conta: '+q.remaining+' de 3 restantes.'
+      : 'Pesquisas de hoje: '+q.used+' de '+q.limit+'.';
   $('quotaNotice').textContent=label+' Cada análise Gemini ou pesquisa de vendas conta como 1 utilização.';
   renderAccount();
 }
@@ -635,7 +648,7 @@ async function ensureAnonymousSession(){
   updateAccountButton();
   return true;
 }
-async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save()}
+async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save();await refreshAccountPlan()}
 async function save(){if(!sb||!user)return;const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)status('Erro de sincronização: '+error.message);else status(tr('saved'));renderAccount()}
 $('login').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()};
 $('signup').onclick=async()=>{
@@ -798,10 +811,20 @@ function renderAccount(){
   $('accountCreatedAt').textContent=accountDate(user.created_at,false);
   $('accountCollectionValue').textContent=items.length+' '+(items.length===1?'modelo':'modelos');
   $('accountWatchValue').textContent=watch.length+' na lista “À procura”';
-  const quota=latestQuota;
-  $('accountPlanValue').textContent='Gratuito';
-  $('accountPlanNote').textContent='Plano gratuito ativo';
-  if(quota&&typeof quota.limit==='number'){
+  const quota=latestQuota,isPremium=quota?.tier==='premium';
+  $('accountPlanValue').textContent=isPremium?'Premium':'Gratuito';
+  $('accountPlanNote').textContent=isPremium
+    ? (quota.expires_at?'Ativo até '+accountDate(quota.expires_at,false):'Acesso permanente')
+    : 'Plano gratuito ativo';
+  const planPill=$('accountPlanPill');
+  planPill.textContent=isPremium
+    ? (quota.expires_at?'★ PREMIUM ATIVO':'★ PREMIUM PERMANENTE')
+    : '● CONTA ATIVA';
+  planPill.classList.toggle('premium',isPremium);
+  if(isPremium&&quota.unlimited){
+    $('accountQuotaValue').textContent='Ilimitadas';
+    $('accountQuotaNote').textContent='Sem limite diário · Premium ativo';
+  }else if(quota&&typeof quota.limit==='number'){
     $('accountQuotaValue').textContent=(quota.remaining!==undefined?quota.remaining+' restantes':quota.used+' / '+quota.limit);
     $('accountQuotaNote').textContent=(quota.used||0)+' utilizadas hoje · limite '+quota.limit;
   }else{
