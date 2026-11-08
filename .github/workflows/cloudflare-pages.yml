@@ -1,0 +1,51 @@
+name: Deploy HW Price Check to Cloudflare Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish to Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create Pages project if it does not exist
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: "290ebea135897d3733df7a3a9afede94"
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::error::Missing GitHub secret CLOUDFLARE_API_TOKEN."
+            exit 1
+          fi
+
+          response="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/pages/projects")"
+
+          if echo "$response" | jq -e '.result[]? | select(.name == "hwpricecheck")' >/dev/null; then
+            echo "Cloudflare Pages project hwpricecheck already exists."
+          else
+            echo "Creating Cloudflare Pages project hwpricecheck..."
+            npx --yes wrangler@latest pages project create hwpricecheck --production-branch main
+          fi
+
+      - name: Deploy site
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: "290ebea135897d3733df7a3a9afede94"
+          command: pages deploy . --project-name=hwpricecheck --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
