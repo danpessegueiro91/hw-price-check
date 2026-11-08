@@ -666,7 +666,7 @@ async function ensureAnonymousSession(){
   updateAccountButton();
   return true;
 }
-async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save();await refreshAccountPlan()}
+async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save();await refreshAccountPlan();handleSubscriptionReturn()}
 async function save(){if(!sb||!user)return;const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)status('Erro de sincronização: '+error.message);else status(tr('saved'));renderAccount()}
 $('login').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()};
 $('signup').onclick=async()=>{
@@ -994,18 +994,20 @@ async function runBillingAction(action){
 $('premiumSubscribeBtn').onclick=()=>runBillingAction('checkout');
 $('premiumManageBtn').onclick=()=>runBillingAction(billingDetails?.cancel_at_period_end?'resume':'cancel');
 
-if(new URLSearchParams(window.location.search).get('subscription')==='success'){
+function handleSubscriptionReturn(){
   const params=new URLSearchParams(window.location.search);
+  const result=params.get('subscription');
+  if(!result||!user||user.is_anonymous)return;
   params.delete('subscription');
   const cleanUrl=window.location.pathname+(params.toString()?'?'+params.toString():'')+window.location.hash;
   window.history.replaceState({},'',cleanUrl);
-  window.addEventListener('load',()=>{
-    if(user&&!user.is_anonymous){
-      openWorkspace('accountPage');
-      accountNotice('Pagamento concluído. O Premium será ativado assim que o Stripe confirmar a subscrição.','success');
-      window.setTimeout(()=>refreshAccountPlan(),2500);
-    }
-  },{once:true});
+  openWorkspace('accountPage');
+  if(result==='success'){
+    accountNotice('Pagamento concluído. O Premium será ativado assim que o Stripe confirmar a subscrição.','success');
+    window.setTimeout(()=>refreshAccountPlan(),2500);
+  }else if(result==='cancelled'){
+    accountNotice('O pagamento foi cancelado. Não foi criada nenhuma subscrição.','error');
+  }
 }
 $('accountLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
 $('accountSecurityLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
