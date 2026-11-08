@@ -220,7 +220,13 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
               <button class="account-shortcut" type="button" data-account-section="activity">Ver atividade completa →</button>
             </article>
           </div>
-          <p class="account-footnote">O plano apresentado corresponde ao acesso gratuito atual do HW Price Check. As opções Pro serão apresentadas quando estiverem disponíveis.</p>
+          <div class="account-form-card premium-billing-card" id="premiumBillingCard">
+            <h3 id="premiumBillingTitle">HW Price Check Premium</h3>
+            <p id="premiumBillingDescription">4,99 €/mês · Pesquisas ilimitadas na análise de modelos e nas vendas concluídas.</p>
+            <button class="account-action" type="button" id="premiumSubscribeBtn">🏁 Comprar Premium — 4,99 €/mês</button>
+            <button class="account-action account-secondary-action hidden" type="button" id="premiumManageBtn">Gerir subscrição</button>
+          </div>
+          <p class="account-footnote">O Premium pago renova mensalmente. Podes cancelar a renovação a qualquer momento e manténs o acesso até ao fim do período já pago.</p>
         </section>
 
         <section class="account-panel" data-account-panel="profile">
@@ -516,7 +522,7 @@ de:{headline:'Mit Köpfchen kaufen.',subhead:'Prüfe Modelle und verwalte deine 
 it:{headline:'Compra con criterio.',subhead:'Analizza i modelli e gestisci la collezione. I prezzi richiesti non sono vendite concluse.',analyse:'Analizza',collection:'Collezione',watch:'Da cercare',photo:'Foto',photoHelp:'Carica foto nitide del fronte, retro e dettagli. L’IA aiuta a identificare il modello; verifica sempre i dati.',details:'Dati del modello',model:'Modello / nome *',year:'Anno / serie / riferimento',type:'Classificazione',condition:'Condizioni',assessment:'Valutazione acquisto',ask:'Prezzo richiesto (€)',shipping:'Spedizione e costi (€)',min:'Valore minimo (€)',max:'Valore massimo (€)',sold:'Vendite comparabili concluse',certainty:'Conferma TH/STH',evidence:'Prove / link vendite',notes:'Note e motivazione',evaluate:'Valuta opportunità',clear:'Pulisci',limits:'Nessuna ricerca eBay/Vinted o conferma TH/STH automatica.',items:'Articoli',invested:'Investito',value:'Valore stimato',collectionTitle:'La mia collezione',search:'Cerca modello…',empty:'Nessun modello salvato.',export:'Esporta CSV',watchTitle:'Lista desideri',wanted:'Modello cercato',limit:'Prezzo massimo (€)',add:'Aggiungi',watchEmpty:'Lista vuota.',login:'Accedi',signup:'Crea account',authIntro:'Accedi per sincronizzare la tua collezione.',pw:'Password',saved:'Salvato e sincronizzato.',buy:'COMPRA',pass:'PASSA',check:'VERIFICA',total:'Costo totale',range:'Rivendita stimata',margin:'Margine stimato',reason:'Decisione basata sui dati inseriti.',askLogin:'Accedi prima.'},
 nl:{headline:'Koop met inzicht.',subhead:'Controleer modellen en beheer je collectie. Vraagprijzen zijn geen afgeronde verkopen.',analyse:'Controleren',collection:'Collectie',watch:'Gezocht',photo:'Foto’s',photoHelp:'Upload duidelijke foto’s van de voor-, achterkant en details. AI helpt het model te herkennen; controleer de gegevens altijd.',details:'Modelgegevens',model:'Model / naam *',year:'Jaar / serie / referentie',type:'Classificatie',condition:'Staat',assessment:'Aankoopbeoordeling',ask:'Vraagprijs (€)',shipping:'Verzending en kosten (€)',min:'Minimumwaarde (€)',max:'Maximumwaarde (€)',sold:'Vergelijkbare verkopen',certainty:'TH/STH-bevestiging',evidence:'Bewijs / verkooplinks',notes:'Notities en reden',evaluate:'Beoordeel',clear:'Wissen',limits:'Geen automatische eBay/Vinted-zoektocht of TH/STH-bevestiging zonder bewijs.',items:'Items',invested:'Geïnvesteerd',value:'Geschatte waarde',collectionTitle:'Mijn collectie',search:'Zoek model…',empty:'Nog geen modellen opgeslagen.',export:'CSV exporteren',watchTitle:'Zoeklijst',wanted:'Gezocht model',limit:'Maximumprijs (€)',add:'Toevoegen',watchEmpty:'Lijst leeg.',login:'Inloggen',signup:'Account maken',authIntro:'Log in om je collectie te synchroniseren.',pw:'Wachtwoord',saved:'Opgeslagen en gesynchroniseerd.',buy:'KOPEN',pass:'OVERSLAAN',check:'CONTROLEREN',total:'Totale kosten',range:'Geschatte doorverkoop',margin:'Geschatte marge',reason:'Beslissing op basis van ingevoerde gegevens.',askLogin:'Log eerst in.'},
 br:{headline:'Compre com critério.',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Envie fotos nítidas da frente, do verso e dos detalhes. A IA ajuda a identificar o modelo; confira sempre as informações.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
-let lang=localStorage.getItem('hwpc_lang')||'pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],lastEval=null,latestQuota=null;
+let lang=localStorage.getItem('hwpc_lang')||'pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
 
 const CATALOG={
@@ -587,12 +593,24 @@ $('language').onchange=e=>{lang=e.target.value;localStorage.setItem('hwpc_lang',
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){$('authStatus').textContent=s}
 function showGate(v){$('authGate').classList.toggle('hidden',!v)}
+async function refreshBillingDetails(){
+  if(!sb||!user||user.is_anonymous){billingDetails=null;return}
+  const {data,error}=await sb.from('hw_billing_subscriptions')
+    .select('status,current_period_end,cancel_at_period_end')
+    .eq('user_id',user.id).maybeSingle();
+  if(error){
+    console.warn('HW Price Check billing lookup:',error);
+    billingDetails=null;
+  }else billingDetails=data||null;
+}
 async function refreshAccountPlan(){
-  if(!sb||!user||user.is_anonymous){latestQuota=null;renderAccount();return}
+  if(!sb||!user||user.is_anonymous){latestQuota=null;billingDetails=null;renderAccount();return}
   try{
     const {data,error}=await sb.rpc('get_my_hw_plan');
     if(error)throw error;
     updateQuota(data);
+    await refreshBillingDetails();
+    renderAccount();
   }catch(error){
     console.warn('HW Price Check plan lookup:',error);
     accountNotice('Não foi possível atualizar o estado do plano neste momento.','error');
@@ -831,6 +849,34 @@ function renderAccount(){
     $('accountQuotaValue').textContent='10 / dia';
     $('accountQuotaNote').textContent='Limite atual do plano gratuito';
   }
+
+  const billingTitle=$('premiumBillingTitle');
+  const billingDescription=$('premiumBillingDescription');
+  const subscribeButton=$('premiumSubscribeBtn');
+  const manageButton=$('premiumManageBtn');
+  const isPermanentPremium=isPremium&&!quota.expires_at;
+  const isMonthlyPremium=isPremium&&!!quota.expires_at;
+  if(isPermanentPremium){
+    billingTitle.textContent='Premium permanente';
+    billingDescription.textContent='Esta conta tem acesso Premium vitalício, sem mensalidade nem renovação. As pesquisas são ilimitadas.';
+    subscribeButton.classList.add('hidden');
+    manageButton.classList.add('hidden');
+  }else if(isMonthlyPremium){
+    billingTitle.textContent='Premium ativo · 4,99 €/mês';
+    const endDate=accountDate(quota.expires_at,false);
+    billingDescription.textContent=billingDetails?.cancel_at_period_end
+      ? 'A renovação foi cancelada. Manténs pesquisas ilimitadas até '+endDate+'.'
+      : 'Tens pesquisas ilimitadas. A subscrição renova automaticamente; período atual até '+endDate+'.';
+    subscribeButton.classList.add('hidden');
+    manageButton.classList.remove('hidden');
+    manageButton.textContent=billingDetails?.cancel_at_period_end?'↻ Reativar renovação':'Cancelar renovação';
+  }else{
+    billingTitle.textContent='Desbloqueia o Premium';
+    billingDescription.textContent='4,99 €/mês · Pesquisas ilimitadas na análise de modelos e nas vendas concluídas. Renovação automática, cancelável a qualquer momento.';
+    subscribeButton.classList.remove('hidden');
+    manageButton.classList.add('hidden');
+  }
+
   if(document.activeElement!==$('accountProfileName'))$('accountProfileName').value=meta.display_name||meta.full_name||'';
   $('accountLanguage').value=lang;
   $('accountAppearance').value=localStorage.getItem('hwpc_theme')||'dark';
@@ -912,6 +958,54 @@ async function accountSignOut(){
   await ensureAnonymousSession();
   if(user){updateAccountButton();await load()}else updateAccountButton();
   if(button)button.disabled=false;
+}
+async function runBillingAction(action){
+  if(!sb||!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta registada para usar o Premium.','error');
+  const button=action==='checkout'?$('premiumSubscribeBtn'):$('premiumManageBtn');
+  const originalText=button.textContent;
+  button.disabled=true;
+  button.textContent=action==='checkout'?'A abrir pagamento…':action==='cancel'?'A cancelar renovação…':'A reativar renovação…';
+  try{
+    const {data,error}=await sb.functions.invoke('hw-billing',{body:{action}});
+    if(error){
+      let message=error.message||'Não foi possível contactar o serviço de faturação.';
+      try{const detail=await error.context?.json();if(detail?.message)message=detail.message;}catch(e){}
+      throw new Error(message);
+    }
+    if(data?.error)throw new Error(data.message||'Não foi possível processar o pedido.');
+    if(action==='checkout'){
+      if(!data?.url)throw new Error('O Stripe não devolveu o endereço de pagamento.');
+      window.location.assign(data.url);
+      return;
+    }
+    billingDetails={...(billingDetails||{}),status:data.status,current_period_end:data.current_period_end,cancel_at_period_end:data.cancel_at_period_end};
+    renderAccount();
+    accountNotice(action==='cancel'
+      ? 'Renovação cancelada. O Premium mantém-se até ao fim do período pago.'
+      : 'Renovação reativada. O Premium continuará a renovar mensalmente.','success');
+  }catch(error){
+    accountNotice(error.message||'Não foi possível concluir a operação.','error');
+  }finally{
+    button.disabled=false;
+    button.textContent=originalText;
+    renderAccount();
+  }
+}
+$('premiumSubscribeBtn').onclick=()=>runBillingAction('checkout');
+$('premiumManageBtn').onclick=()=>runBillingAction(billingDetails?.cancel_at_period_end?'resume':'cancel');
+
+if(new URLSearchParams(window.location.search).get('subscription')==='success'){
+  const params=new URLSearchParams(window.location.search);
+  params.delete('subscription');
+  const cleanUrl=window.location.pathname+(params.toString()?'?'+params.toString():'')+window.location.hash;
+  window.history.replaceState({},'',cleanUrl);
+  window.addEventListener('load',()=>{
+    if(user&&!user.is_anonymous){
+      openWorkspace('accountPage');
+      accountNotice('Pagamento concluído. O Premium será ativado assim que o Stripe confirmar a subscrição.','success');
+      window.setTimeout(()=>refreshAccountPlan(),2500);
+    }
+  },{once:true});
 }
 $('accountLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
 $('accountSecurityLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
