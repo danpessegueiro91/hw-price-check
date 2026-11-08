@@ -40,7 +40,12 @@ function updateQuota(q){
 }
 function guestBackup(){
   if(user?.is_anonymous){
-    try{localStorage.setItem(GUEST_BACKUP_KEY,JSON.stringify(db));}catch(e){}
+    try{
+      const previous=JSON.parse(localStorage.getItem(GUEST_BACKUP_KEY)||'{"items":[],"watch":[]}');
+      const itemMap=new Map([...(previous.items||[]),...(db.items||[])].map(x=>[x.id,x]));
+      const watchMap=new Map([...(previous.watch||[]),...(db.watch||[])].map(x=>[x.id,x]));
+      localStorage.setItem(GUEST_BACKUP_KEY,JSON.stringify({items:[...itemMap.values()],watch:[...watchMap.values()]}));
+    }catch(e){}
   }
 }
 function mergeGuestBackup(){
@@ -74,7 +79,7 @@ async function ensureAnonymousSession(){
 async function load(){const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();if(!data)await save()}
 async function save(){if(!user)return;const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)status('Erro de sincronização: '+error.message);else status(tr('saved'))}
 $('login').onclick=async()=>{guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;showGate(false);await load();mergeGuestBackup();$('account').textContent=user.email};
-$('signup').onclick=async()=>{guestBackup();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);if(data.session){user=data.user;showGate(false);await load();mergeGuestBackup();$('account').textContent=user.email}else status('Conta criada. Confirma o email e depois inicia sessão; os dados desta sessão ficam guardados neste dispositivo.')};
+$('signup').onclick=async()=>{guestBackup();if(user?.is_anonymous)await sb.auth.signOut();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});if(error){await ensureAnonymousSession();return status(error.message)}if(data.session){user=data.user;showGate(false);await load();mergeGuestBackup();$('account').textContent=user.email}else{user=null;status('Conta criada. Confirma o email e depois inicia sessão; os dados desta sessão ficam guardados neste dispositivo.')}};
 $('account').onclick=async()=>{if(!user||user.is_anonymous){guestBackup();$('authTitle').textContent='Acede à tua conta';$('authIntro').textContent='Tens 3 pesquisas gratuitas sem conta. Cria uma conta ou inicia sessão para continuar e sincronizar a coleção.';showGate(true);return}if(confirm('Terminar sessão?')){await save();await sb.auth.signOut();user=null;await ensureAnonymousSession();showGate(false);if(user)await load()}};
 sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;if(!user){await ensureAnonymousSession()}if(user){showGate(false);$('account').textContent=user.is_anonymous?'Visitante':user.email;await load();mergeGuestBackup()}else showGate(false)});
 sb.auth.onAuthStateChange((event,s)=>{if(event==='SIGNED_OUT'){user=null;showGate(false)}});
