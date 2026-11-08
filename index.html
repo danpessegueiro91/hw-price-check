@@ -30,7 +30,7 @@
     <div class="orange-track track-left"></div><div class="orange-track track-right"></div>
     <div class="stage-inner">
       <div class="hero-message">
-        <div class="hero-kicker">IDENTIFICA · COMPARA · COLECIONA</div>
+        <div class="hero-kicker hero-brand-word">HOT WHEELS</div>
         <h1 id="headline">Descobre o valor das tuas <em>Hot Wheels</em></h1>
         <p class="hero-subtitle" id="subhead">Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.</p>
       </div>
@@ -64,6 +64,23 @@
       <article><span>03</span><h3>Avaliar oportunidades</h3><p>Considera o custo total, o estado do blister e vendas concluídas comparáveis.</p></article>
     </div>
   </section>
+  <section class="catalog-section" id="treasureCatalog">
+    <div class="catalog-heading">
+      <div><div class="section-kicker">ARQUIVO DE COLECIONADOR</div><h2>Treasure Hunts & Super Treasure Hunts</h2><p>Consulta os modelos por ano, distingue TH de STH e usa os intervalos apenas como referência inicial.</p></div>
+      <div class="catalog-controls">
+        <label for="catalogYear">Ano</label><select id="catalogYear"><option value="2026" selected>2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option><option value="2007">2007</option><option value="2006">2006</option><option value="2005">2005</option><option value="2004">2004</option><option value="2003">2003</option><option value="2002">2002</option><option value="2001">2001</option><option value="2000">2000</option><option value="1999">1999</option><option value="1998">1998</option><option value="1997">1997</option><option value="1996">1996</option><option value="1995">1995</option></select>
+        <label for="catalogType">Categoria</label><select id="catalogType"><option value="all">TH + STH</option><option value="th">Treasure Hunt</option><option value="sth">Super Treasure Hunt</option></select>
+      </div>
+    </div>
+    <div class="catalog-note"><b>Valores indicativos em euros.</b> Não são cotações garantidas nem vendas confirmadas. O preço varia com país, estado do blister, variante e procura. Para preços fiáveis, compara vendas concluídas recentes.</div>
+    <div class="catalog-summary" id="catalogSummary"></div>
+    <div class="catalog-grid" id="catalogGrid" aria-live="polite"></div>
+    <div class="catalog-sources">Referências para confirmar listas, fotografias e variantes:
+      <a href="https://www.164custom.com/hot-wheels/treasure-hunt.html" target="_blank" rel="noopener">Arquivo TH 1995–2026</a> ·
+      <a href="https://www.164custom.com/hot-wheels/super-treasure-hunt.html" target="_blank" rel="noopener">Arquivo STH 2007–2026</a> ·
+      <a href="https://hotwheelstreasure.com/cars" target="_blank" rel="noopener">Índice STH e valores</a>
+    </div>
+  </section>
   <section class="about-preview" id="aboutSection"><div><div class="section-kicker">SOBRE O PROJECTO</div><h2>Uma ferramenta independente para colecionadores.</h2></div><p>HW Price Check ajuda-te a identificar modelos, organizar a coleção e tomar decisões de compra com informação mais clara. As estimativas são indicativas e não garantem valorização.</p></section>
 </section>
 <section id="appWorkspace" class="wrap hidden">
@@ -76,10 +93,16 @@
 </section>
 </main>
 <footer class="site-footer">
-  <div class="footer-brand"><div class="brand brand-lockup"><svg class="brand-flame" viewBox="0 0 74 42" aria-hidden="true"><path d="M2 5 32 15 25 2 72 12 50 23 68 27 37 40 22 29 3 30 17 20Z" fill="#ff3e35"/></svg><span class="brand-word">HW <b>Price Check</b><small>Avaliação e Preços de Hot Wheels</small></span></div><p>Ferramenta independente para colecionadores de carros à escala.</p><small>Não afiliada, patrocinada ou aprovada pela Mattel.</small></div>
+  <div class="footer-brand"><div class="brand brand-lockup"><svg class="brand-flame" viewBox="0 0 74 42" aria-hidden="true"><path d="M2 5 32 15 25 2 72 12 50 23 68 27 37 40 22 29 3 30 17 20Z" fill="#ff3e35"/></svg><span class="brand-word">HW <b>Price Check</b><small>Avaliação e Preços de Hot Wheels</small></span></div><p>Ferramenta independente para colecionadores de carros à escala.</p><small>Não afiliada, patrocinada ou aprovada pela Mattel.</small><div class="social-row"><span title="Redes sociais em preparação">YouTube</span><span title="Redes sociais em preparação">Instagram</span><span title="Redes sociais em preparação">Facebook</span></div></div>
   <div class="footer-col"><b>Navegação</b><a href="#top" id="footerHome">Início</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="#appWorkspace" data-page="collection">Coleções</a><a href="#guidesSection">Guias</a><a href="#guidesSection">Blog</a></div>
   <div class="footer-col"><b>Ajuda</b><a href="#guidesSection">Perguntas Frequentes (FAQ)</a><a href="#guidesSection">Como Funciona</a><a href="#appWorkspace" data-page="analyse">Planos e Limites</a><a href="#" id="contactLink">Contactar Suporte</a></div>
   <div class="footer-col"><b>Sobre</b><a href="#aboutSection">Quem Somos</a><a href="#" id="termsLink">Termos de Utilização</a><a href="#" id="privacyLink">Política de Privacidade</a><a href="#" id="cookiesLink">Política de Cookies</a></div>
+  <form class="newsletter-box" id="newsletterForm">
+    <div class="newsletter-title">✉ Recebe novidades</div>
+    <p>Dicas, novos recursos e atualizações do HW Price Check.</p>
+    <div class="newsletter-fields"><input id="newsletterEmail" type="email" placeholder="O teu email" autocomplete="email" required maxlength="254"><button class="btn primary" id="newsletterSubmit" type="submit">Subscrever</button></div>
+    <small id="newsletterStatus" aria-live="polite">O teu email fica registado para futuras novidades. O envio de campanhas ainda não está ativo.</small>
+  </form>
   <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span id="visitorCounter" class="visitor-counter" role="status" aria-live="polite" title="Um registo por navegador. A mesma pessoa pode contar em mais do que um dispositivo.">Visitantes: a carregar…</span><span>Estimativas informativas · v1.0.0</span></div>
 </footer>
 
@@ -225,6 +248,55 @@ body.theme-light #appWorkspace input,body.theme-light #appWorkspace select,body.
 }
 body.theme-light .hero-stage{background-color:#061020}
 </style>
+<style id="professional-home-v2">
+/* Landing layout aligned to the supplied reference */
+.site-header{height:72px;padding:0 clamp(20px,3.1vw,48px);gap:24px}.site-header .lang{display:none}
+.brand-lockup{min-width:290px}.brand-word{font-size:29px}.primary-nav{gap:clamp(8px,1.45vw,23px)}
+.home-page{background:#061020}
+.hero-stage{min-height:715px;padding:0 clamp(22px,6.9vw,106px) 26px;background-image:linear-gradient(90deg,rgba(3,9,19,.05),rgba(3,9,19,0) 58%),linear-gradient(180deg,rgba(3,9,19,.04),rgba(3,9,19,.15) 56%,#061020 100%),url('./assets/hwpc-hero.webp');background-position:center top;background-size:cover;background-repeat:no-repeat}
+.hero-stage:before,.shelf-glow,.orange-track{display:none!important}
+.hero-stage:after{height:100px;opacity:.3}
+.stage-inner{min-height:335px;grid-template-columns:1fr}
+.hero-message{padding-top:142px;max-width:610px}
+.hero-kicker{font-size:clamp(25px,3.6vw,48px);letter-spacing:-.04em;color:#ffe21c;text-shadow:0 3px 12px #000;line-height:1.04}.hero-brand-word{display:inline-block;color:#ffe323;font-weight:1000;font-style:italic;letter-spacing:-.06em;text-transform:none;text-shadow:3px 3px 0 #cf202b,-2px -2px 0 #cf202b,0 5px 14px #000;font-size:clamp(43px,5.1vw,70px);transform:skew(-8deg);margin-left:3px}
+.hero-message h1{font-size:clamp(34px,3.2vw,45px);max-width:640px;margin:16px 0 8px}
+.hero-message h1 em{display:inline;color:var(--yellow)}
+.hero-subtitle{max-width:600px;font-size:clamp(16px,1.5vw,21px);text-shadow:0 2px 12px #000}
+.diecast-display{display:none!important}
+.search-panel{max-width:1065px;margin:0 auto 38px}
+.benefit-row{max-width:1200px;margin:0 auto 30px}
+.free-plan-strip{max-width:1325px}
+.site-footer{grid-template-columns:1.25fr .68fr .9fr .82fr 1.55fr;column-gap:28px;row-gap:22px;padding-top:24px}
+.footer-brand .social-row{display:flex;gap:10px;margin-top:17px;flex-wrap:wrap}
+.social-row span{font-size:11px;font-weight:800;color:#e9f0f8;border:1px solid #344a67;border-radius:99px;padding:7px 10px;background:#101d30}
+.newsletter-box{border:1px solid #304967;border-radius:16px;padding:16px;background:linear-gradient(145deg,#101e32,#0b1627);align-self:start}
+.newsletter-title{font-weight:900;font-size:16px}.newsletter-title:first-letter{color:var(--yellow)}
+.newsletter-box p{font-size:12px;color:#c3d0e2;margin:7px 0 10px}
+.newsletter-fields{display:flex;gap:8px}.newsletter-fields input{min-width:0;flex:1;background:#1a2a40;border:1px solid #3a506c;border-radius:10px;padding:10px 12px;color:white}
+.newsletter-fields button{padding:9px 14px}
+.newsletter-box small{display:block;color:#aebdd1;font-size:10px;margin-top:8px;line-height:1.4}
+.catalog-section{max-width:1325px;margin:0 auto;padding:42px clamp(18px,4vw,40px) 56px;border-top:1px solid #253c58}
+.catalog-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:18px}
+.catalog-heading h2{font-size:clamp(25px,3vw,34px);margin:8px 0}.catalog-heading p{color:#bdcce0;margin:0;max-width:690px;font-size:14px}
+.catalog-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.catalog-controls label{font-size:12px;color:#b7c6d9}
+.catalog-controls select{background:#13243a;color:#f6f8fb;border:1px solid #3b5575;border-radius:9px;padding:10px 12px}
+.catalog-note{padding:13px 16px;border:1px solid #304967;background:#0d1a2b;border-radius:12px;color:#bfcde0;font-size:12px;line-height:1.5;margin-bottom:18px}
+.catalog-note b{color:#ffe16a}.catalog-summary{color:#c5d2e2;font-size:13px;margin:12px 0}
+.catalog-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.catalog-card{display:flex;gap:13px;align-items:center;min-width:0;padding:14px;border:1px solid #2b4361;border-radius:14px;background:linear-gradient(145deg,#112139,#0b1627)}
+.catalog-thumb{width:84px;height:72px;flex:none;border-radius:10px;overflow:hidden;background:#07111f;border:1px solid #354b68;display:flex;align-items:center;justify-content:center;color:#ffda00;font-size:11px;font-weight:900;text-align:center}
+.catalog-thumb img{width:100%;height:100%;object-fit:contain}
+.catalog-copy{min-width:0;flex:1}.catalog-copy h3{font-size:14px;margin:0 0 5px;line-height:1.25}.catalog-meta{color:#aebed2;font-size:11px;line-height:1.45}
+.catalog-price{font-size:12px;font-weight:900;color:#ffe16a;margin-top:6px}
+.catalog-links{margin-top:6px}.catalog-links a{font-size:11px;color:#9dc9ff;text-decoration:underline}
+.catalog-badge{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.08em;padding:3px 6px;border-radius:5px;background:#1c3d35;color:#67e7a6;margin-bottom:5px}
+.catalog-badge.sth{background:#3b2a52;color:#d6b8ff}
+.catalog-sources{font-size:11px;color:#9fb0c6;margin-top:20px;line-height:1.7}.catalog-sources a{color:#a9ccff;text-decoration:underline}
+.visitor-counter{color:#ffe16b}
+@media(max-width:1120px){.site-footer{grid-template-columns:repeat(3,1fr)}.newsletter-box{grid-column:span 2}.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.hero-stage{min-height:690px;background-position:58% top}.hero-stage:after{height:70px}.stage-inner{min-height:335px}.hero-message{padding-top:125px;max-width:75%}.hero-kicker{font-size:34px}.hero-message h1{font-size:38px}.search-panel{margin-top:0}.catalog-heading{align-items:start;flex-direction:column}.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.hero-stage{min-height:750px;padding-left:14px;padding-right:14px;background-position:59% top;background-size:auto 510px}.stage-inner{min-height:335px}.hero-message{padding-top:95px;max-width:100%}.hero-kicker{font-size:27px;max-width:80%}.hero-message h1{font-size:35px;max-width:80%}.hero-subtitle{max-width:80%;font-size:14px}.search-panel{margin-top:0}.benefit-row{margin-top:20px}.free-plan-strip{margin-bottom:0}.site-footer{grid-template-columns:1fr 1fr;padding:25px 18px}.newsletter-box{grid-column:1/-1}.catalog-section{padding:34px 16px}.catalog-grid{grid-template-columns:1fr}.catalog-thumb{width:74px;height:66px}.catalog-controls{width:100%}.catalog-controls select{flex:1;min-width:100px}}
+</style>
 <script>
 const SUPABASE_URL='https://hvxszwbszrigeznmmkeb.supabase.co',KEY='sb_publishable_onFuWjOv4XdLMoA0enaCgA_OXc1deTF',sb=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,KEY):null;
 const T={
@@ -238,6 +310,45 @@ nl:{headline:'Koop met inzicht.',subhead:'Controleer modellen en beheer je colle
 br:{headline:'Compre com critério.',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Envie fotos nítidas da frente, do verso e dos detalhes. A IA ajuda a identificar o modelo; confira sempre as informações.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
 let lang=localStorage.getItem('hwpc_lang')||'pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],lastEval=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
+
+const CATALOG={
+2026:{
+th:["'87 Buick Regal GNX","'92 Dodge Viper RT/10","Electro Silhouette","Hot Wheengs","Cone Shaker","2016 Ford GT Race","2 Jet Z","Total Disposal","Amaru GTC","Sweet Driver","Mad Manga","Ford Model A Custom '31","Fast Fish","Nissan Skyline HT 2000GT-X","Gazella GT"],
+sth:["Drift-Ender","Ford Mustang GTD","Ferrari F40 Competizione","'64 Impala","'87 Ford Sierra Cosworth","Honda Civic Custom","Custom Otto","Lotus Sport Elise","Subaru Impreza","'94 Toyota Supra (Tooned)","Nissan Maxima Drift Car","Porsche 911 Carrera RS 2.7","'23 Ram 1500","'70 Plymouth AAR 'Cuda","'67 Pontiac Firebird 400"]
+},
+2025:{
+th:["Ford Performance Supervan 4","Fish'd & Chip'd","Mailed It!","Pedal Driver","Rig Storm","'85 Honda City Turbo II","Birthday Burner","Nissan Leaf NISMO RC_02","Chill Mill","Chevroletor","Honda S800 Racing","Shark Bite","1966 Triumph Tiger 100","'84 Audi Sport quattro","Triumph TR6"],
+sth:["'87 Audi quattro","Hirohata Merc","Hi-Roller II","1975 Datsun Sunny Truck (B120)","Aston Martin DB4GT High-Speed Edition","'20 Jeep Gladiator","Porsche 911 Rallye","'71 Mustang Funny Car","'62 Corvette Gasser","McLaren Speedtail","'94 Bugatti EB110 SS","'73 Honda Civic Custom","'20 Dodge Charger Hellcat","BMW M3 Wagon","Ford RS200"]
+},
+2024:{
+th:["'47 Chevy Fleetline","Ain't Fare","Tooligan","Custom '53 Chevy","Batman Forever Batmobile","Ford Mustang Mach-E 1400","Draggin' Wagon","Purple Passion","Honda Super Cub Custom","Bone Shaker","Car-de-Asada","Hot Wheels Ford Transit Connect","DMC DeLorean","'59 Chevy Impala","Porsche 928S Safari"],
+sth:["Ford Escort RS2000","'18 Camaro SS","BMW 507","'89 Mercedes-Benz 560 SEC AMG","'60s Fiat 500D Modificado","'71 El Camino","Audi 90 quattro","Volvo P1800 Gasser","Mitsubishi Pajero Evolution","Mazda 787B","'77 Pontiac Firebird","'96 Nissan 180SX Type X","Celero GT","Lamborghini Huracán LP 620-2 Super Trofeo","'83 Chevy Silverado"]
+}};
+function renderCatalog(){
+ const year=$('catalogYear')?.value||'2026',type=$('catalogType')?.value||'all',grid=$('catalogGrid'),summary=$('catalogSummary');
+ if(!grid||!summary)return;
+ const rows=[];
+ if(CATALOG[year]){
+  for(const kind of ['th','sth'])if(type==='all'||type===kind)for(const name of CATALOG[year][kind])rows.push({name,kind});
+ }else{
+  const noSth=Number(year)<2007&&type==='sth';
+  summary.textContent=noSth?'A série Super Treasure Hunt começou em 2007.':'O arquivo deste ano está disponível nas checklists de referência externas.';
+  grid.innerHTML='<article class="catalog-card"><div class="catalog-thumb">HW<br>'+year+'</div><div class="catalog-copy"><h3>'+(noSth?'Ainda não existiam STH neste ano':'Arquivo histórico '+year)+'</h3><div class="catalog-meta">Consulta a lista anual completa e as fotografias na referência especializada.</div><div class="catalog-links"><a href="https://www.164custom.com/hot-wheels/treasure-hunt.html" target="_blank" rel="noopener">Abrir arquivo TH 1995–2026 ↗</a> · <a href="https://www.164custom.com/hot-wheels/super-treasure-hunt.html" target="_blank" rel="noopener">Arquivo STH 2007–2026 ↗</a></div></div></article>';
+  return;
+ }
+ const thValue=year==='2026'?'€3–8':'€2–7',sthValue=year==='2026'?'€35–120+':'€20–100+';
+ summary.textContent=rows.length+' modelos listados · '+(type==='all'?'TH e STH':type.toUpperCase())+' · '+year;
+ grid.innerHTML=rows.map(x=>{
+  const label=x.kind==='sth'?'SUPER TREASURE HUNT':'TREASURE HUNT';
+  const price=x.kind==='sth'?sthValue:thValue;
+  const url=x.kind==='sth'?'https://www.164custom.com/hot-wheels/super-treasure-hunt.html':'https://www.164custom.com/hot-wheels/treasure-hunt.html';
+  const yearUrl=x.kind==='sth'?'https://www.164custom.com/hot-wheels/super-treasure-hunt/'+year+'.html':'https://www.164custom.com/hot-wheels/treasure-hunt/'+year+'.html';
+  return '<article class="catalog-card"><div class="catalog-thumb" aria-label="Fotografia de referência disponível na checklist externa">HW<br>'+year+'</div><div class="catalog-copy"><span class="catalog-badge '+x.kind+'">'+label+'</span><h3>'+safe(x.name)+'</h3><div class="catalog-meta">Ano '+year+' · Miniatura carded, estado por confirmar</div><div class="catalog-price">Intervalo indicativo: '+price+'</div><div class="catalog-links"><a href="'+yearUrl+'" target="_blank" rel="noopener">Ver fotografia e detalhes ↗</a></div></div></article>';
+ }).join('');
+}
+$('catalogYear')?.addEventListener('change',renderCatalog);
+$('catalogType')?.addEventListener('change',renderCatalog);
+
 
 async function updateVisitorCounter(){
   const target=$('visitorCounter');
@@ -363,7 +474,23 @@ function render(){const items=db.items||[],watch=db.watch||[];$('count').textCon
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('search').oninput=render;
 $('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()};
-window.HWPC_MAIN_READY=true;updateVisitorCounter();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+
+$('newsletterForm')?.addEventListener('submit',async e=>{
+ e.preventDefault();
+ const email=$('newsletterEmail').value.trim().toLowerCase(),button=$('newsletterSubmit'),status=$('newsletterStatus');
+ if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){status.textContent='Indica um endereço de email válido.';return}
+ if(!sb){status.textContent='Serviço indisponível. Tenta novamente mais tarde.';return}
+ button.disabled=true;button.textContent='A subscrever…';
+ try{
+  const {error}=await sb.from('newsletter_subscribers').insert({email});
+  if(error&&error.code==='23505'){status.textContent='Este email já está inscrito.'}
+  else if(error)throw error;
+  else{status.textContent='Registo concluído. Obrigado!';$('newsletterEmail').value=''}
+ }catch(err){console.error('Newsletter:',err);status.textContent='Não foi possível concluir a subscrição. Tenta novamente.'}
+ finally{button.disabled=false;button.textContent='Subscrever'}
+});
+
+window.HWPC_MAIN_READY=true;updateVisitorCounter();renderCatalog();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 <script>
 (()=> {
