@@ -1,4 +1,4 @@
-const CACHE='hwpc-pwa-v13';
+const CACHE='hwpc-pwa-v14';
 const CORE=['./','./index.html','./manifest.json','./icon.svg','./assets/hwpc-cat-logo-v2.webp'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
