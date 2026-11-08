@@ -30,7 +30,7 @@
     <div class="orange-track track-left"></div><div class="orange-track track-right"></div>
     <div class="stage-inner">
       <div class="hero-message">
-        <div class="hero-kicker">IDENTIFICA · COMPARA · COLECIONA</div>
+        <div class="hero-kicker hero-brand-word">HOT WHEELS</div>
         <h1 id="headline">Descobre o valor das tuas <em>Hot Wheels</em></h1>
         <p class="hero-subtitle" id="subhead">Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.</p>
       </div>
@@ -101,7 +101,7 @@
     <div class="newsletter-title">✉ Recebe novidades</div>
     <p>Dicas, novos recursos e atualizações do HW Price Check.</p>
     <div class="newsletter-fields"><input id="newsletterEmail" type="email" placeholder="O teu email" autocomplete="email" required maxlength="254"><button class="btn primary" id="newsletterSubmit" type="submit">Subscrever</button></div>
-    <small id="newsletterStatus" aria-live="polite">Só receberás novidades do HW Price Check. Podes pedir a remoção da subscrição.</small>
+    <small id="newsletterStatus" aria-live="polite">O teu email fica registado para futuras novidades. O envio de campanhas ainda não está ativo.</small>
   </form>
   <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span id="visitorCounter" class="visitor-counter" role="status" aria-live="polite" title="Um registo por navegador. A mesma pessoa pode contar em mais do que um dispositivo.">Visitantes: a carregar…</span><span>Estimativas informativas · v1.0.0</span></div>
 </footer>
@@ -250,7 +250,7 @@ body.theme-light .hero-stage{background-color:#061020}
 </style>
 <style id="professional-home-v2">
 /* Landing layout aligned to the supplied reference */
-.site-header{height:72px;padding:0 clamp(20px,3.1vw,48px);gap:24px}
+.site-header{height:72px;padding:0 clamp(20px,3.1vw,48px);gap:24px}.site-header .lang{display:none}
 .brand-lockup{min-width:290px}.brand-word{font-size:29px}.primary-nav{gap:clamp(8px,1.45vw,23px)}
 .home-page{background:#061020}
 .hero-stage{min-height:715px;padding:0 clamp(22px,6.9vw,106px) 26px;background-image:linear-gradient(90deg,rgba(3,9,19,.05),rgba(3,9,19,0) 58%),linear-gradient(180deg,rgba(3,9,19,.04),rgba(3,9,19,.15) 56%,#061020 100%),url('./assets/hwpc-hero.webp');background-position:center top;background-size:cover;background-repeat:no-repeat}
@@ -258,7 +258,7 @@ body.theme-light .hero-stage{background-color:#061020}
 .hero-stage:after{height:100px;opacity:.3}
 .stage-inner{min-height:335px;grid-template-columns:1fr}
 .hero-message{padding-top:142px;max-width:610px}
-.hero-kicker{font-size:clamp(25px,3.6vw,48px);letter-spacing:-.04em;color:#ffe21c;text-shadow:0 3px 12px #000;line-height:1.04}
+.hero-kicker{font-size:clamp(25px,3.6vw,48px);letter-spacing:-.04em;color:#ffe21c;text-shadow:0 3px 12px #000;line-height:1.04}.hero-brand-word{display:inline-block;color:#ffe323;font-weight:1000;font-style:italic;letter-spacing:-.06em;text-transform:none;text-shadow:3px 3px 0 #cf202b,-2px -2px 0 #cf202b,0 5px 14px #000;font-size:clamp(43px,5.1vw,70px);transform:skew(-8deg);margin-left:3px}
 .hero-message h1{font-size:clamp(34px,3.2vw,45px);max-width:640px;margin:16px 0 8px}
 .hero-message h1 em{display:inline;color:var(--yellow)}
 .hero-subtitle{max-width:600px;font-size:clamp(16px,1.5vw,21px);text-shadow:0 2px 12px #000}
@@ -485,7 +485,7 @@ $('newsletterForm')?.addEventListener('submit',async e=>{
   const {error}=await sb.from('newsletter_subscribers').insert({email});
   if(error&&error.code==='23505'){status.textContent='Este email já está inscrito.'}
   else if(error)throw error;
-  else{status.textContent='Subscrição registada. Obrigado!';$('newsletterEmail').value=''}
+  else{status.textContent='Registo concluído. Obrigado!';$('newsletterEmail').value=''}
  }catch(err){console.error('Newsletter:',err);status.textContent='Não foi possível concluir a subscrição. Tenta novamente.'}
  finally{button.disabled=false;button.textContent='Subscrever'}
 });
