@@ -68,7 +68,7 @@
     <div class="catalog-heading">
       <div><div class="section-kicker">ARQUIVO DE COLECIONADOR</div><h2>Treasure Hunts & Super Treasure Hunts</h2><p>Consulta os modelos por ano, distingue TH de STH e usa os intervalos apenas como referência inicial.</p></div>
       <div class="catalog-controls">
-        <label for="catalogYear">Ano</label><select id="catalogYear"><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option></select>
+        <label for="catalogYear">Ano</label><select id="catalogYear"><option value="2026" selected>2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option><option value="2014">2014</option><option value="2013">2013</option><option value="2012">2012</option><option value="2011">2011</option><option value="2010">2010</option><option value="2009">2009</option><option value="2008">2008</option><option value="2007">2007</option><option value="2006">2006</option><option value="2005">2005</option><option value="2004">2004</option><option value="2003">2003</option><option value="2002">2002</option><option value="2001">2001</option><option value="2000">2000</option><option value="1999">1999</option><option value="1998">1998</option><option value="1997">1997</option><option value="1996">1996</option><option value="1995">1995</option></select>
         <label for="catalogType">Categoria</label><select id="catalogType"><option value="all">TH + STH</option><option value="th">Treasure Hunt</option><option value="sth">Super Treasure Hunt</option></select>
       </div>
     </div>
@@ -328,7 +328,14 @@ function renderCatalog(){
  const year=$('catalogYear')?.value||'2026',type=$('catalogType')?.value||'all',grid=$('catalogGrid'),summary=$('catalogSummary');
  if(!grid||!summary)return;
  const rows=[];
- for(const kind of ['th','sth'])if(type==='all'||type===kind)for(const name of CATALOG[year][kind])rows.push({name,kind});
+ if(CATALOG[year]){
+  for(const kind of ['th','sth'])if(type==='all'||type===kind)for(const name of CATALOG[year][kind])rows.push({name,kind});
+ }else{
+  const noSth=Number(year)<2007&&type==='sth';
+  summary.textContent=noSth?'A série Super Treasure Hunt começou em 2007.':'O arquivo deste ano está disponível nas checklists de referência externas.';
+  grid.innerHTML='<article class="catalog-card"><div class="catalog-thumb">HW<br>'+year+'</div><div class="catalog-copy"><h3>'+(noSth?'Ainda não existiam STH neste ano':'Arquivo histórico '+year)+'</h3><div class="catalog-meta">Consulta a lista anual completa e as fotografias na referência especializada.</div><div class="catalog-links"><a href="https://www.164custom.com/hot-wheels/treasure-hunt.html" target="_blank" rel="noopener">Abrir arquivo TH 1995–2026 ↗</a> · <a href="https://www.164custom.com/hot-wheels/super-treasure-hunt.html" target="_blank" rel="noopener">Arquivo STH 2007–2026 ↗</a></div></div></article>';
+  return;
+ }
  const thValue=year==='2026'?'€3–8':'€2–7',sthValue=year==='2026'?'€35–120+':'€20–100+';
  summary.textContent=rows.length+' modelos listados · '+(type==='all'?'TH e STH':type.toUpperCase())+' · '+year;
  grid.innerHTML=rows.map(x=>{
@@ -467,6 +474,22 @@ function render(){const items=db.items||[],watch=db.watch||[];$('count').textCon
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('search').oninput=render;
 $('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()};
+
+$('newsletterForm')?.addEventListener('submit',async e=>{
+ e.preventDefault();
+ const email=$('newsletterEmail').value.trim().toLowerCase(),button=$('newsletterSubmit'),status=$('newsletterStatus');
+ if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){status.textContent='Indica um endereço de email válido.';return}
+ if(!sb){status.textContent='Serviço indisponível. Tenta novamente mais tarde.';return}
+ button.disabled=true;button.textContent='A subscrever…';
+ try{
+  const {error}=await sb.from('newsletter_subscribers').insert({email});
+  if(error&&error.code==='23505'){status.textContent='Este email já está inscrito.'}
+  else if(error)throw error;
+  else{status.textContent='Subscrição registada. Obrigado!';$('newsletterEmail').value=''}
+ }catch(err){console.error('Newsletter:',err);status.textContent='Não foi possível concluir a subscrição. Tenta novamente.'}
+ finally{button.disabled=false;button.textContent='Subscrever'}
+});
+
 window.HWPC_MAIN_READY=true;updateVisitorCounter();renderCatalog();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 <script>
