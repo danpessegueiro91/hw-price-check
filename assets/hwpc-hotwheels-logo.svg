@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 190" role="img" aria-labelledby="title desc">
+  <title id="title">Hot Wheels</title>
+  <desc id="desc">Logótipo estilizado Hot Wheels em amarelo e vermelho, com chama dinâmica.</desc>
+  <path d="M15 91C52 60 36 28 116 25c-27 24-19 42 13 40C218 58 278 13 386 17c89 3 168 32 250 55-53-7-79 13-94 48-18 41-67 59-116 45 38-3 59-20 62-43-93 33-192 44-290 29-69-10-112-15-171 2 26-21 24-41-12-62Z" fill="#e9232b" stroke="#fff" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M35 99c39-21 34-44 73-51-18 21-8 34 16 33 82-7 143-56 251-58 74-1 132 18 197 39-72-11-118 6-161 22-94 34-186 36-267 22-43-8-74-11-109-7Z" fill="#e9232b"/>
+  <text x="103" y="132" textLength="505" lengthAdjust="spacingAndGlyphs" font-family="Arial Black,Impact,sans-serif" font-size="108" font-style="italic" font-weight="1000" letter-spacing="-6" fill="#ffe21a" stroke="#bd1723" stroke-width="3" paint-order="stroke fill">Hot Wheels</text>
+  <path d="M107 143c133 25 265 18 381-11-47 41-158 53-288 34-37-5-70-13-93-23Z" fill="#e9232b" opacity=".96"/>
+</svg>
