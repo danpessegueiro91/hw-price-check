@@ -398,9 +398,6 @@ function renderCatalog(){
   return '<article class="catalog-card"><div class="catalog-thumb" aria-label="Fotografia de referência disponível na checklist externa">HW<br>'+year+'</div><div class="catalog-copy"><span class="catalog-badge '+x.kind+'">'+label+'</span><h3>'+safe(x.name)+'</h3><div class="catalog-meta">Ano '+year+' · Miniatura carded, estado por confirmar</div><div class="catalog-price">Intervalo indicativo: '+price+'</div><div class="catalog-links"><a href="'+yearUrl+'" target="_blank" rel="noopener">Ver fotografia e detalhes ↗</a></div></div></article>';
  }).join('');
 }
-$('catalogYear')?.addEventListener('change',renderCatalog);
-$('catalogType')?.addEventListener('change',renderCatalog);
-
 
 async function updateVisitorCounter(){
   const target=$('visitorCounter');
@@ -542,7 +539,7 @@ $('newsletterForm')?.addEventListener('submit',async e=>{
  finally{button.disabled=false;button.textContent='Subscrever'}
 });
 
-window.HWPC_MAIN_READY=true;updateVisitorCounter();renderCatalog();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.HWPC_MAIN_READY=true;updateVisitorCounter();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
 </script>
 <script>
 (()=> {
@@ -709,9 +706,6 @@ window.HWPC_MAIN_READY=true;updateVisitorCounter();renderCatalog();translate();$
   }).join("");
   grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
  };
- renderCatalog();
- ["catalogYear","catalogType","catalogSort"].forEach(id=>$(id)?.addEventListener("change",renderCatalog));
- $('catalogSearch')?.addEventListener('input',renderCatalog);
  $('catalogDetailClose')?.addEventListener('click',closeDetail);
  $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
  $('catalogDetailMarket')?.addEventListener('click',()=>{
