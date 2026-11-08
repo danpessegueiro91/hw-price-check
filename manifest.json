@@ -1,9 +1,20 @@
 {
   "name": "HW Price Check",
-  "short_name": "HW Price Check",
+  "short_name": "HW Price",
+  "id": "./",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#101113",
   "theme_color": "#101113",
-  "description": "Análise e gestão de coleção Hot Wheels"
+  "description": "Análise e gestão de coleção Hot Wheels",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
