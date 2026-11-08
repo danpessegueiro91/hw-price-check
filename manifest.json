@@ -1,0 +1,9 @@
+{
+  "name": "HW Price Check",
+  "short_name": "HW Price Check",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#101113",
+  "theme_color": "#101113",
+  "description": "Análise e gestão de coleção Hot Wheels"
+}
