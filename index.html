@@ -582,9 +582,9 @@ async function updateVisitorCounter(){
 
 const $=id=>document.getElementById(id),tr=k=>T[lang][k]||T.pt[k],money=n=>new Intl.NumberFormat(lang==='pt'||lang==='br'?'pt-PT':lang==='de'?'de-DE':lang==='fr'?'fr-FR':lang==='it'?'it-IT':lang==='nl'?'nl-NL':lang==='es'?'es-ES':'en-IE',{style:'currency',currency:'EUR'}).format(Number(n)||0);
 const fields={headline:'headline',subhead:'subhead',tabAnalyse:'analyse',tabCollection:'collection',tabWatch:'watch',photoTitle:'photo',photoHelp:'photoHelp',detailsTitle:'details',modelLabel:'model',yearLabel:'year',typeLabel:'type',conditionLabel:'condition',assessmentTitle:'assessment',askLabel:'ask',shippingLabel:'shipping',minLabel:'min',maxLabel:'max',soldLabel:'sold',certaintyLabel:'certainty',evidenceLabel:'evidence',notesLabel:'notes',evaluate:'evaluate',clear:'clear',itemsLabel:'items',investedLabel:'invested',valueLabel:'value',collectionTitle:'collectionTitle',export:'export',watchTitle:'watchTitle',wantedLabel:'wanted',limitLabel:'limit',addWatch:'add',limits:'limits',authIntro:'authIntro',pwLabel:'pw',login:'login',signup:'signup'};
-function translate(){for(const [id,k] of Object.entries(fields)){if(id==='headline')$(id).innerHTML=tr(k).replace(/(Hot Wheels)/i,'<em>$1</em>');else $(id).textContent=tr(k)}$('language').value=lang;$('authTitle').textContent=tr('login');$('search').placeholder=tr('search');$('authGate').querySelector('h2').textContent=tr('login');render()}
+function translate(){for(const [id,k] of Object.entries(fields)){if(id==='headline')$(id).innerHTML=tr(k).replace(/(Hot Wheels)/i,'<em>$1</em>');else $(id).textContent=tr(k)}$('language').value=lang;$('authTitle').textContent=tr('login');$('search').placeholder=tr('search');$('authGate').querySelector('h2').textContent=tr('login');$('tabAccount').textContent=({pt:'🏁 A Minha Conta',en:'🏁 My Account',es:'🏁 Mi cuenta',fr:'🏁 Mon compte',de:'🏁 Mein Konto',it:'🏁 Il mio account',nl:'🏁 Mijn account',br:'🏁 Minha conta'}[lang]||'🏁 A Minha Conta');renderAccount();render()}
 $('language').onchange=e=>{lang=e.target.value;localStorage.setItem('hwpc_lang',lang);translate()};
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render()});
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){$('authStatus').textContent=s}
 function showGate(v){$('authGate').classList.toggle('hidden',!v)}
 function updateQuota(q){
@@ -667,10 +667,10 @@ $('signup').onclick=async()=>{
       showGate(false);
       await load();
       mergeGuestBackup();
-      $('account').textContent=user.email;
+      updateAccountButton();renderAccount();
       return;
     }
-    user=null;
+    user=null;updateAccountButton();
     if(Array.isArray(data.user?.identities)&&data.user.identities.length===0){
       const {error:resendError}=await sb.auth.resend({
         type:'signup',
@@ -839,7 +839,7 @@ $('accountEmailSave').onclick=async()=>{
   if(email===String(user.email||'').toLowerCase())return accountNotice('O novo endereço é igual ao email atual.','error');
   button.disabled=true;button.textContent='A enviar pedido…';
   try{
-    const {data,error}=await sb.auth.updateUser({email});
+    const {data,error}=await sb.auth.updateUser({email},{emailRedirectTo:'https://hwpricecheck.pages.dev/'});
     if(error)throw error;
     user=data.user||user;
     accountNotice('Pedido enviado. Segue as instruções de confirmação recebidas por email antes de usares o novo endereço.','success');
