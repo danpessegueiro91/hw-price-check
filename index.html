@@ -263,6 +263,7 @@ function mergeGuestBackup(){
   }catch(e){status('Não foi possível recuperar alguns dados da sessão de visitante.');}
 }
 async function ensureAnonymousSession(){
+  if(!sb){user=null;$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';return false;}
   const {data:{session}}=await sb.auth.getSession();
   if(session){user=session.user;return true;}
   if(!sb){user=null;$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';return false;}const {data,error}=await sb.auth.signInAnonymously();
@@ -322,5 +323,53 @@ function render(){const items=db.items||[],watch=db.watch||[];$('count').textCon
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 $('search').oninput=render;
 $('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()};
-translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
-</script></body></html>
+window.HWPC_MAIN_READY=true;translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+<script>
+(()=> {
+  if(window.HWPC_MAIN_READY)return;
+  const $=id=>document.getElementById(id);
+  const showPage=view=>{
+    $('homePage')?.classList.add('hidden');
+    $('appWorkspace')?.classList.remove('hidden');
+    document.querySelectorAll('.view').forEach(x=>x.classList.toggle('hidden',x.id!==view));
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view===view));
+    document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));
+    $('appWorkspace')?.scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  const tell=s=>{const n=$('appNotice');if(n)n.textContent=s;const q=$('heroSearchFeedback');if(q)q.textContent=s;};
+  document.querySelectorAll('[data-page]').forEach(b=>{
+    if(b.dataset.page==='home')b.addEventListener('click',()=>{ $('appWorkspace')?.classList.add('hidden');$('homePage')?.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});});
+    else if(['analyse','collection','watch'].includes(b.dataset.page))b.addEventListener('click',()=>showPage(b.dataset.page));
+    else b.addEventListener('click',()=>{ $('homePage')?.classList.remove('hidden');$('appWorkspace')?.classList.add('hidden');$('guidesSection')?.scrollIntoView({behavior:'smooth'});});
+  });
+  $('heroAnalyse')?.addEventListener('click',()=>{
+    const q=$('heroSearch')?.value.trim()||'';
+    if($('model'))$('model').value=q;
+    showPage('analyse');
+    if($('aiStatus'))$('aiStatus').textContent=q?'Modelo preenchido. Adiciona fotografias para o identificar.':'Escreve um modelo ou escolhe uma fotografia para começar.';
+    tell(q?'Modelo enviado para análise.':'Área de análise aberta.');
+  });
+  $('heroCamera')?.addEventListener('click',()=>{
+    showPage('analyse');
+    const p=document.querySelector('[data-photo="0"]');
+    if(p)p.click();else tell('Não foi possível encontrar o seletor de fotografias.');
+  });
+  $('heroSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse')?.click()});
+  $('signupTop')?.addEventListener('click',()=>{if($('authGate'))$('authGate').classList.remove('hidden')});
+  $('signupHero')?.addEventListener('click',()=>{if($('authGate'))$('authGate').classList.remove('hidden')});
+  $('account')?.addEventListener('click',()=>{if($('authGate'))$('authGate').classList.remove('hidden')});
+  $('themeToggle')?.addEventListener('click',()=>document.body.classList.toggle('theme-light'));
+  document.querySelectorAll('[data-photo]').forEach(input=>{
+    input.addEventListener('change',()=>{
+      const file=input.files?.[0];if(!file)return;
+      const url=window.URL.createObjectURL(file),label=input.parentElement;
+      if(label){label.innerHTML='';const img=document.createElement('img');img.src=url;label.append(img);label.append(input);}
+      tell('Fotografia carregada. Podes acrescentar o verso e os detalhes e depois identificar.');
+      if($('aiStatus'))$('aiStatus').textContent='Fotografia carregada. Adiciona outras vistas e carrega em “Identificar com Gemini”.';
+    });
+  });
+  tell('Modo de navegação de reserva ativo. Algumas funções de conta podem exigir atualização da página.');
+})();
+</script>
+</body></html>
