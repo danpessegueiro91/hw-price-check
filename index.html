@@ -762,7 +762,7 @@ $('evaluate').onclick=()=>{
  }
  lastEval={id:crypto.randomUUID(),model,year:$('year').value,type,condition,ask,shipping:ship,min,max,sold,certainty,evidence,notes:$('notes').value,photos:photos.slice(),decision,reason,date:new Date().toISOString()};
  const d=$('result');d.classList.remove('hidden');
- d.innerHTML='<div class="eyebrow">'+tr('reason')+'</div><div class="decision '+(decision==='buy'?'buy':decision==='pass'?'pass':'check')+'">'+tr(decision)+'</div><div class="grid"><div><small>'+tr('total')+'</small><h3>'+money(cost)+'</h3></div><div><small>'+tr('range')+'</small><h3>'+money(min)+' – '+money(max)+'</h3></div><div><small>'+tr('margin')+'</small><h3>'+money(margin)+'</h3></div><div><small>Vendas comparáveis</small><h3>'+sold+'</h3></div></div><p class="muted">'+safe(reason)+'</p><button class="btn primary" id="saveItem">Guardar na coleção+'</button>';
+ d.innerHTML='<div class="eyebrow">'+tr('reason')+'</div><div class="decision '+(decision==='buy'?'buy':decision==='pass'?'pass':'check')+'">'+tr(decision)+'</div><div class="grid"><div><small>'+tr('total')+'</small><h3>'+money(cost)+'</h3></div><div><small>'+tr('range')+'</small><h3>'+money(min)+' – '+money(max)+'</h3></div><div><small>'+tr('margin')+'</small><h3>'+money(margin)+'</h3></div><div><small>Vendas comparáveis</small><h3>'+sold+'</h3></div></div><p class="muted">'+safe(reason)+'</p><button class="btn primary" id="saveItem">Guardar na coleção</button>';
  $('saveItem').onclick=async()=>{
   if(!user)return alert(tr('askLogin'));
   db.items.unshift(lastEval);await save();render();
