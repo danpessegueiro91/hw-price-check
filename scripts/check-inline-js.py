@@ -47,9 +47,6 @@ def check(command, label):
 html = (ROOT / "index.html").read_text(encoding="utf-8")
 parser = ScriptExtractor()
 parser.feed(html)
-if not parser.scripts:
-    raise SystemExit("FAIL: no inline JavaScript blocks found")
-
 # Validate every same-origin JavaScript asset referenced by the page.
 external_scripts = []
 for match in __import__("re").finditer(r'<script\b([^>]*)>', html, __import__("re").I):
@@ -66,6 +63,9 @@ for match in __import__("re").finditer(r'<script\b([^>]*)>', html, __import__("r
         raise SystemExit(f"FAIL: missing JavaScript asset: {src.group(1)}")
     if asset.suffix == ".js":
         external_scripts.append(asset)
+
+if not parser.scripts and not external_scripts:
+    raise SystemExit("FAIL: no JavaScript found in index.html")
 
 with tempfile.TemporaryDirectory() as temp:
     for number, source in enumerate(parser.scripts, start=1):
