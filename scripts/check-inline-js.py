@@ -52,8 +52,8 @@ if not parser.scripts:
 
 # Validate every same-origin JavaScript asset referenced by the page.
 external_scripts = []
-for match in __import__("re").finditer(r'<script\\b([^>]*)>', html, __import__("re").I):
-    src = __import__("re").search(r'\\bsrc=["\\']([^"\\']+)', match.group(1), __import__("re").I)
+for match in __import__("re").finditer(r'<script\b([^>]*)>', html, __import__("re").I):
+    src = __import__("re").search(r'\bsrc=["\']([^"\']+)', match.group(1), __import__("re").I)
     if not src:
         continue
     parsed = urlparse(src.group(1))
