@@ -1863,14 +1863,18 @@ button.account-shortcut:hover,a.btn:hover,#homePage .camera-button:hover{
 
 
 <style id="HWPC_HEADLINE_THIN_BLACK_OUTLINE_20261109">
-/* Contorno preto fino no texto branco do título principal. */
+/* Contorno preto visível no texto branco do título principal. */
 #homePage #headline{
-  -webkit-text-stroke:1.25px #05080d;
-  paint-order:stroke fill;
-  text-shadow:0 2px 14px #000b,0 0 1px #05080d!important;
+  -webkit-text-stroke:1.2px #05080d!important;
+  paint-order:stroke fill!important;
+  text-shadow:
+    -1px -1px 0 #05080d, 0 -1px 0 #05080d, 1px -1px 0 #05080d,
+    -1px 0 0 #05080d, 1px 0 0 #05080d,
+    -1px 1px 0 #05080d, 0 1px 0 #05080d, 1px 1px 0 #05080d,
+    0 2px 14px #000b!important;
 }
 #homePage #headline em{
-  -webkit-text-stroke:1.5px #ed1c24;
+  -webkit-text-stroke:1.5px #ed1c24!important;
 }
 </style>
 
