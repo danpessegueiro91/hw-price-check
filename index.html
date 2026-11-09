@@ -1687,10 +1687,9 @@ const translateText=()=>{
   })().finally(()=>mmInflight.delete(key));
   mmInflight.set(key,promise);return promise;
  };
- let mmGeneration=0,mmScheduled=false;
+ let mmScheduled=false;
  const translateUnknown=()=>{
   const L=lang();if(L==='pt')return;
-  const generation=++mmGeneration;
   if(mmScheduled)return;mmScheduled=true;
   setTimeout(async()=>{
    mmScheduled=false;
@@ -1706,7 +1705,7 @@ const translateText=()=>{
     nodes.push({node,raw});
    }
    for(const item of nodes){
-    if(lang()!==active||generation!==mmGeneration)break;
+    if(lang()!==active)break;
     const cached=mmCache()[active+'|'+item.raw];
     if(cached){if(item.node.isConnected&&originals.get(item.node)===item.raw)item.node.nodeValue=cached;continue;}
     try{
