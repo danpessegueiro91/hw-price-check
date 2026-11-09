@@ -1610,7 +1610,7 @@ document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
   --hwpc-fire-orange:#ff5a1f;
   --hwpc-fire-yellow:#ffd629;
 }
-button:not(.theme-toggle),
+button:not(.theme-toggle):not(.nav-link),
 .btn,
 a.btn,
 .account-action,
@@ -1619,7 +1619,7 @@ input[type="submit"],
 input[type="reset"],
 #homePage .search-submit,
 #homePage .hero-actions .btn,
-#appWorkspace button:not(.theme-toggle){
+#appWorkspace button:not(.theme-toggle):not(.nav-link):not(.nav-link){
   color:#fff!important;
   background:linear-gradient(112deg,#c8101e 0%,#ed1c24 38%,#ff5a1f 72%,#ffb923 100%)!important;
   border:1px solid #ffd629!important;
@@ -1629,19 +1629,19 @@ input[type="reset"],
   box-shadow:0 4px 0 #8e1019,0 7px 18px rgba(237,28,36,.24),inset 0 1px 0 rgba(255,239,145,.42)!important;
   transition:transform .16s ease,filter .16s ease,box-shadow .16s ease!important;
 }
-button:not(.theme-toggle):hover,
+button:not(.theme-toggle):not(.nav-link):hover,
 .btn:hover,
 a.btn:hover,
 .account-action:hover,
 input[type="button"]:hover,
 input[type="submit"]:hover,
 input[type="reset"]:hover,
-#appWorkspace button:not(.theme-toggle):hover{
+#appWorkspace button:not(.theme-toggle):not(.nav-link):not(.nav-link):hover{
   filter:brightness(1.12) saturate(1.12)!important;
   transform:translateY(-2px);
   box-shadow:0 6px 0 #8e1019,0 11px 23px rgba(237,28,36,.32),inset 0 1px 0 rgba(255,239,145,.55)!important;
 }
-button:not(.theme-toggle):active,
+button:not(.theme-toggle):not(.nav-link):active,
 .btn:active,
 a.btn:active,
 .account-action:active,
@@ -1651,7 +1651,7 @@ input[type="reset"]:active{
   transform:translateY(2px);
   box-shadow:0 1px 0 #8e1019,0 3px 9px rgba(237,28,36,.2)!important;
 }
-button:not(.theme-toggle):disabled,
+button:not(.theme-toggle):not(.nav-link):disabled,
 .btn:disabled,
 .account-action:disabled,
 input:disabled{
@@ -1668,7 +1668,7 @@ input:disabled{
   box-shadow:0 4px 0 #8e1019,0 7px 18px rgba(237,28,36,.22),inset 0 1px 0 rgba(255,239,145,.4)!important;
 }
 @media(prefers-reduced-motion:reduce){
-  button:not(.theme-toggle),.btn,a.btn,.account-action{transition:none!important}
+  button:not(.theme-toggle):not(.nav-link),.btn,a.btn,.account-action{transition:none!important}
 }
 </style>
 </body></html>
