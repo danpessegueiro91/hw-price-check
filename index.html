@@ -1578,25 +1578,48 @@ const D={
 "Pesquisar um modelo Hot Wheels...":["Search for a Hot Wheels model...","Buscar un modelo Hot Wheels...","Rechercher un modèle Hot Wheels...","Hot-Wheels-Modell suchen...","Cerca un modello Hot Wheels...","Zoek een Hot Wheels-model...","Pesquisar um modelo Hot Wheels..."],
 const idx={en:0,es:1,fr:2,de:3,it:4,nl:5,br:6};
 const originals=new WeakMap(),attrs=new WeakMap();
-const lang=()=>document.getElementById('language')?.value||'pt';
+const languageSelect=document.getElementById('language');
+const validLanguages=['pt','en','es','fr','de','it','nl','br'];
+const savedLanguage=()=>{try{return localStorage.getItem('hwpc-language')||'pt'}catch(_){return 'pt'}};
+const lang=()=>languageSelect?.value||savedLanguage();
+if(languageSelect){const saved=savedLanguage();if(validLanguages.includes(saved))languageSelect.value=saved;}
+const dictionaryKeys=Object.keys(D).sort((a,b)=>b.length-a.length);
+const translateValue=(raw,L,col)=>{
+ if(L==='pt')return raw;
+ const trimmed=raw.trim();if(!trimmed)return raw;
+ const exact=D[trimmed];if(exact)return raw.replace(trimmed,exact[col]||exact[0]);
+ let result=raw;
+ for(const key of dictionaryKeys){
+  if(!key||!result.includes(key))continue;
+  const value=D[key][col]||D[key][0];
+  result=result.split(key).join(value);
+ }
+ return result;
+};
 const translateText=()=>{
  const L=lang(),col=idx[L];
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  let n;while((n=walker.nextNode())){
   if(!originals.has(n))originals.set(n,n.nodeValue);
-  const raw=originals.get(n),trim=raw.trim();if(!trim)continue;
-  const entry=D[trim];if(!entry)continue;
-  const translated=L==='pt'?raw:raw.replace(trim,entry[col]||entry[0]);
+  const raw=originals.get(n),translated=translateValue(raw,L,col);
   if(n.nodeValue!==translated)n.nodeValue=translated;
  }
- document.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el=>{
+ document.querySelectorAll('[placeholder],[aria-label],[title],[value]').forEach(el=>{
   let saved=attrs.get(el);if(!saved){saved={};attrs.set(el,saved)}
-  ['placeholder','aria-label','title'].forEach(attr=>{const v=el.getAttribute(attr);if(!(attr in saved)&&v!==null)saved[attr]=v;const original=saved[attr];if(original&&D[original])el.setAttribute(attr,L==='pt'?original:(D[original][col]||D[original][0]))});
+  ['placeholder','aria-label','title','value'].forEach(attr=>{
+   const current=el.getAttribute(attr);
+   if(!(attr in saved)&&current!==null)saved[attr]=current;
+   const original=saved[attr];
+   if(original!==undefined&&original!==null){
+    const translated=translateValue(original,L,col);
+    if(current!==translated)el.setAttribute(attr,translated);
+   }
+  });
  });
  document.documentElement.lang=({pt:'pt-PT',br:'pt-BR',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
 };
 let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;translateText()})};
-document.getElementById('language')?.addEventListener('change',run);
+languageSelect?.addEventListener('change',()=>{try{localStorage.setItem('hwpc-language',languageSelect.value)}catch(_){};run()});
 new MutationObserver(run).observe(document.body,{childList:true,subtree:true,characterData:true});
 document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
 })();
@@ -1711,4 +1734,31 @@ button.account-shortcut:hover,a.btn:hover,#homePage .camera-button:hover{
   text-shadow:2px 2px 0 #ed1c24,4px 5px 0 #8e1019,0 0 16px rgba(255,94,31,.35)!important;
 }
 </style>
+
+<style id="HWPC_FINAL_HERO_BACKGROUND_FIX_20261109">
+/* Configuração final do fundo: prevalece sobre os estilos antigos acumulados. */
+#homePage .hero-stage{
+  background-color:#061020!important;
+  background-image:
+    linear-gradient(90deg,rgba(3,9,19,.04),rgba(3,9,19,0) 58%),
+    linear-gradient(180deg,rgba(3,9,19,.02),rgba(3,9,19,.08) 55%,#061020 100%),
+    url('./assets/hwpc-hero-new.webp')!important;
+  background-position:center top,center top,center top!important;
+  background-size:100% auto,100% 100%,100% auto!important;
+  background-repeat:no-repeat!important;
+}
+@media(max-width:850px){
+  #homePage .hero-stage{
+    background-position:center top,center top,58% top!important;
+    background-size:100% auto,100% 100%,auto 520px!important;
+  }
+}
+@media(max-width:560px){
+  #homePage .hero-stage{
+    background-position:center top,center top,58% top!important;
+    background-size:100% auto,100% 100%,auto 430px!important;
+  }
+}
+</style>
+
 </body></html>
