@@ -35,9 +35,10 @@ test('language selector updates the document locale and translated headline', as
 });
 
 test('account dialog can be opened and closed', async ({ page }) => {
+  // Isolate this UI test from Supabase/network availability: an unavailable auth SDK
+  // leaves the app in its signed-out state, which is the state this dialog serves.
+  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
   await page.goto('/');
-  // Wait for Supabase anonymous-session initialization before testing the account action.
-  await expect(page.locator('#account')).toContainText('Visitante');
   await page.locator('#account').click();
   await expect(page.locator('#authGate')).toBeVisible();
   await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'false');
