@@ -1674,4 +1674,40 @@ input:disabled{
   button:not(.theme-toggle):not(.nav-link),.btn,a.btn,.account-action{transition:none!important}
 }
 </style>
+
+<style id="HWPC_HOTWHEELS_VISUAL_FIX_20261109">
+/* Forçar a identidade Hot Wheels nos controlos de ação, sem tocar na navegação. */
+#homePage button:not(.nav-link):not(.theme-toggle),
+#appWorkspace button:not(.nav-link):not(.theme-toggle),
+button.btn,button.account-action,button.account-side-link,button.account-shortcut,
+a.btn,.account-action,input[type="button"],input[type="submit"],input[type="reset"],
+#homePage .camera-button,#homePage .search-submit{
+  background:linear-gradient(110deg,#c8101e 0%,#ed1c24 42%,#ff641f 76%,#ffd629 100%)!important;
+  color:#fff!important;
+  border:1px solid #ffd629!important;
+  border-radius:10px!important;
+  text-shadow:0 1px 2px #7b1017!important;
+  box-shadow:0 4px 0 #8e1019,0 7px 18px rgba(237,28,36,.28),inset 0 1px 0 rgba(255,245,170,.5)!important;
+}
+#homePage button:not(.nav-link):not(.theme-toggle):hover,
+#appWorkspace button:not(.nav-link):not(.theme-toggle):hover,
+button.btn:hover,button.account-action:hover,button.account-side-link:hover,
+button.account-shortcut:hover,a.btn:hover,#homePage .camera-button:hover{
+  filter:brightness(1.12) saturate(1.12)!important;
+  transform:translateY(-2px);
+}
+#homePage #headline{
+  color:#fff!important;
+  text-shadow:0 2px 14px #000b!important;
+}
+#homePage #headline em{
+  display:inline-block;
+  color:#ffd629!important;
+  -webkit-text-fill-color:#ffd629!important;
+  -webkit-text-stroke:1.5px #ed1c24;
+  paint-order:stroke fill;
+  font-style:normal!important;
+  text-shadow:2px 2px 0 #ed1c24,4px 5px 0 #8e1019,0 0 16px rgba(255,94,31,.35)!important;
+}
+</style>
 </body></html>
