@@ -773,10 +773,20 @@ $('soldSearch').onclick=async()=>{const q=[$('model').value.trim(),$('year').val
 function render(){const items=db.items||[],watch=db.watch||[];$('count').textContent=items.length;$('invested').textContent=money(items.reduce((a,x)=>a+(+x.ask||0)+(+x.shipping||0),0));$('worth').textContent=money(items.reduce((a,x)=>a+(+x.min||0),0));const box=$('items');box.innerHTML='';const q=$('search').value?.toLowerCase()||'';const filtered=items.filter(x=>x.model.toLowerCase().includes(q));if(!filtered.length){box.className='empty';box.textContent=tr('empty')}else{box.className='';filtered.forEach(x=>{const row=document.createElement('div');row.className='item';const grow=document.createElement('div');grow.className='grow';grow.innerHTML='<b>'+safe(x.model)+'</b><br><small>'+safe(x.year||'')+' · '+money((+x.ask||0)+(+x.shipping||0))+' · '+money(x.min||0)+'</small>';const badge=document.createElement('span');badge.className='note';badge.textContent=tr(x.decision);const del=document.createElement('button');del.className='btn red';del.textContent='×';del.onclick=async()=>{db.items=db.items.filter(y=>y.id!==x.id);await save();render()};row.append(grow,badge,del);box.append(row)})}const wb=$('watchItems');wb.innerHTML='';if(!watch.length){wb.className='empty';wb.textContent=tr('watchEmpty')}else{wb.className='';watch.forEach(x=>{const row=document.createElement('div');row.className='item';const grow=document.createElement('div');grow.className='grow';grow.textContent=x.name+' · até '+money(x.max);const del=document.createElement('button');del.className='btn red';del.textContent='×';del.onclick=async()=>{db.watch=db.watch.filter(y=>y.id!==x.id);await save();render()};row.append(grow,del);wb.append(row)})}}
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
+const ACCOUNT_I18N={
+  pt:{myAccount:'A Minha Conta',premiumActive:'Premium ativo · 4,99 €/mês',renewalCancelled:d=>'A renovação foi cancelada. Manténs pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerir subscrição'},
+  en:{myAccount:'My Account',premiumActive:'Premium active · €4.99/month',renewalCancelled:d=>'Renewal cancelled. You keep unlimited searches until '+d+'.',manage:'⚙ Manage subscription'},
+  es:{myAccount:'Mi cuenta',premiumActive:'Premium activo · 4,99 €/mes',renewalCancelled:d=>'La renovación se ha cancelado. Mantienes búsquedas ilimitadas hasta el '+d+'.',manage:'⚙ Gestionar suscripción'},
+  fr:{myAccount:'Mon compte',premiumActive:'Premium actif · 4,99 €/mois',renewalCancelled:d=>'Le renouvellement a été annulé. Tu conserves les recherches illimitées jusqu’au '+d+'.',manage:'⚙ Gérer l’abonnement'},
+  de:{myAccount:'Mein Konto',premiumActive:'Premium aktiv · 4,99 €/Monat',renewalCancelled:d=>'Die Verlängerung wurde gekündigt. Du behältst unbegrenzte Suchen bis zum '+d+'.',manage:'⚙ Abonnement verwalten'},
+  it:{myAccount:'Il mio account',premiumActive:'Premium attivo · 4,99 €/mese',renewalCancelled:d=>'Il rinnovo è stato annullato. Mantieni le ricerche illimitate fino al '+d+'.',manage:'⚙ Gestisci abbonamento'},
+  nl:{myAccount:'Mijn account',premiumActive:'Premium actief · € 4,99/maand',renewalCancelled:d=>'De verlenging is geannuleerd. Je behoudt onbeperkt zoeken tot '+d+'.',manage:'⚙ Abonnement beheren'},
+  br:{myAccount:'Minha conta',premiumActive:'Premium ativo · R$ 4,99/mês',renewalCancelled:d=>'A renovação foi cancelada. Você mantém pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerenciar assinatura'}
+};
 function updateAccountButton(){
   const btn=$('account');
   if(!btn)return;
-  const label=!user?'Entrar':user.is_anonymous?'Visitante':'A Minha Conta';
+  const words=ACCOUNT_I18N[lang]||ACCOUNT_I18N.pt;\n  const label=!user?'Entrar':user.is_anonymous?'Visitante':words.myAccount;
   btn.innerHTML='<span aria-hidden="true">♙</span><span>'+label+'</span>';
 }
 function applyAccountPreferences(){
@@ -866,14 +876,14 @@ function renderAccount(){
     subscribeButton.classList.add('hidden');
     manageButton.classList.add('hidden');
   }else if(isMonthlyPremium){
-    billingTitle.textContent='Premium ativo · 4,99 €/mês';
+    billingTitle.textContent=words.premiumActive;
     const endDate=accountDate(quota.expires_at,false);
     billingDescription.textContent=billingDetails?.cancel_at_period_end
-      ? 'A renovação foi cancelada. Manténs pesquisas ilimitadas até '+endDate+'.'
+      ? words.renewalCancelled(endDate)
       : 'Tens pesquisas ilimitadas. A subscrição renova automaticamente; período atual até '+endDate+'.';
     subscribeButton.classList.add('hidden');
     manageButton.classList.remove('hidden');
-    manageButton.textContent='⚙ Gerir subscrição';
+    manageButton.textContent=words.manage;
   }else{
     billingTitle.textContent='Desbloqueia o Premium';
     billingDescription.textContent='4,99 €/mês · Pesquisas ilimitadas na análise de modelos e nas vendas concluídas. Renovação automática, cancelável a qualquer momento.';
