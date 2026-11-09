@@ -746,7 +746,9 @@ $('evaluate').onclick=async()=>{
  if(!model||!Number.isFinite(ask)||ask<=0)return alert('Indica o modelo e um preço pedido válido.');
  if(!Number.isFinite(ship)||ship<0||!Number.isFinite(min)||!Number.isFinite(max)||min<0||max<min)return alert('Confirma os portes e o intervalo de revenda. O máximo deve ser igual ou superior ao mínimo.');
  if(!Number.isInteger(sold)||sold<0)return alert('O número de vendas comparáveis não é válido.');
- const photoSnapshots=await Promise.all(photoFiles.map(file=>file?fileData(file):Promise.resolve(null)));\n photos=photoSnapshots.map(item=>item?.data||'');\n const cost=ask+ship,margin=min-cost;
+ const photoSnapshots=await Promise.all(photoFiles.map(file=>file?fileData(file):Promise.resolve(null)));
+ photos=photoSnapshots.map(item=>item?.data||'');
+ const cost=ask+ship,margin=min-cost;
  const special=type==='th'||type==='sth';
  let decision='check',reason='Dados insuficientes. Regista pelo menos duas vendas concluídas comparáveis e as respetivas evidências.';
  const enoughComps=sold>=2&&evidence.length>0&&min>0&&max>0;
