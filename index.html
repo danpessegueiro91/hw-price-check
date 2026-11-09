@@ -1431,7 +1431,7 @@ document.addEventListener('click',function(event){
 <script id="HWPC_FULL_LANGUAGE_PATCH_20261109">
 (()=>{
 const D={
-"Descobre o valor das tuas":["Discover the value of your","Descubre el valor de tus","Découvre la valeur de tes","Entdecke den Wert deiner","Scopri il valore delle tue","Ontdek de waarde van je","Descobre o valor das tuas"],
+"Descobre o valor das tuas":["Buy with a clear head.","Compra con criterio.","Achète avec méthode.","Mit Köpfchen kaufen.","Compra con criterio.","Koop met inzicht.","Compre com critério."],
 "Analisar":["Analyse","Analizar","Analyser","Analysieren","Analizza","Analyseren","Analisar"],
 "Pesquisar modelo":["Search model","Buscar modelo","Rechercher un modèle","Modell suchen","Cerca modello","Model zoeken","Pesquisar modelo"],
 "Início":["Home","Inicio","Accueil","Startseite","Home","Home","Início"],
@@ -1580,7 +1580,13 @@ const idx={en:0,es:1,fr:2,de:3,it:4,nl:5,br:6};
 const originals=new WeakMap(),attrs=new WeakMap();
 const lang=()=>document.getElementById('language')?.value||'pt';
 const translateText=()=>{
- const L=lang(),col=idx[L],walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
+ const L=lang(),col=idx[L];
+ const headline=document.getElementById('headline');
+ if(headline){
+  const slogans={pt:'Descobre o valor das tuas',en:'Buy with a clear head.',es:'Compra con criterio.',fr:'Achète avec méthode.',de:'Mit Köpfchen kaufen.',it:'Compra con criterio.',nl:'Koop met inzicht.',br:'Compre com critério.'};
+  headline.innerHTML=L==='pt'?'Descobre o valor das tuas <em>Hot Wheels</em>':(slogans[L]||slogans.en);
+ }
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  let n;while((n=walker.nextNode())){
   if(!originals.has(n))originals.set(n,n.nodeValue);
   const raw=originals.get(n),trim=raw.trim();if(!trim)continue;
