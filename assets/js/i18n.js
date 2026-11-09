@@ -187,6 +187,15 @@ const D={
 "Termos de Utilização":["Terms of Use","Términos de uso","Conditions d’utilisation","Nutzungsbedingungen","Termini di utilizzo","Gebruiksvoorwaarden","Termos de Utilização"],
 "Política de Privacidade":["Privacy Policy","Política de privacidad","Politique de confidentialité","Datenschutzerklärung","Informativa sulla privacy","Privacybeleid","Política de Privacidade"],
 "Política de Cookies":["Cookie Policy","Política de cookies","Politique relative aux cookies","Cookie-Richtlinie","Informativa sui cookie","Cookiebeleid","Política de Cookies"],
+"Pesquisa um modelo Hot Wheels...":["Search for a Hot Wheels model...","Busca un modelo Hot Wheels...","Rechercher un modèle Hot Wheels...","Nach einem Hot-Wheels-Modell suchen...","Cerca un modello Hot Wheels...","Zoek een Hot Wheels-model...","Pesquise um modelo Hot Wheels..."],
+"Pesquisar por fotografia":["Search by photo","Buscar por foto","Rechercher par photo","Nach Foto suchen","Cerca per foto","Zoeken op foto","Pesquisar por foto"],
+"Adicionar fotografias":["Add photos","Añadir fotos","Ajouter des photos","Fotos hinzufügen","Aggiungi foto","Foto's toevoegen","Adicionar fotos"],
+"Alternar tema":["Toggle theme","Cambiar tema","Changer de thème","Design wechseln","Cambia tema","Thema wisselen","Alternar tema"],
+"Como te devemos chamar?":["What should we call you?","¿Cómo debemos llamarte?","Comment devons-nous t’appeler ?","Wie sollen wir dich nennen?","Come dobbiamo chiamarti?","Hoe mogen we je noemen?","Como devemos chamar você?"],
+"Novo endereço de email":["New email address","Nueva dirección de correo","Nouvelle adresse e-mail","Neue E-Mail-Adresse","Nuovo indirizzo email","Nieuw e-mailadres","Novo endereço de email"],
+"Mínimo de 8 caracteres":["At least 8 characters","Mínimo de 8 caracteres","8 caractères minimum","Mindestens 8 Zeichen","Almeno 8 caratteri","Minimaal 8 tekens","Mínimo de 8 caracteres"],
+"Repete a nova palavra-passe":["Re-enter the new password","Repite la nueva contraseña","Saisis à nouveau le nouveau mot de passe","Neues Passwort wiederholen","Ripeti la nuova password","Herhaal het nieuwe wachtwoord","Repita a nova senha"],
+"O teu email":["Your email","Tu correo electrónico","Ton adresse e-mail","Deine E-Mail-Adresse","La tua email","Je e-mailadres","Seu email"],
 };
 const idx={en:0,es:1,fr:2,de:3,it:4,nl:5,br:6};
 const originals=new WeakMap(),attrs=new WeakMap();
