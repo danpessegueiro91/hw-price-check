@@ -737,7 +737,38 @@ if(sb){sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;i
 document.querySelectorAll('[data-photo]').forEach(i=>i.onchange=async()=>{const f=i.files[0];if(!f)return;const idx=+i.dataset.photo;const url=window.URL.createObjectURL(f);photos[idx]=url;photoFiles[idx]=f;const l=i.parentElement;l.innerHTML='';const img=document.createElement('img');img.src=url;l.append(img);l.append(i);});
 function clearForm(){['model','year','ask','min','max','sold','evidence','notes'].forEach(id=>$(id).value='');$('shipping').value=0;$('type').value='unknown';$('certainty').value='inconclusive';$('result').classList.add('hidden');photos=['','',''];photoFiles=[null,null,null];document.querySelectorAll('[data-photo]').forEach(i=>{const l=i.parentElement;l.innerHTML='＋<br>'+['Frente','Verso','Detalhe'][+i.dataset.photo];l.append(i)})}
 $('clear').onclick=clearForm;
-$('evaluate').onclick=()=>{const model=$('model').value.trim(),ask=+$('ask').value,ship=+$('shipping').value||0,min=+$('min').value,max=+$('max').value,sold=+$('sold').value||0;if(!model||!Number.isFinite(ask)||ask<0)return alert('Indica o modelo e o preço pedido.');if(max<min)return alert('O valor máximo deve ser igual ou superior ao mínimo.');const cost=ask+ship,margin=min-cost;let decision='check',reason='Dados insuficientes ou comparáveis não registados.';if(sold>=2&&min>0&&max>=min&&margin>cost*.2){decision='buy';reason='Pelo menos duas vendas comparáveis e margem conservadora superior a 20%; confirma estado e comparabilidade.'}else if(max>0&&max-cost<=0&&sold>=1){decision='pass';reason='O valor máximo estimado não cobre o custo total.'}lastEval={id:crypto.randomUUID(),model,year:$('year').value,type:$('type').value,condition:$('condition').value,ask,shipping:ship,min,max,sold,certainty:$('certainty').value,evidence:$('evidence').value,notes:$('notes').value,photos:photos.slice(),decision,reason,date:new Date().toISOString()};const d=$('result');d.classList.remove('hidden');d.innerHTML='<div class="eyebrow">'+tr('reason')+'</div><div class="decision '+(decision==='buy'?'buy':decision==='pass'?'pass':'check')+'">'+tr(decision)+'</div><div class="grid"><div><small>'+tr('total')+'</small><h3>'+money(cost)+'</h3></div><div><small>'+tr('range')+'</small><h3>'+money(min)+' – '+money(max)+'</h3></div><div><small>'+tr('margin')+'</small><h3>'+money(margin)+'</h3></div><div><small>Vendas comparáveis</small><h3>'+sold+'</h3></div></div><p class="muted">'+reason+'</p><button class="btn primary" id="saveItem">Guardar na coleção</button>';$('saveItem').onclick=async()=>{if(!user)return alert(tr('askLogin'));db.items.unshift(lastEval);await save();render();$('saveItem').disabled=true;$('saveItem').textContent=tr('saved')}};
+$('evaluate').onclick=()=>{
+ const model=$('model').value.trim();
+ const ask=Number($('ask').value),ship=Number($('shipping').value||0);
+ const min=Number($('min').value),max=Number($('max').value),sold=Number($('sold').value||0);
+ const type=$('type').value,certainty=$('certainty').value,condition=$('condition').value;
+ const evidence=$('evidence').value.trim(),photoCount=photos.filter(Boolean).length;
+ if(!model||!Number.isFinite(ask)||ask<=0)return alert('Indica o modelo e um preço pedido válido.');
+ if(!Number.isFinite(ship)||ship<0||!Number.isFinite(min)||!Number.isFinite(max)||min<0||max<min)return alert('Confirma os portes e o intervalo de revenda. O máximo deve ser igual ou superior ao mínimo.');
+ if(!Number.isInteger(sold)||sold<0)return alert('O número de vendas comparáveis não é válido.');
+ const cost=ask+ship,margin=min-cost;
+ const special=type==='th'||type==='sth';
+ let decision='check',reason='Dados insuficientes. Regista pelo menos duas vendas concluídas comparáveis e as respetivas evidências.';
+ const enoughComps=sold>=2&&evidence.length>0&&min>0&&max>0;
+ const specialVerified=!special||(certainty==='confirmed'&&photoCount>=2);
+ if(enoughComps&&!specialVerified){
+  reason='A classificação TH/STH ainda não está suficientemente confirmada. Junta pelo menos duas fotografias úteis e confirma os detalhes antes de decidir.';
+ }else if(enoughComps&&max<=cost){
+  decision='pass';reason='Mesmo o limite superior estimado não cobre o custo total.';
+ }else if(enoughComps&&specialVerified&&margin>cost*.2&&!['damaged','loose'].includes(condition)){
+  decision='buy';reason='Há pelo menos duas vendas comparáveis documentadas e a margem conservadora supera 20%. Confirma sempre variante, estado e custos.';
+ }else if(enoughComps){
+  reason='Existe alguma margem potencial, mas não é suficientemente confortável para recomendar a compra.';
+ }
+ lastEval={id:crypto.randomUUID(),model,year:$('year').value,type,condition,ask,shipping:ship,min,max,sold,certainty,evidence,notes:$('notes').value,photos:photos.slice(),decision,reason,date:new Date().toISOString()};
+ const d=$('result');d.classList.remove('hidden');
+ d.innerHTML='<div class="eyebrow">'+tr('reason')+'</div><div class="decision '+(decision==='buy'?'buy':decision==='pass'?'pass':'check')+'">'+tr(decision)+'</div><div class="grid"><div><small>'+tr('total')+'</small><h3>'+money(cost)+'</h3></div><div><small>'+tr('range')+'</small><h3>'+money(min)+' – '+money(max)+'</h3></div><div><small>'+tr('margin')+'</small><h3>'+money(margin)+'</h3></div><div><small>Vendas comparáveis</small><h3>'+sold+'</h3></div></div><p class="muted">'+safe(reason)+'</p><button class="btn primary" id="saveItem">'+tr('saveItem')+'</button>';
+ $('saveItem').onclick=async()=>{
+  if(!user)return alert(tr('askLogin'));
+  db.items.unshift(lastEval);await save();render();
+  $('saveItem').disabled=true;$('saveItem').textContent=tr('saved');
+ };
+}
 $('addWatch').onclick=async()=>{const name=$('wanted').value.trim();if(!name)return;if(!user)return alert(tr('askLogin'));db.watch.unshift({id:crypto.randomUUID(),name,max:+$('limit').value||0,date:new Date().toISOString()});$('wanted').value='';$('limit').value='';await save();render()};
 
 async function callFunction(name,body){
@@ -1031,7 +1062,7 @@ $('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor m�
 $('newsletterForm')?.addEventListener('submit',async e=>{
  e.preventDefault();
  const email=$('newsletterEmail').value.trim().toLowerCase(),button=$('newsletterSubmit'),status=$('newsletterStatus');
- if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){status.textContent='Indica um endereço de email válido.';return}
+ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent='Indica um endereço de email válido.';return}
  if(!sb){status.textContent='Serviço indisponível. Tenta novamente mais tarde.';return}
  button.disabled=true;button.textContent='A subscrever…';
  try{
