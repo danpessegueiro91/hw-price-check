@@ -36,6 +36,8 @@ test('language selector updates the document locale and translated headline', as
 
 test('account dialog can be opened and closed', async ({ page }) => {
   await page.goto('/');
+  // Wait for Supabase anonymous-session initialization before testing the account action.
+  await expect(page.locator('#account')).toContainText('Visitante');
   await page.locator('#account').click();
   await expect(page.locator('#authGate')).toBeVisible();
   await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'false');
