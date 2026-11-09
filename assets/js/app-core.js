@@ -155,6 +155,40 @@ async function ensureAnonymousSession(){
 }
 async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save();await refreshAccountPlan();handleSubscriptionReturn()}
 async function save(){if(!sb||!user)return;const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)status('Erro de sincronização: '+error.message);else status(tr('saved'));renderAccount()}
+// Verifica palavras-passe expostas usando HIBP k-anonymity.
+// A palavra-passe e o hash completo nunca saem do browser.
+async function checkPwnedPassword(password){
+  if(!password)throw new Error('Introduz uma palavra-passe.');
+  if(!globalThis.crypto?.subtle)throw new Error('Este navegador não suporta a verificação segura. Atualiza o navegador.');
+  const bytes=new TextEncoder().encode(password);
+  const digest=await crypto.subtle.digest('SHA-1',bytes);
+  const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
+  const prefix=hash.slice(0,5),suffix=hash.slice(5);
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),8000);
+  let response;
+  try{
+    response=await fetch('https://api.pwnedpasswords.com/range/'+prefix,{
+      method:'GET',
+      headers:{'Add-Padding':'true'},
+      signal:controller.signal,
+      cache:'no-store'
+    });
+  }catch(error){
+    throw new Error(error?.name==='AbortError'?'A verificação de segurança demorou demasiado. Tenta novamente.':'Não foi possível contactar o serviço de verificação de palavras-passe. Tenta novamente.');
+  }finally{clearTimeout(timeout)}
+  if(!response.ok)throw new Error('O serviço de verificação de segurança está indisponível. Tenta novamente mais tarde.');
+  const rows=(await response.text()).split(/\\r?\\n/);
+  for(const row of rows){
+    const [candidate,countText]=row.trim().split(':');
+    if(candidate?.toUpperCase()===suffix)return Number.parseInt(countText,10)||1;
+  }
+  return 0;
+}
+async function requireSafePassword(password){
+  const occurrences=await checkPwnedPassword(password);
+  if(occurrences>0)throw new Error('Esta palavra-passe foi encontrada em fugas de dados conhecidas ('+occurrences.toLocaleString('pt-PT')+' ocorrências). Escolhe outra que nunca tenhas utilizado.');
+}
 $('login').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()};
 $('signup').onclick=async()=>{
   const button=$('signup');
@@ -163,10 +197,12 @@ $('signup').onclick=async()=>{
   const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return status('Preenche o email e a palavra-passe.');
   if(password.length<8)return status('A palavra-passe deve ter pelo menos 8 caracteres.');
+  if(password.length>256)return status('A palavra-passe não pode ultrapassar 256 caracteres.');
   button.disabled=true;
   const originalText=button.textContent;
   button.textContent='A enviar…';
   try{
+    await requireSafePassword(password);
     guestBackup();
     if(user?.is_anonymous)await sb.auth.signOut();
     const {data,error}=await sb.auth.signUp({
@@ -454,6 +490,7 @@ $('accountPasswordSave').onclick=async()=>{
   if(password!==confirmPassword)return accountNotice('As duas palavras-passe não coincidem.','error');
   button.disabled=true;button.textContent='A atualizar…';
   try{
+    await requireSafePassword(password);
     const {error}=await sb.auth.updateUser({password});
     if(error)throw error;
     $('accountNewPassword').value='';$('accountConfirmPassword').value='';
