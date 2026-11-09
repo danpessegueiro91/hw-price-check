@@ -178,7 +178,7 @@ async function checkPwnedPassword(password){
     throw new Error(error?.name==='AbortError'?'A verificação de segurança demorou demasiado. Tenta novamente.':'Não foi possível contactar o serviço de verificação de palavras-passe. Tenta novamente.');
   }finally{clearTimeout(timeout)}
   if(!response.ok)throw new Error('O serviço de verificação de segurança está indisponível. Tenta novamente mais tarde.');
-  const rows=(await response.text()).split(/\\r?\\n/);
+  const rows=(await response.text()).split(/\r?\n/);
   for(const row of rows){
     const [candidate,countText]=row.trim().split(':');
     if(candidate?.toUpperCase()===suffix)return Number.parseInt(countText,10)||1;
