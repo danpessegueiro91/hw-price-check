@@ -9,6 +9,7 @@ Aplicação web móvel para análise e gestão de coleção Hot Wheels.
 - Identificação por IA e pesquisa de vendas concluídas através de funções Supabase, quando estas estão configuradas e operacionais.
 - Catálogo histórico Treasure Hunt / Super Treasure Hunt.
 - Exportação e gestão de dados, interface adaptada a telemóvel e computador e suporte PWA.
+- JavaScript separado por responsabilidade em `assets/js/` (núcleo, navegação, catálogo, melhorias de interface, autenticação e idiomas).
 
 ## Critérios de avaliação
 
@@ -20,4 +21,4 @@ A autenticação, sincronização, identificação por IA, pesquisa de vendas, q
 
 ## Publicação
 
-O workflow `.github/workflows/cloudflare-pages.yml` publica a aplicação em Cloudflare Pages após a validação automática do código.
+O workflow `.github/workflows/cloudflare-pages.yml` publica a aplicação em Cloudflare Pages após validar os blocos JavaScript inline, todos os ficheiros JavaScript externos, o service worker e o manifesto PWA.
