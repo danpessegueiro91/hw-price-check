@@ -817,7 +817,8 @@ const ACCOUNT_I18N={
 function updateAccountButton(){
   const btn=$('account');
   if(!btn)return;
-  const words=ACCOUNT_I18N[lang]||ACCOUNT_I18N.pt;\n  const label=!user?'Entrar':user.is_anonymous?'Visitante':words.myAccount;
+  const words=ACCOUNT_I18N[lang]||ACCOUNT_I18N.pt;
+  const label=!user?'Entrar':user.is_anonymous?'Visitante':words.myAccount;
   btn.innerHTML='<span aria-hidden="true">♙</span><span>'+label+'</span>';
 }
 function applyAccountPreferences(){
