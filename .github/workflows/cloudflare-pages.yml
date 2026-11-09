@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 22
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.x"
       - name: Check inline JavaScript and PWA manifest
@@ -43,7 +43,7 @@ jobs:
         with:
           node-version: 22
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.x"
       - name: Install browser test dependencies
