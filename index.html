@@ -1718,7 +1718,7 @@ const translateText=()=>{
  };
 
 };
-let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;translateText();translateUnknown()})};
+let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;translateText()})};
 languageSelect?.addEventListener('change',()=>{try{localStorage.setItem('hwpc-language',languageSelect.value)}catch(_){};run()});
 new MutationObserver(run).observe(document.body,{childList:true,subtree:true,characterData:true});
 document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
