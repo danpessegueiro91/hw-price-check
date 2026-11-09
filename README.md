@@ -3,14 +3,21 @@
 Aplicação web móvel para análise e gestão de coleção Hot Wheels.
 
 - Oito idiomas: PT-PT, EN, ES, FR, DE, IT, NL e PT-BR.
-- Autenticação Supabase por email e palavra-passe.
-- Coleção e lista de procura sincronizadas na conta privada.
-- Avaliação de compra com custo total, intervalo de revenda e vendas comparáveis introduzidas pelo utilizador.
-- Exportação CSV.
-- Interface adaptada a telemóvel e computador.
+- Autenticação e sincronização de coleção através do Supabase.
+- Lista de procura e gestão de coleção.
+- Avaliação de compra com custo total, intervalo de revenda e vendas comparáveis.
+- Identificação por IA e pesquisa de vendas concluídas através de funções Supabase, quando estas estão configuradas e operacionais.
+- Catálogo histórico Treasure Hunt / Super Treasure Hunt.
+- Exportação e gestão de dados, interface adaptada a telemóvel e computador e suporte PWA.
 
-## Limitações desta versão
-A identificação por IA e a pesquisa automática de vendas concluídas ainda não estão ligadas. Não confirmar TH/STH sem evidências. As decisões usam os dados introduzidos e não constituem garantia de valorização.
+## Critérios de avaliação
+
+A aplicação deve recomendar **COMPRAR** apenas quando existem pelo menos duas vendas comparáveis documentadas, margem conservadora superior a 20% e, para TH/STH, confirmação acompanhada de pelo menos duas fotografias. Os resultados são indicativos e não garantem valorização ou preço de revenda.
+
+## Serviços externos
+
+A autenticação, sincronização, identificação por IA, pesquisa de vendas, quotas e faturação dependem da configuração do projeto Supabase e das respetivas Edge Functions. A newsletter só fica ativa quando o serviço de subscrição estiver configurado.
 
 ## Publicação
-O workflow em .github/workflows/deploy.yml publica automaticamente a raiz do repositório no GitHub Pages.
+
+O workflow `.github/workflows/cloudflare-pages.yml` publica a aplicação em Cloudflare Pages após a validação automática do código.
