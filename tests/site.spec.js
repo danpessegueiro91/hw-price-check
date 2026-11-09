@@ -27,11 +27,14 @@ test('main navigation opens analysis and collection views', async ({ page }) => 
   await expect(page.locator('#tabCollection')).toHaveClass(/active/);
 });
 
-test('language selector updates the document locale and translated headline', async ({ page }) => {
+test('language selector updates the document locale, labels and form hints', async ({ page }) => {
   await page.goto('/');
   await page.locator('#language').selectOption('en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('#headline')).not.toContainText('Descobre o valor das tuas');
+  await expect(page.locator('#heroSearch')).toHaveAttribute('aria-label', 'Search model');
+  await expect(page.locator('#heroSearch')).toHaveAttribute('placeholder', 'Search for a Hot Wheels model...');
+  await expect(page.locator('#heroCamera')).toHaveAttribute('title', 'Search by photo');
 });
 
 test('account dialog can be opened and closed', async ({ page }) => {
