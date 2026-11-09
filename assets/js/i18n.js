@@ -223,13 +223,15 @@ const translateText=()=>{
   if(n.nodeValue!==translated)n.nodeValue=translated;
  }
  document.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el=>{
-  if(el.closest(protectedContent)||/^(INPUT|TEXTAREA|SELECT|OPTION)$/.test(el.tagName))return;
+  if(el.closest(protectedContent))return;
   let saved=attrs.get(el);if(!saved){saved={};attrs.set(el,saved)}
-  ['placeholder','aria-label','title','value'].forEach(attr=>{
+  ['placeholder','aria-label','title'].forEach(attr=>{
    const current=el.getAttribute(attr);
    if(!(attr in saved)&&current!==null)saved[attr]=current;
    const original=saved[attr];
    if(original!==undefined&&original!==null){
+    // Only translate known UI labels in attributes. Never machine-translate
+    // model examples, email hints, or user-entered values.
     const translated=translateValue(original,L,col);
     if(current!==translated)el.setAttribute(attr,translated);
    }
@@ -298,6 +300,6 @@ const translateText=()=>{
 };
 let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;translateText()})};
 languageSelect?.addEventListener('change',()=>{try{localStorage.setItem('hwpc-language',languageSelect.value)}catch(_){};run()});
-new MutationObserver(run).observe(document.body,{childList:true,subtree:true,characterData:true});
+new MutationObserver(run).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
 document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
 })();
