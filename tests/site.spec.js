@@ -30,28 +30,22 @@ test('main navigation opens analysis and collection views', async ({ page }) => 
 test('all eight languages update the document locale, labels and form hints', async ({ page }) => {
   await page.goto('/');
   const languages = [
-    { code: 'pt', locale: 'pt-PT', placeholder: 'Pesquisa um modelo Hot Wheels...' },
-    { code: 'en', locale: 'en', placeholder: 'Search for a Hot Wheels model...' },
-    { code: 'es', locale: 'es', placeholder: 'Busca un modelo Hot Wheels...' },
-    { code: 'fr', locale: 'fr', placeholder: 'Rechercher un modèle Hot Wheels...' },
-    { code: 'de', locale: 'de', placeholder: 'Nach einem Hot-Wheels-Modell suchen...' },
-    { code: 'it', locale: 'it', placeholder: 'Cerca un modello Hot Wheels...' },
-    { code: 'nl', locale: 'nl', placeholder: 'Zoek een Hot Wheels-model...' },
-    { code: 'br', locale: 'pt-BR', placeholder: 'Pesquise um modelo Hot Wheels...' },
+    { code: 'pt', locale: 'pt-PT', placeholder: 'Pesquisa um modelo Hot Wheels...', ariaLabel: 'Pesquisar modelo', cameraTitle: 'Pesquisar por fotografia' },
+    { code: 'en', locale: 'en', placeholder: 'Search for a Hot Wheels model...', ariaLabel: 'Search model', cameraTitle: 'Search by photo' },
+    { code: 'es', locale: 'es', placeholder: 'Busca un modelo Hot Wheels...', ariaLabel: 'Buscar modelo', cameraTitle: 'Buscar por foto' },
+    { code: 'fr', locale: 'fr', placeholder: 'Rechercher un modèle Hot Wheels...', ariaLabel: 'Rechercher un modèle', cameraTitle: 'Rechercher par photo' },
+    { code: 'de', locale: 'de', placeholder: 'Nach einem Hot-Wheels-Modell suchen...', ariaLabel: 'Modell suchen', cameraTitle: 'Nach Foto suchen' },
+    { code: 'it', locale: 'it', placeholder: 'Cerca un modello Hot Wheels...', ariaLabel: 'Cerca modello', cameraTitle: 'Cerca per foto' },
+    { code: 'nl', locale: 'nl', placeholder: 'Zoek een Hot Wheels-model...', ariaLabel: 'Model zoeken', cameraTitle: 'Zoeken op foto' },
+    { code: 'br', locale: 'pt-BR', placeholder: 'Pesquise um modelo Hot Wheels...', ariaLabel: 'Pesquisar modelo', cameraTitle: 'Pesquisar por foto' },
   ];
 
   for (const language of languages) {
     await page.locator('#language').selectOption(language.code);
     await expect(page.locator('html')).toHaveAttribute('lang', language.locale);
     await expect(page.locator('#heroSearch')).toHaveAttribute('placeholder', language.placeholder);
-    await expect(page.locator('#heroSearch')).toHaveAttribute(
-      'aria-label',
-      language.code === 'pt' ? 'Pesquisar modelo' : 'Search model'
-    );
-    await expect(page.locator('#heroCamera')).toHaveAttribute(
-      'title',
-      language.code === 'pt' ? 'Pesquisar por fotografia' : 'Search by photo'
-    );
+    await expect(page.locator('#heroSearch')).toHaveAttribute('aria-label', language.ariaLabel);
+    await expect(page.locator('#heroCamera')).toHaveAttribute('title', language.cameraTitle);
     if (language.code !== 'pt') {
       await expect(page.locator('#headline')).not.toContainText('Descobre o valor das tuas');
     }
