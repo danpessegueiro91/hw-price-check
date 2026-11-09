@@ -30,8 +30,31 @@ jobs:
       - name: Check inline JavaScript and PWA manifest
         run: python scripts/check-inline-js.py
 
-  deploy:
+
+  browser-test:
     needs: validate
+    name: Browser functional tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+      - name: Run browser functional tests
+        run: npm test
+
+  deploy:
+    needs: [validate, browser-test]
     name: Publish to Cloudflare Pages
     runs-on: ubuntu-latest
     steps:
