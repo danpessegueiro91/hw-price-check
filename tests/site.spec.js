@@ -38,8 +38,11 @@ test('account dialog can be opened and closed', async ({ page }) => {
   await page.goto('/');
   await page.locator('#account').click();
   await expect(page.locator('#authGate')).toBeVisible();
+  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'false');
+  await expect(page.locator('#authClose')).toBeVisible();
   await page.locator('#authClose').click();
   await expect(page.locator('#authGate')).toBeHidden();
+  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'true');
 });
 
 test('homepage remains within a mobile viewport', async ({ page }) => {
