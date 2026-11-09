@@ -1581,11 +1581,6 @@ const originals=new WeakMap(),attrs=new WeakMap();
 const lang=()=>document.getElementById('language')?.value||'pt';
 const translateText=()=>{
  const L=lang(),col=idx[L];
- const headline=document.getElementById('headline');
- if(headline){
-  const slogans={pt:'Descobre o valor das tuas',en:'Buy with a clear head.',es:'Compra con criterio.',fr:'Achète avec méthode.',de:'Mit Köpfchen kaufen.',it:'Compra con criterio.',nl:'Koop met inzicht.',br:'Compre com critério.'};
-  headline.innerHTML=L==='pt'?'Descobre o valor das tuas <em>Hot Wheels</em>':(slogans[L]||slogans.en);
- }
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
  let n;while((n=walker.nextNode())){
   if(!originals.has(n))originals.set(n,n.nodeValue);
