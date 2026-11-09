@@ -79,7 +79,7 @@ function translate(){for(const [id,k] of Object.entries(fields)){if(id==='headli
 $('language').onchange=e=>{lang=e.target.value;localStorage.setItem('hwpc_lang',lang);translate()};
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){$('authStatus').textContent=s}
-function showGate(v){$('authGate').classList.toggle('hidden',!v)}
+function showGate(v){const gate=$('authGate');if(!gate)return;gate.classList.toggle('hidden',!v);gate.setAttribute('aria-hidden',String(!v))}
 async function refreshBillingDetails(){
   if(!sb||!user||user.is_anonymous){billingDetails=null;return}
   const {data,error}=await sb.from('hw_billing_subscriptions')
