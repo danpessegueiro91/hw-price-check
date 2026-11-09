@@ -2,6 +2,8 @@ name: Deploy HW Price Check to Cloudflare Pages
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -9,7 +11,7 @@ permissions:
   deployments: write
 
 concurrency:
-  group: cloudflare-pages
+  group: cloudflare-pages-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -29,7 +31,6 @@ jobs:
           python-version: "3.x"
       - name: Check inline JavaScript and PWA manifest
         run: python scripts/check-inline-js.py
-
 
   browser-test:
     needs: validate
@@ -54,6 +55,7 @@ jobs:
         run: npm test
 
   deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [validate, browser-test]
     name: Publish to Cloudflare Pages
     runs-on: ubuntu-latest
