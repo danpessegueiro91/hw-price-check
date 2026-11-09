@@ -8,10 +8,12 @@
 .hero-stage{min-height:715px;padding:0 clamp(22px,6.9vw,106px) 25px;background-color:#061020;background-image:linear-gradient(90deg,rgba(3,9,19,.04),rgba(3,9,19,0) 58%),linear-gradient(180deg,rgba(3,9,19,.02),rgba(3,9,19,.08) 55%,#061020 100%),url('./assets/hwpc-hero.webp');background-position:center top,center top,center top;background-size:100% auto,100% 100%,100% auto;background-repeat:no-repeat}
 .hero-stage:before,.shelf-glow,.orange-track{display:none!important}.hero-stage:after{height:100px;opacity:.34}
 .stage-inner{min-height:335px;max-width:1280px;grid-template-columns:1fr;align-items:center}
-.hero-message{max-width:635px;padding:0;position:relative;z-index:2;margin-left:-18px}
-.hero-hotwheels-logo{display:block;width:min(430px,100%);height:auto;max-height:132px;object-fit:contain;object-position:left center;margin:-2px 0 7px -50px;filter:drop-shadow(0 4px 9px #0008)}
-.hero-message h1{font-size:clamp(35px,3.2vw,46px);line-height:1.04;max-width:650px;margin:11px 0 8px;font-weight:950;letter-spacing:-.045em;text-shadow:0 2px 16px #0007}
-.hero-message h1 em{display:block;color:#ffd400;font-style:normal}
+.hero-message{max-width:720px;padding:0;position:relative;z-index:2;margin-left:0}
+.hero-hotwheels-logo{display:block;width:150px;height:64px;max-height:64px;object-fit:contain;object-position:left center;margin:0 0 9px 0;filter:drop-shadow(0 4px 9px #0008)}
+.hero-message h1{font-size:clamp(35px,3.05vw,45px);line-height:1.06;max-width:720px;margin:0 0 9px;font-weight:950;letter-spacing:-.045em;text-shadow:0 2px 16px #0007}
+.hero-message h1 em{display:inline;color:#ffd400;font-style:normal}
+@media(max-width:850px){.hero-message{max-width:76%}.hero-hotwheels-logo{width:132px;height:58px;max-height:58px}}
+@media(max-width:560px){.hero-message{max-width:100%;padding-top:8px}.hero-hotwheels-logo{width:116px;height:50px;max-height:50px;margin-bottom:7px}.hero-message h1{font-size:34px;max-width:100%;margin:0 0 8px}.hero-message h1 em{display:inline}}
 .hero-subtitle{max-width:610px;font-size:clamp(16px,1.45vw,20px);line-height:1.42;color:#e0e9f5;margin:0;text-shadow:0 1px 8px #000}
 .diecast-display{display:none!important}.search-panel{max-width:1065px;margin:0 auto 36px}.search-input-wrap{min-width:0}.search-submit{font-size:15px}
 .benefit-row{max-width:1200px;margin:0 auto 28px;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
@@ -107,7 +109,7 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
     <div class="orange-track track-left"></div><div class="orange-track track-right"></div>
     <div class="stage-inner">
       <div class="hero-message">
-        <img class="hero-hotwheels-logo" src="./assets/hwpc-hotwheels-logo.webp" alt="Hot Wheels">
+        <img class="hero-hotwheels-logo" src="./assets/hwpc-cat-logo-v2.webp" alt="Hot Wheels">
         <h1 id="headline">Descobre o valor das tuas <em>Hot Wheels</em></h1>
         <p class="hero-subtitle" id="subhead">Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.</p>
       </div>
