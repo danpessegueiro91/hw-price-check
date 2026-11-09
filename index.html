@@ -1602,4 +1602,73 @@ document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
 #top.site-header .header-actions #language.lang{display:inline-flex!important;visibility:visible!important;opacity:1!important;position:relative!important;width:auto;min-width:66px;height:40px;padding:7px 24px 7px 10px;border:1px solid #e33b2e;border-radius:10px;background:#17243a;color:#ffd83d;font-size:13px;font-weight:900;cursor:pointer;flex:0 0 auto;}
 @media(max-width:560px){#top.site-header .header-actions #language.lang{display:inline-flex!important;width:auto;min-width:58px;height:36px;padding:5px 17px 5px 7px;font-size:12px}}
 </style>
+
+<style id="HWPC_UNIFIED_HOTWHEELS_BUTTONS_20261109">
+/* Identidade comum dos botões: vermelho Hot Wheels, amarelo e brilho de chama. */
+:root{
+  --hwpc-fire-red:#ed1c24;
+  --hwpc-fire-orange:#ff5a1f;
+  --hwpc-fire-yellow:#ffd629;
+}
+button:not(.theme-toggle),
+.btn,
+a.btn,
+.account-action,
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+#homePage .search-submit,
+#homePage .hero-actions .btn,
+#appWorkspace button:not(.theme-toggle){
+  color:#fff!important;
+  background:linear-gradient(112deg,#c8101e 0%,#ed1c24 38%,#ff5a1f 72%,#ffb923 100%)!important;
+  border:1px solid #ffd629!important;
+  border-radius:10px!important;
+  font-weight:850!important;
+  text-shadow:0 1px 2px #781018!important;
+  box-shadow:0 4px 0 #8e1019,0 7px 18px rgba(237,28,36,.24),inset 0 1px 0 rgba(255,239,145,.42)!important;
+  transition:transform .16s ease,filter .16s ease,box-shadow .16s ease!important;
+}
+button:not(.theme-toggle):hover,
+.btn:hover,
+a.btn:hover,
+.account-action:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+#appWorkspace button:not(.theme-toggle):hover{
+  filter:brightness(1.12) saturate(1.12)!important;
+  transform:translateY(-2px);
+  box-shadow:0 6px 0 #8e1019,0 11px 23px rgba(237,28,36,.32),inset 0 1px 0 rgba(255,239,145,.55)!important;
+}
+button:not(.theme-toggle):active,
+.btn:active,
+a.btn:active,
+.account-action:active,
+input[type="button"]:active,
+input[type="submit"]:active,
+input[type="reset"]:active{
+  transform:translateY(2px);
+  box-shadow:0 1px 0 #8e1019,0 3px 9px rgba(237,28,36,.2)!important;
+}
+button:not(.theme-toggle):disabled,
+.btn:disabled,
+.account-action:disabled,
+input:disabled{
+  opacity:.48!important;
+  filter:saturate(.55)!important;
+  cursor:not-allowed!important;
+  transform:none!important;
+}
+/* Botões secundários deixam de ter cores verdes/azuis diferentes. */
+.btn.green,.btn.red,.account-secondary-action{
+  color:#fff!important;
+  background:linear-gradient(112deg,#c8101e 0%,#ed1c24 42%,#ff5a1f 76%,#ffb923 100%)!important;
+  border-color:#ffd629!important;
+  box-shadow:0 4px 0 #8e1019,0 7px 18px rgba(237,28,36,.22),inset 0 1px 0 rgba(255,239,145,.4)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  button:not(.theme-toggle),.btn,a.btn,.account-action{transition:none!important}
+}
+</style>
 </body></html>
