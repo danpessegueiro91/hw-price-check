@@ -565,7 +565,7 @@ function renderCatalog(){
  }).join('');
 }
 
-async async function updateVisitorCounter(){
+async function updateVisitorCounter(){
   const target=$('visitorCounter');
   if(!target)return;
   const set=(value,state='ready')=>{target.textContent=value;target.dataset.state=state;};
