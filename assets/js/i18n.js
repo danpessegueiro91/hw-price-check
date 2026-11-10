@@ -268,6 +268,12 @@ const translateText=()=>{
    }
   });
  });
+ // Tradução explícita do campo principal para garantir a mudança de idioma do placeholder.
+ const heroSearch=document.getElementById('heroSearch');
+ if(heroSearch){
+  heroSearch.setAttribute('placeholder',translateValue('Pesquisa um modelo Hot Wheels...',L,col));
+  heroSearch.setAttribute('aria-label',translateValue('Pesquisar modelo',L,col));
+ }
  document.documentElement.lang=({pt:'pt-PT',br:'pt-BR',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
  try{localStorage.setItem('hwpc-language',L);localStorage.setItem('hwpc_lang',L)}catch(_){}
  // MyMemory: tradução automática de fallback para textos ainda não existentes no dicionário.
