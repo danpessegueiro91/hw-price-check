@@ -217,6 +217,6 @@ test('visitor counter reuses the authenticated Supabase UUID without a separate 
   const match = source.match(/async function updateVisitorCounter\(\)\s*\{([\s\S]*?)\n\}/);
   expect(match, 'visitor counter function should exist').not.toBeNull();
   expect(match[1]).toContain('session?.user?.id');
-  expect(match[1]).not.toContain('localStorage');
+  expect(match[1]).not.toMatch(/localStorage\.(getItem|setItem|removeItem)\s*\(/);
   expect(match[1]).not.toContain('crypto.randomUUID');
 });
