@@ -271,8 +271,21 @@ const translateText=()=>{
  // Tradução explícita do campo principal para garantir a mudança de idioma do placeholder.
  const heroSearch=document.getElementById('heroSearch');
  if(heroSearch){
-  heroSearch.setAttribute('placeholder',translateValue('Pesquisa um modelo Hot Wheels...',L,col));
-  heroSearch.setAttribute('aria-label',translateValue('Pesquisar modelo',L,col));
+  // O placeholder principal não existe necessariamente no dicionário geral.
+  // Mantemos traduções explícitas para que nunca dependa do fallback ou de APIs externas.
+  const heroPlaceholders={
+   pt:'Pesquisa um modelo Hot Wheels...',
+   en:'Search for a Hot Wheels model...',
+   es:'Busca un modelo Hot Wheels...',
+   fr:'Rechercher un modèle Hot Wheels...',
+   de:'Nach einem Hot-Wheels-Modell suchen...',
+   it:'Cerca un modello Hot Wheels...',
+   nl:'Zoek een Hot Wheels-model...',
+   br:'Pesquise um modelo Hot Wheels...'
+  };
+  const heroLabels={pt:'Pesquisar modelo',en:'Search model',es:'Buscar modelo',fr:'Rechercher un modèle',de:'Modell suchen',it:'Cerca modello',nl:'Zoek model',br:'Pesquisar modelo'};
+  heroSearch.setAttribute('placeholder',heroPlaceholders[L]||heroPlaceholders.pt);
+  heroSearch.setAttribute('aria-label',heroLabels[L]||heroLabels.pt);
  }
  document.documentElement.lang=({pt:'pt-PT',br:'pt-BR',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
  try{localStorage.setItem('hwpc-language',L);localStorage.setItem('hwpc_lang',L)}catch(_){}
