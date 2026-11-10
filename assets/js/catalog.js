@@ -91,7 +91,7 @@
   selected=item;const p=market(item),img=IMAGES[item.year+"|"+item.kind+"|"+item.name]||"",sth=item.kind==="sth";
   $('catalogDetailBadge').textContent=sth?"SUPER TREASURE HUNT":"TREASURE HUNT";$('catalogDetailBadge').className="catalog-badge "+item.kind;
   $('catalogDetailYear').textContent="ANO "+item.year;$('catalogDetailArtType').textContent=sth?"STH":"TH";
-  $('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
+  $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
