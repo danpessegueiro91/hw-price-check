@@ -278,7 +278,7 @@ const translateValue=(raw,L,col)=>{
  }
  return result;
 };
-const protectedContent='[data-no-translate], [contenteditable="true"], .catalog-grid, .catalog-detail-layout, .catalog-detail-art, .catalog-detail-copy, .catalog-thumb, .collection-items, .watch-items, .item, .stat, .decision, .photos, .photo, .thumb, .search-results';
+const protectedContent='[data-no-translate], [contenteditable="true"], .catalog-grid, .catalog-detail-layout, .catalog-detail-art, .catalog-thumb, .collection-items, .watch-items, .item, .stat, .decision, .photos, .photo, .thumb, .search-results';
 const isProtectedNode=node=>!!node?.parentElement?.closest(protectedContent);
 const translateText=()=>{
  const L=lang(),col=idx[L];
