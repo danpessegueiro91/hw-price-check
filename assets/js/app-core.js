@@ -466,7 +466,7 @@ $('accountProfileSave')?.addEventListener('click',async()=>{
     accountNotice('Perfil atualizado com sucesso.','success');
   }catch(error){accountNotice('Não foi possível guardar o perfil: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='✓ Guardar perfil'}
-};
+});
 $('accountEmailSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para alterar o email.','error');
   const button=$('accountEmailSave'),email=$('accountNewEmail').value.trim().toLowerCase();
@@ -481,7 +481,7 @@ $('accountEmailSave')?.addEventListener('click',async()=>{
     $('accountNewEmail').value='';
   }catch(error){accountNotice('Não foi possível pedir a alteração do email: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='Enviar pedido de alteração'}
-};
+});
 $('accountPasswordSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para alterar a palavra-passe.','error');
   const button=$('accountPasswordSave'),password=$('accountNewPassword').value,confirmPassword=$('accountConfirmPassword').value;
@@ -496,7 +496,7 @@ $('accountPasswordSave')?.addEventListener('click',async()=>{
     accountNotice('Palavra-passe atualizada com sucesso.','success');
   }catch(error){accountNotice('Não foi possível atualizar a palavra-passe: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='🔐 Atualizar palavra-passe'}
-};
+});
 $('accountPreferencesSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para guardar preferências.','error');
   const button=$('accountPreferencesSave'),newLang=$('accountLanguage').value,appearance=$('accountAppearance').value;
@@ -514,7 +514,7 @@ $('accountPreferencesSave')?.addEventListener('click',async()=>{
     translate();renderAccount();
     accountNotice('Preferências aplicadas neste dispositivo, mas não foi possível sincronizá-las com a conta: '+(error.message||error),'error');
   }finally{button.disabled=false;button.textContent='✓ Guardar preferências'}
-};
+});
 async function accountSignOut(){
   if(!user||user.is_anonymous)return;
   const button=$('accountLogout');if(button)button.disabled=true;
