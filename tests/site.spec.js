@@ -225,6 +225,6 @@ test('photo previews clear their label without interpreting HTML', async () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
-  expect(source).toContain('l.replaceChildren()');
+  expect(source).toContain("l.textContent=''");
   expect(source).not.toContain("l.innerHTML=''");
 });
