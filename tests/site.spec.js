@@ -121,3 +121,49 @@ test('catalog interface translates but Hot Wheels model names stay unchanged', a
   await expect(page.locator('#catalogDetailTitle')).toHaveText(modelName);
   await expect(page.locator('#catalogDetailTitle')).toHaveAttribute('data-no-translate', 'true');
 });
+
+test('catalog controls localize across all eight languages without changing model names', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  await expect(page.locator('#catalogPage')).toBeVisible();
+
+  const languages = [
+    { code: 'pt', detail: 'Ver ficha', photos: 'Ver fotos' },
+    { code: 'en', detail: 'View details', photos: 'View photos' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Ver fotos' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Voir les photos' },
+    { code: 'de', detail: 'Details ansehen', photos: 'Fotos ansehen' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Vedi foto' },
+    { code: 'nl', detail: 'Bekijk details', photos: "Bekijk foto's" },
+    { code: 'br', detail: 'Ver ficha', photos: 'Ver fotos' },
+  ];
+
+  const firstCard = page.locator('.catalog-card').first();
+  const modelName = await firstCard.locator('h3').textContent();
+
+  for (const language of languages) {
+    await page.locator('#language').selectOption(language.code);
+    await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
+    await expect(firstCard.locator('.catalog-actions a')).toHaveText(language.photos);
+    await expect(firstCard.locator('h3')).toHaveText(modelName);
+    await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
+
+    await firstCard.locator('.catalog-view-detail').click();
+    await expect(page.locator('#catalogDetailTitle')).toHaveText(modelName);
+    await expect(page.locator('#catalogDetailTitle')).toHaveAttribute('data-no-translate', 'true');
+    await page.locator('#catalogDetailClose').click();
+  }
+});
+
+test('catalog dictionary source keys are unique and have eight locale values', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/i18n.js'), 'utf8');
+  const entries = [...source.matchAll(/^"([^"]+)"\\s*:\\s*\\[([^\\]]*)\\]/gm)];
+  const keys = entries.map(entry => entry[1]);
+  expect(new Set(keys).size).toBe(keys.length);
+  for (const entry of entries) {
+    const values = [...entry[2].matchAll(/"(?:[^"\\\\]|\\\\.)*"/g)];
+    expect(values, `Expected seven translations for ${entry[1]}`).toHaveLength(7);
+  }
+});
