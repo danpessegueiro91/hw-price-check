@@ -86,3 +86,25 @@ test('translation dictionary has no duplicate source keys', async () => {
   const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
   expect(duplicates).toEqual([]);
 });
+
+test('dynamic newsletter validation feedback follows the selected language', async ({ page }) => {
+  await page.goto('/');
+  const cases = [
+    { code: 'en', message: 'Enter a valid email address.' },
+    { code: 'es', message: 'Indica una dirección de correo válida.' },
+    { code: 'fr', message: 'Saisis une adresse e-mail valide.' },
+    { code: 'de', message: 'Gib eine gültige E-Mail-Adresse ein.' },
+    { code: 'it', message: 'Inserisci un indirizzo email valido.' },
+    { code: 'nl', message: 'Voer een geldig e-mailadres in.' },
+    { code: 'br', message: 'Informe um endereço de email válido.' },
+  ];
+
+  for (const item of cases) {
+    await page.locator('#language').selectOption(item.code);
+    await page.locator('#newsletterEmail').fill('invalid');
+    await page.locator('#newsletterForm').evaluate(form =>
+      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+    );
+    await expect(page.locator('#newsletterStatus')).toHaveText(item.message);
+  }
+});
