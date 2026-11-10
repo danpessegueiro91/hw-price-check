@@ -215,10 +215,10 @@ test('visitor counter reuses the authenticated Supabase UUID without a separate 
   const path = require('node:path');
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
   const start = source.indexOf('async function updateVisitorCounter(){');
-  const end = source.indexOf('\\n}', start);
+  const end = source.indexOf('\\n\\nconst $=', start);
   const counter = start >= 0 && end > start ? source.slice(start, end) : '';
   expect(counter, 'visitor counter function should exist').not.toBe('');
-  expect(counter[1]).toContain('session?.user?.id');
-  expect(counter[1]).not.toContain('localStorage');
-  expect(counter[1]).not.toContain('crypto.randomUUID');
+  expect(counter).toContain('session?.user?.id');
+  expect(counter).not.toContain('localStorage');
+  expect(counter).not.toContain('crypto.randomUUID');
 });
