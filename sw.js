@@ -1,5 +1,5 @@
-const CACHE='hwpc-pwa-v20';
-const CORE=['./','./index.html','./manifest.json','./icon.svg','./assets/hwpc-cat-logo-v2.webp','./assets/hwpc-hero-new.webp','./assets/hwpc-logo-original.png','./assets/js/app-core.js','./assets/js/navigation.js','./assets/js/catalog.js','./assets/js/ui-enhancements.js','./assets/js/auth-dialog.js','./assets/js/i18n.js'];
+const CACHE='hwpc-pwa-v21';
+const CORE=['./','./index.html','./manifest.json','./icon.svg','./assets/hwpc-cat-logo-v2.webp','./assets/hwpc-hero-new.webp','./assets/hwpc-logo-original.png','./assets/js/app-core.js','./assets/js/navigation.js','./assets/js/catalog.js','./assets/js/auth-dialog.js','./assets/js/i18n.js'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',event=>{
