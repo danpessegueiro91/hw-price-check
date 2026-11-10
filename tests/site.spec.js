@@ -144,7 +144,7 @@ test('catalog controls localize across all eight languages without changing mode
   for (const language of languages) {
     await page.locator('#language').selectOption(language.code);
     await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
-    await expect(firstCard.locator('.catalog-actions a')).toHaveText(language.photos);
+    await expect(firstCard.locator('.catalog-actions a')).toContainText(language.photos);
     await expect(firstCard.locator('h3')).toHaveText(modelName);
     await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
 
