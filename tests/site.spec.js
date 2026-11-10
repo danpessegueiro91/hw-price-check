@@ -76,3 +76,13 @@ test('homepage remains within a mobile viewport', async ({ page }) => {
   }));
   expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport + 1);
 });
+
+test('translation dictionary has no duplicate source keys', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/i18n.js'), 'utf8');
+  const entries = [...source.matchAll(/^"((?:[^"\\\\]|\\\\.)*)"\\s*:\\s*\\[/gm)];
+  const keys = entries.map(entry => entry[1]);
+  const duplicates = keys.filter((key, index) => keys.indexOf(key) !== index);
+  expect(duplicates).toEqual([]);
+});
