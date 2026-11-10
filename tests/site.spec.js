@@ -61,6 +61,18 @@ test('all eight languages update the document locale, labels and form hints', as
   }
 });
 
+test('account renderer defines localized words used by premium billing labels', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  const renderer = source.match(/function renderAccount\(\)\s*\{([\s\S]*?)\n\}/);
+  expect(renderer, 'renderAccount function should exist').not.toBeNull();
+  expect(renderer[1]).toMatch(/const words\s*=\s*ACCOUNT_I18N\[lang\]\s*\|\|\s*ACCOUNT_I18N\.pt/);
+  expect(renderer[1]).toContain('words.premiumActive');
+  expect(renderer[1]).toContain('words.renewalCancelled');
+  expect(renderer[1]).toContain('words.manage');
+});
+
 test('account dialog can be opened and closed', async ({ page }) => {
   // Isolate this UI test from Supabase/network availability: an unavailable auth SDK
   // leaves the app in its signed-out state, which is the state this dialog serves.
