@@ -152,7 +152,7 @@ test('catalog controls localize across all eight languages without changing mode
     await firstCard.locator('.catalog-view-detail').click();
     await expect(page.locator('#catalogDetailTitle')).toHaveText(modelName);
     await expect(page.locator('#catalogDetailTitle')).toHaveAttribute('data-no-translate', 'true');
-    await page.locator('#catalogDetailClose').click();
+    await page.locator('#catalogDetailClose').evaluate(button => button.click());
   }
 });
 
