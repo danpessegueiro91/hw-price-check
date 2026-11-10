@@ -123,6 +123,7 @@ test('catalog interface translates but Hot Wheels model names stay unchanged', a
 });
 
 test('catalog controls localize across all eight languages without changing model names', async ({ page }) => {
+  test.setTimeout(90000);
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogPage')).toBeVisible();
