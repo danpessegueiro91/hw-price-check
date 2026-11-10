@@ -220,3 +220,11 @@ test('visitor counter reuses the authenticated Supabase UUID without a separate 
   expect(match[1]).not.toMatch(/localStorage\.(getItem|setItem|removeItem)\s*\(/);
   expect(match[1]).not.toContain('crypto.randomUUID');
 });
+
+test('photo previews clear their label without interpreting HTML', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  expect(source).toContain('l.replaceChildren()');
+  expect(source).not.toContain("l.innerHTML=''");
+});
