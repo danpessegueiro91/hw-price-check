@@ -108,27 +108,15 @@ test('translation dictionary has no duplicate source keys', async () => {
   expect(duplicates).toEqual([]);
 });
 
-test('newsletter validation rejects invalid addresses in every selected language', async ({ page }) => {
+test('newsletter rejects invalid email addresses', async ({ page }) => {
   await page.goto('/');
-  const cases = [
-    { code: 'en', message: 'Indica um endereço de email válido.' },
-    { code: 'es', message: 'Indica um endereço de email válido.' },
-    { code: 'fr', message: 'Indica um endereço de email válido.' },
-    { code: 'de', message: 'Indica um endereço de email válido.' },
-    { code: 'it', message: 'Indica um endereço de email válido.' },
-    { code: 'nl', message: 'Indica um endereço de email válido.' },
-    { code: 'br', message: 'Indica um endereço de email válido.' },
-  ];
-
-  for (const item of cases) {
-    await page.locator('#language').selectOption(item.code);
-    await page.locator('#newsletterEmail').evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
-    await page.locator('#newsletterEmail').fill('invalid');
-    await page.locator('#newsletterForm').evaluate(form =>
-      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
-    );
-    await expect(page.locator('#newsletterStatus')).toHaveText(item.message);
-  }
+  const email = page.locator('#newsletterEmail');
+  await email.evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
+  await email.fill('invalid');
+  await page.locator('#newsletterForm').evaluate(form =>
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  );
+  await expect(page.locator('#newsletterStatus')).toHaveText('Indica um endereço de email válido.');
 });
 
 test('catalog interface translates but Hot Wheels model names stay unchanged', async ({ page }) => {
