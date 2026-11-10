@@ -384,6 +384,7 @@ function buildAccountActivity(limit){
 }
 function renderAccount(){
   if(!user||user.is_anonymous)return;
+  const words=ACCOUNT_I18N[lang]||ACCOUNT_I18N.pt;
   const meta=user.user_metadata||{},displayName=meta.display_name||meta.full_name||user.email?.split('@')[0]||'Colecionador';
   const items=db.items||[],watch=db.watch||[];
   $('accountDisplayName').textContent=displayName;
