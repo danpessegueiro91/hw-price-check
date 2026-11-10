@@ -187,3 +187,36 @@ test('photo identification is the only valuation entry point', async ({ page }) 
   await expect(page.locator('#evaluate')).toHaveCount(0);
   await expect(page.locator('#soldSearch')).toHaveCount(0);
 });
+
+
+test('headline translation builds safe emphasis without interpreting HTML', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#language').selectOption('en');
+  const headline = page.locator('#headline');
+  await expect(headline.locator('em')).toHaveText('Hot Wheels');
+  await expect(headline).toContainText('Discover the value of your Hot Wheels');
+  const result = await headline.evaluate(el => ({ text: el.textContent, emphasis: el.querySelector('em')?.textContent }));
+  expect(result).toEqual({ text: 'Discover the value of your Hot Wheels', emphasis: 'Hot Wheels' });
+});
+
+test('guest language and appearance preferences are not persisted in browser storage', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => { localStorage.removeItem('hwpc_lang'); localStorage.removeItem('hwpc-language'); localStorage.removeItem('hwpc_theme'); });
+  await page.locator('#language').selectOption('en');
+  await page.locator('#themeToggle').click();
+  const stored = await page.evaluate(() => ({ language: localStorage.getItem('hwpc_lang'), legacyLanguage: localStorage.getItem('hwpc-language'), theme: localStorage.getItem('hwpc_theme') }));
+  expect(stored).toEqual({ language: null, legacyLanguage: null, theme: null });
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('body')).toHaveClass(/theme-light/);
+});
+
+test('visitor counter reuses the authenticated Supabase UUID without a separate browser identifier', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  const counter = source.match(/async function updateVisitorCounter\\(\\)\\s*\\{([\\s\\S]*?)\\n\\}/);
+  expect(counter, 'visitor counter function should exist').not.toBeNull();
+  expect(counter[1]).toContain('session?.user?.id');
+  expect(counter[1]).not.toContain('localStorage');
+  expect(counter[1]).not.toContain('crypto.randomUUID');
+});
