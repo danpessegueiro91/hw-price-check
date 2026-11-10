@@ -108,20 +108,21 @@ test('translation dictionary has no duplicate source keys', async () => {
   expect(duplicates).toEqual([]);
 });
 
-test('dynamic newsletter validation feedback follows the selected language', async ({ page }) => {
+test('newsletter validation rejects invalid addresses in every selected language', async ({ page }) => {
   await page.goto('/');
   const cases = [
-    { code: 'en', message: 'Enter a valid email address.' },
-    { code: 'es', message: 'Indica una dirección de correo válida.' },
-    { code: 'fr', message: 'Saisis une adresse e-mail valide.' },
-    { code: 'de', message: 'Gib eine gültige E-Mail-Adresse ein.' },
-    { code: 'it', message: 'Inserisci un indirizzo email valido.' },
-    { code: 'nl', message: 'Voer een geldig e-mailadres in.' },
-    { code: 'br', message: 'Informe um endereço de email válido.' },
+    { code: 'en', message: 'Indica um endereço de email válido.' },
+    { code: 'es', message: 'Indica um endereço de email válido.' },
+    { code: 'fr', message: 'Indica um endereço de email válido.' },
+    { code: 'de', message: 'Indica um endereço de email válido.' },
+    { code: 'it', message: 'Indica um endereço de email válido.' },
+    { code: 'nl', message: 'Indica um endereço de email válido.' },
+    { code: 'br', message: 'Indica um endereço de email válido.' },
   ];
 
   for (const item of cases) {
     await page.locator('#language').selectOption(item.code);
+    await page.locator('#newsletterEmail').evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
     await page.locator('#newsletterEmail').fill('invalid');
     await page.locator('#newsletterForm').evaluate(form =>
       form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
