@@ -159,7 +159,7 @@ test('catalog dictionary source keys are unique and have eight locale values', a
   const fs = require('node:fs');
   const path = require('node:path');
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/i18n.js'), 'utf8');
-  const entries = [...source.matchAll(/^"([^"]+)"\\s*:\\s*\\[([^\\]]*)\\]/gm)];
+  const entries = source.split("\n").map(line => line.match(/^\s*"([^"]+)"\s*:\s*\[([^\]]*)\]/)).filter(Boolean);
   const keys = entries.map(entry => entry[1]);
   expect(new Set(keys).size).toBe(keys.length);
   for (const entry of entries) {
