@@ -16,6 +16,15 @@ test('homepage loads without uncaught JavaScript errors', async ({ page }) => {
   expect(pageErrors).toEqual([]);
 });
 
+test('header logo returns to the homepage from a workspace view', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await expect(page.locator('#appWorkspace')).toBeVisible();
+  await page.locator('#top .brand-lockup').click();
+  await expect(page.locator('#homePage')).toBeVisible();
+  await expect(page.locator('#appWorkspace')).toBeHidden();
+});
+
 test('main navigation opens analysis and collection views', async ({ page }) => {
   await page.goto('/');
   await page.locator('#heroAnalyse').click();
