@@ -442,7 +442,7 @@ function renderAccount(){
 
   if(document.activeElement!==$('accountProfileName'))$('accountProfileName').value=meta.display_name||meta.full_name||'';
   $('accountLanguage').value=lang;
-  $('accountAppearance').value=localStorage.getItem('hwpc_theme')||'dark';
+  $('accountAppearance').value=document.body.classList.contains('theme-light')?'light':'dark';
   $('accountRecentActivity').innerHTML=buildAccountActivity(3);
   $('accountFullActivity').innerHTML=buildAccountActivity(30);
 }
