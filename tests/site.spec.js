@@ -178,3 +178,12 @@ test('catalog dictionary source keys are unique and have eight locale values', a
     expect(values, `Expected seven translations for ${entry[1]}`).toHaveLength(7);
   }
 });
+
+test('photo identification is the only valuation entry point', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await expect(page.locator('#identify')).toBeVisible();
+  await expect(page.locator('#soldSite')).toBeVisible();
+  await expect(page.locator('#evaluate')).toHaveCount(0);
+  await expect(page.locator('#soldSearch')).toHaveCount(0);
+});
