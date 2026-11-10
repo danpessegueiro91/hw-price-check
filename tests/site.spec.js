@@ -108,3 +108,16 @@ test('dynamic newsletter validation feedback follows the selected language', asy
     await expect(page.locator('#newsletterStatus')).toHaveText(item.message);
   }
 });
+
+test('catalog interface translates but Hot Wheels model names stay unchanged', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#language').selectOption('en');
+  await page.locator('[data-page="guides"]').click();
+  await expect(page.locator('#catalogPage')).toBeVisible();
+  const modelName = await page.locator('.catalog-copy h3').first().textContent();
+  await expect(page.locator('.catalog-copy h3').first()).toHaveAttribute('data-no-translate', 'true');
+  await expect(page.locator('.catalog-view-detail').first()).toHaveText('View details');
+  await page.locator('.catalog-view-detail').first().click();
+  await expect(page.locator('#catalogDetailTitle')).toHaveText(modelName);
+  await expect(page.locator('#catalogDetailTitle')).toHaveAttribute('data-no-translate', 'true');
+});
