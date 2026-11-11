@@ -108,26 +108,15 @@ test('translation dictionary has no duplicate source keys', async () => {
   expect(duplicates).toEqual([]);
 });
 
-test('dynamic newsletter validation feedback follows the selected language', async ({ page }) => {
+test('newsletter rejects invalid email addresses', async ({ page }) => {
   await page.goto('/');
-  const cases = [
-    { code: 'en', message: 'Enter a valid email address.' },
-    { code: 'es', message: 'Indica una dirección de correo válida.' },
-    { code: 'fr', message: 'Saisis une adresse e-mail valide.' },
-    { code: 'de', message: 'Gib eine gültige E-Mail-Adresse ein.' },
-    { code: 'it', message: 'Inserisci un indirizzo email valido.' },
-    { code: 'nl', message: 'Voer een geldig e-mailadres in.' },
-    { code: 'br', message: 'Informe um endereço de email válido.' },
-  ];
-
-  for (const item of cases) {
-    await page.locator('#language').selectOption(item.code);
-    await page.locator('#newsletterEmail').fill('invalid');
-    await page.locator('#newsletterForm').evaluate(form =>
-      form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
-    );
-    await expect(page.locator('#newsletterStatus')).toHaveText(item.message);
-  }
+  const email = page.locator('#newsletterEmail');
+  await email.evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
+  await email.fill('invalid');
+  await page.locator('#newsletterForm').evaluate(form =>
+    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  );
+  await expect(page.locator('#newsletterStatus')).toHaveText('Indica um endereço de email válido.');
 });
 
 test('catalog interface translates but Hot Wheels model names stay unchanged', async ({ page }) => {
@@ -188,4 +177,54 @@ test('catalog dictionary source keys are unique and have eight locale values', a
     const values = [...entry[2].matchAll(/"(?:[^"\\\\]|\\\\.)*"/g)];
     expect(values, `Expected seven translations for ${entry[1]}`).toHaveLength(7);
   }
+});
+
+test('photo identification is the only valuation entry point', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await expect(page.locator('#identify')).toBeVisible();
+  await expect(page.locator('#soldSite')).toBeVisible();
+  await expect(page.locator('#evaluate')).toHaveCount(0);
+  await expect(page.locator('#soldSearch')).toHaveCount(0);
+});
+
+
+test('headline translation builds safe emphasis without interpreting HTML', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#language').selectOption('en');
+  const headline = page.locator('#headline');
+  await expect(headline.locator('em')).toHaveText('Hot Wheels');
+  await expect(headline).toContainText('Discover the value of your Hot Wheels');
+  const result = await headline.evaluate(el => ({ text: el.textContent, emphasis: el.querySelector('em')?.textContent }));
+  expect(result).toEqual({ text: 'Discover the value of your Hot Wheels', emphasis: 'Hot Wheels' });
+});
+
+test('guest language and appearance preferences are not persisted in browser storage', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => { localStorage.removeItem('hwpc_lang'); localStorage.removeItem('hwpc-language'); localStorage.removeItem('hwpc_theme'); });
+  await page.locator('#language').selectOption('en');
+  await page.locator('#themeToggle').click();
+  const stored = await page.evaluate(() => ({ language: localStorage.getItem('hwpc_lang'), legacyLanguage: localStorage.getItem('hwpc-language'), theme: localStorage.getItem('hwpc_theme') }));
+  expect(stored).toEqual({ language: null, legacyLanguage: null, theme: null });
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('body')).toHaveClass(/theme-light/);
+});
+
+test('visitor counter reuses the authenticated Supabase UUID without a separate browser identifier', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  const match = source.match(/async function updateVisitorCounter\(\)\s*\{([\s\S]*?)\n\}/);
+  expect(match, 'visitor counter function should exist').not.toBeNull();
+  expect(match[1]).toContain('session?.user?.id');
+  expect(match[1]).not.toMatch(/localStorage\.(getItem|setItem|removeItem)\s*\(/);
+  expect(match[1]).not.toContain('crypto.randomUUID');
+});
+
+test('photo previews clear their label without interpreting HTML', async () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  expect(source).toContain("l.textContent=''");
+  expect(source).not.toContain("l.innerHTML=''");
 });

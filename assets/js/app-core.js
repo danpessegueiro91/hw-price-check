@@ -9,8 +9,10 @@ de:{headline:'Entdecke den Wert deiner Hot Wheels',subhead:'Prüfe Modelle und v
 it:{headline:'Scopri il valore delle tue Hot Wheels',subhead:'Analizza i modelli e gestisci la collezione. I prezzi richiesti non sono vendite concluse.',analyse:'Analizza',collection:'Collezione',watch:'Da cercare',photo:'Foto',photoHelp:'Carica foto nitide del fronte, retro e dettagli. L’IA aiuta a identificare il modello; verifica sempre i dati.',details:'Dati del modello',model:'Modello / nome *',year:'Anno / serie / riferimento',type:'Classificazione',condition:'Condizioni',assessment:'Valutazione acquisto',ask:'Prezzo richiesto (€)',shipping:'Spedizione e costi (€)',min:'Valore minimo (€)',max:'Valore massimo (€)',sold:'Vendite comparabili concluse',certainty:'Conferma TH/STH',evidence:'Prove / link vendite',notes:'Note e motivazione',evaluate:'Valuta opportunità',clear:'Pulisci',limits:'Nessuna ricerca eBay/Vinted o conferma TH/STH automatica.',items:'Articoli',invested:'Investito',value:'Valore stimato',collectionTitle:'La mia collezione',search:'Cerca modello…',empty:'Nessun modello salvato.',export:'Esporta CSV',watchTitle:'Lista desideri',wanted:'Modello cercato',limit:'Prezzo massimo (€)',add:'Aggiungi',watchEmpty:'Lista vuota.',login:'Accedi',signup:'Crea account',authIntro:'Accedi per sincronizzare la tua collezione.',pw:'Password',saved:'Salvato e sincronizzato.',buy:'COMPRA',pass:'PASSA',check:'VERIFICA',total:'Costo totale',range:'Rivendita stimata',margin:'Margine stimato',reason:'Decisione basata sui dati inseriti.',askLogin:'Accedi prima.'},
 nl:{headline:'Ontdek de waarde van je Hot Wheels',subhead:'Controleer modellen en beheer je collectie. Vraagprijzen zijn geen afgeronde verkopen.',analyse:'Controleren',collection:'Collectie',watch:'Gezocht',photo:'Foto’s',photoHelp:'Upload duidelijke foto’s van de voor-, achterkant en details. AI helpt het model te herkennen; controleer de gegevens altijd.',details:'Modelgegevens',model:'Model / naam *',year:'Jaar / serie / referentie',type:'Classificatie',condition:'Staat',assessment:'Aankoopbeoordeling',ask:'Vraagprijs (€)',shipping:'Verzending en kosten (€)',min:'Minimumwaarde (€)',max:'Maximumwaarde (€)',sold:'Vergelijkbare verkopen',certainty:'TH/STH-bevestiging',evidence:'Bewijs / verkooplinks',notes:'Notities en reden',evaluate:'Beoordeel',clear:'Wissen',limits:'Geen automatische eBay/Vinted-zoektocht of TH/STH-bevestiging zonder bewijs.',items:'Items',invested:'Geïnvesteerd',value:'Geschatte waarde',collectionTitle:'Mijn collectie',search:'Zoek model…',empty:'Nog geen modellen opgeslagen.',export:'CSV exporteren',watchTitle:'Zoeklijst',wanted:'Gezocht model',limit:'Maximumprijs (€)',add:'Toevoegen',watchEmpty:'Lijst leeg.',login:'Inloggen',signup:'Account maken',authIntro:'Log in om je collectie te synchroniseren.',pw:'Wachtwoord',saved:'Opgeslagen en gesynchroniseerd.',buy:'KOPEN',pass:'OVERSLAAN',check:'CONTROLEREN',total:'Totale kosten',range:'Geschatte doorverkoop',margin:'Geschatte marge',reason:'Beslissing op basis van ingevoerde gegevens.',askLogin:'Log eerst in.'},
 br:{headline:'Descubra o valor dos seus Hot Wheels',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Envie fotos nítidas da frente, do verso e dos detalhes. A IA ajuda a identificar o modelo; confira sempre as informações.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
-let lang=localStorage.getItem('hwpc_lang')||'pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],photoPreviewUrls=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
+let lang='pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],photoPreviewUrls=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
+// Remove legacy browser identifiers and guest preferences; preferences now live in memory or account metadata.
+try{['hwpc_visitor_id','hwpc_lang','hwpc-language','hwpc_theme'].forEach(key=>localStorage.removeItem(key))}catch(_){}
 
 const CATALOG={
 2026:{
@@ -53,15 +55,12 @@ async function updateVisitorCounter(){
   if(!target)return;
   const set=(value,state='ready')=>{target.textContent=value;target.dataset.state=state;};
   if(!sb){set('Visitantes: indisponível','error');return;}
-  let visitorId;
   try{
-    visitorId=localStorage.getItem('hwpc_visitor_id');
-    if(!visitorId){
-      visitorId=crypto.randomUUID();
-      localStorage.setItem('hwpc_visitor_id',visitorId);
-    }
-  }catch(e){set('Visitantes: indisponível','error');return;}
-  try{
+    // Reuse the Supabase auth UUID already required by the app instead of
+    // creating a second, long-lived browser identifier in localStorage.
+    const {data:{session}}=await sb.auth.getSession();
+    const visitorId=session?.user?.id;
+    if(!visitorId)throw new Error('Sessão de visitante indisponível');
     const {data,error}=await sb.rpc('register_site_visitor',{p_visitor_id:visitorId});
     if(error)throw error;
     const total=Number(data);
@@ -74,9 +73,9 @@ async function updateVisitorCounter(){
 }
 
 const $=id=>document.getElementById(id),tr=k=>T[lang][k]||T.pt[k],money=n=>new Intl.NumberFormat(lang==='pt'||lang==='br'?'pt-PT':lang==='de'?'de-DE':lang==='fr'?'fr-FR':lang==='it'?'it-IT':lang==='nl'?'nl-NL':lang==='es'?'es-ES':'en-IE',{style:'currency',currency:'EUR'}).format(Number(n)||0);
-const fields={soldSiteLabel:'market',headline:'headline',subhead:'subhead',tabAnalyse:'analyse',tabCollection:'collection',tabWatch:'watch',photoTitle:'photo',photoHelp:'photoHelp',detailsTitle:'details',modelLabel:'model',yearLabel:'year',typeLabel:'type',conditionLabel:'condition',assessmentTitle:'assessment',askLabel:'ask',shippingLabel:'shipping',minLabel:'min',maxLabel:'max',soldLabel:'sold',certaintyLabel:'certainty',evidenceLabel:'evidence',notesLabel:'notes',evaluate:'evaluate',clear:'clear',itemsLabel:'items',investedLabel:'invested',valueLabel:'value',collectionTitle:'collectionTitle',export:'export',watchTitle:'watchTitle',wantedLabel:'wanted',limitLabel:'limit',addWatch:'add',limits:'limits',authIntro:'authIntro',pwLabel:'pw',login:'login',signup:'signup'};
-function translate(){for(const [id,k] of Object.entries(fields)){if(id==='headline')$(id).innerHTML=tr(k).replace(/(Hot Wheels)/i,'<em>$1</em>');else $(id).textContent=id==='soldSiteLabel'?soldTr('market'):tr(k)}$('language').value=lang;$('authTitle').textContent=tr('login');$('search').placeholder=tr('search');$('authGate').querySelector('h2').textContent=tr('login');$('tabAccount').textContent=({pt:'🏁 A Minha Conta',en:'🏁 My Account',es:'🏁 Mi cuenta',fr:'🏁 Mon compte',de:'🏁 Mein Konto',it:'🏁 Il mio account',nl:'🏁 Mijn account',br:'🏁 Minha conta'}[lang]||'🏁 A Minha Conta');updateAccountButton();renderAccount();render();if(lastSoldOut)renderSoldHistory(lastSoldOut,'aiResult')}
-$('language').onchange=e=>{lang=e.target.value;localStorage.setItem('hwpc_lang',lang);translate()};
+const fields={soldSiteLabel:'market',headline:'headline',subhead:'subhead',tabAnalyse:'analyse',tabCollection:'collection',tabWatch:'watch',photoTitle:'photo',photoHelp:'photoHelp',detailsTitle:'details',modelLabel:'model',yearLabel:'year',itemsLabel:'items',investedLabel:'invested',valueLabel:'value',collectionTitle:'collectionTitle',export:'export',watchTitle:'watchTitle',wantedLabel:'wanted',limitLabel:'limit',addWatch:'add',limits:'limits',authIntro:'authIntro',pwLabel:'pw',login:'login',signup:'signup'};
+function translate(){for(const [id,k] of Object.entries(fields)){const el=$(id);if(!el)continue;if(id==='headline'){const value=tr(k),parts=value.split(/(Hot Wheels)/i);el.replaceChildren();for(const part of parts){if(!part)continue;if(/^Hot Wheels$/i.test(part)){const emphasis=document.createElement('em');emphasis.textContent=part;el.append(emphasis)}else el.append(document.createTextNode(part))}}else el.textContent=id==='soldSiteLabel'?soldTr('market'):tr(k)}const language=$('language');if(language)language.value=lang;const authTitle=$('authTitle');if(authTitle)authTitle.textContent=tr('login');const search=$('search');if(search)search.placeholder=tr('search');const authHeading=$('authGate')?.querySelector('h2');if(authHeading)authHeading.textContent=tr('login');const tabAccount=$('tabAccount');if(tabAccount)tabAccount.textContent=({pt:'🏁 A Minha Conta',en:'🏁 My Account',es:'🏁 Mi cuenta',fr:'🏁 Mon compte',de:'🏁 Mein Konto',it:'🏁 Il mio account',nl:'🏁 Mijn account',br:'🏁 Minha conta'}[lang]||'🏁 A Minha Conta');updateAccountButton();if(lastSoldOut)renderSoldHistory(lastSoldOut,'aiResult')}
+$('language')?.addEventListener('change',e=>{lang=e.target.value;translate()});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){$('authStatus').textContent=s}
 function showGate(v){const gate=$('authGate');if(!gate)return;gate.classList.toggle('hidden',!v);gate.setAttribute('aria-hidden',String(!v))}
@@ -189,8 +188,8 @@ async function requireSafePassword(password){
   const occurrences=await checkPwnedPassword(password);
   if(occurrences>0)throw new Error('Esta palavra-passe foi encontrada em fugas de dados conhecidas ('+occurrences.toLocaleString('pt-PT')+' ocorrências). Escolhe outra que nunca tenhas utilizado.');
 }
-$('login').onclick=async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()};
-$('signup').onclick=async()=>{
+$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()});
+$('signup')?.addEventListener('click',async()=>{
   const button=$('signup');
   if(button.disabled)return;
   if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');
@@ -250,47 +249,11 @@ $('signup').onclick=async()=>{
     button.disabled=false;
     button.textContent=originalText;
   }
-};
-function openAuth(mode='login'){const creating=mode==='signup';$('authTitle').textContent=creating?'Criar conta gratuita':'Entrar na tua conta';$('authIntro').textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';$('login').classList.toggle('hidden',creating);$('signup').classList.toggle('hidden',!creating);$('password').autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();if(view==='accountPage')renderAccount();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('signupTop').onclick=()=>openAuth('signup');$('signupHero').onclick=()=>openAuth('signup');$('account').onclick=()=>{if(!user||user.is_anonymous){openAuth('login');return}openWorkspace('accountPage')};$('heroAnalyse').onclick=()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar com Gemini” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'};$('heroCamera').onclick=()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'};$('heroSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection').onclick=()=>openWorkspace('collection');$('footerHome').onclick=e=>{e.preventDefault();showHome()};document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle').onclick=()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');localStorage.setItem('hwpc_theme',light?'light':'dark');$('themeToggle').textContent=light?'☀':'☾'};if(localStorage.getItem('hwpc_theme')==='light'){document.body.classList.add('theme-light');$('themeToggle').textContent='☀'}
-if(sb){sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;if(!user){await ensureAnonymousSession()}if(user){showGate(false);applyAccountPreferences();updateAccountButton();await load();mergeGuestBackup()}else showGate(false)});sb.auth.onAuthStateChange((event,s)=>{if(event==='SIGNED_OUT'){user=null;updateAccountButton();showGate(false)}else if(event==='USER_UPDATED'){user=s?.user||user;updateAccountButton();renderAccount()}});}else{showGate(false);$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';}
-document.querySelectorAll('[data-photo]').forEach(i=>i.onchange=()=>{const f=i.files[0];if(!f)return;const idx=+i.dataset.photo;if(photoPreviewUrls[idx])URL.revokeObjectURL(photoPreviewUrls[idx]);const url=URL.createObjectURL(f);photoPreviewUrls[idx]=url;photos[idx]='';photoFiles[idx]=f;const l=i.parentElement;l.innerHTML='';const img=document.createElement('img');img.src=url;img.alt=['Fotografia da frente','Fotografia do verso','Fotografia de detalhe'][idx]||'Fotografia Hot Wheels';l.append(img);l.append(i);});
-function clearForm(){['model','year','ask','min','max','sold','evidence','notes'].forEach(id=>$(id).value='');$('shipping').value=0;$('type').value='unknown';$('certainty').value='inconclusive';$('result').classList.add('hidden');photoPreviewUrls.forEach(url=>{if(url)URL.revokeObjectURL(url)});photos=['','',''];photoFiles=[null,null,null];photoPreviewUrls=[null,null,null];document.querySelectorAll('[data-photo]').forEach(i=>{const l=i.parentElement;l.innerHTML='＋<br>'+['Frente','Verso','Detalhe'][+i.dataset.photo];l.append(i);i.value=''})}
-$('clear').onclick=clearForm;
-$('evaluate').onclick=async()=>{
- const model=$('model').value.trim();
- const ask=Number($('ask').value),ship=Number($('shipping').value||0);
- const min=Number($('min').value),max=Number($('max').value),sold=Number($('sold').value||0);
- const type=$('type').value,certainty=$('certainty').value,condition=$('condition').value;
- const evidence=$('evidence').value.trim(),photoCount=photoFiles.filter(Boolean).length;
- if(!model||!Number.isFinite(ask)||ask<=0)return alert('Indica o modelo e um preço pedido válido.');
- if(!Number.isFinite(ship)||ship<0||!Number.isFinite(min)||!Number.isFinite(max)||min<0||max<min)return alert('Confirma os portes e o intervalo de revenda. O máximo deve ser igual ou superior ao mínimo.');
- if(!Number.isInteger(sold)||sold<0)return alert('O número de vendas comparáveis não é válido.');
- const photoSnapshots=await Promise.all(photoFiles.map(file=>file?fileData(file):Promise.resolve(null)));
- photos=photoSnapshots.map(item=>item?.data||'');
- const cost=ask+ship,margin=min-cost;
- const special=type==='th'||type==='sth';
- let decision='check',reason='Dados insuficientes. Regista pelo menos duas vendas concluídas comparáveis e as respetivas evidências.';
- const enoughComps=sold>=2&&evidence.length>0&&min>0&&max>0;
- const specialVerified=!special||(certainty==='confirmed'&&photoCount>=2);
- if(enoughComps&&!specialVerified){
-  reason='A classificação TH/STH ainda não está suficientemente confirmada. Junta pelo menos duas fotografias úteis e confirma os detalhes antes de decidir.';
- }else if(enoughComps&&max<=cost){
-  decision='pass';reason='Mesmo o limite superior estimado não cobre o custo total.';
- }else if(enoughComps&&specialVerified&&margin>cost*.2&&!['damaged','loose'].includes(condition)){
-  decision='buy';reason='Há pelo menos duas vendas comparáveis documentadas e a margem conservadora supera 20%. Confirma sempre variante, estado e custos.';
- }else if(enoughComps){
-  reason='Existe alguma margem potencial, mas não é suficientemente confortável para recomendar a compra.';
- }
- lastEval={id:crypto.randomUUID(),model,year:$('year').value,type,condition,ask,shipping:ship,min,max,sold,certainty,evidence,notes:$('notes').value,photos:photos.slice(),decision,reason,date:new Date().toISOString()};
- const d=$('result');d.classList.remove('hidden');
- d.innerHTML='<div class="eyebrow">'+tr('reason')+'</div><div class="decision '+(decision==='buy'?'buy':decision==='pass'?'pass':'check')+'">'+tr(decision)+'</div><div class="grid"><div><small>'+tr('total')+'</small><h3>'+money(cost)+'</h3></div><div><small>'+tr('range')+'</small><h3>'+money(min)+' – '+money(max)+'</h3></div><div><small>'+tr('margin')+'</small><h3>'+money(margin)+'</h3></div><div><small>Vendas comparáveis</small><h3>'+sold+'</h3></div></div><p class="muted">'+safe(reason)+'</p><button class="btn primary" id="saveItem">Guardar na coleção</button>';
- $('saveItem').onclick=async()=>{
-  if(!user)return alert(tr('askLogin'));
-  db.items.unshift(lastEval);await save();render();
-  $('saveItem').disabled=true;$('saveItem').textContent=tr('saved');
- };
-}
-$('addWatch').onclick=async()=>{const name=$('wanted').value.trim();if(!name)return;if(!user)return alert(tr('askLogin'));db.watch.unshift({id:crypto.randomUUID(),name,max:+$('limit').value||0,date:new Date().toISOString()});$('wanted').value='';$('limit').value='';await save();render()};
+});
+function openAuth(mode='login'){const creating=mode==='signup';const authTitle=$('authTitle'),authIntro=$('authIntro'),login=$('login'),signup=$('signup'),password=$('password');if(authTitle)authTitle.textContent=creating?'Criar conta gratuita':'Entrar na tua conta';if(authIntro)authIntro.textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';login?.classList.toggle('hidden',creating);signup?.classList.toggle('hidden',!creating);if(password)password.autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();if(view==='accountPage')renderAccount();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('signupTop')?.addEventListener('click',()=>openAuth('signup'));$('signupHero')?.addEventListener('click',()=>openAuth('signup'));$('account')?.addEventListener('click',()=>{if(!user||user.is_anonymous){openAuth('login');return}openWorkspace('accountPage')});$('heroAnalyse')?.addEventListener('click',()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar com Gemini” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'});$('heroCamera')?.addEventListener('click',()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'});$('heroSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection')?.addEventListener('click',()=>openWorkspace('collection'));$('footerHome')?.addEventListener('click',e=>{e.preventDefault();showHome()});document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');$('themeToggle').textContent=light?'☀':'☾'});
+if(sb){sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;if(!user){await ensureAnonymousSession()}if(user){showGate(false);applyAccountPreferences();updateAccountButton();await load();mergeGuestBackup()}else showGate(false);await updateVisitorCounter()});sb.auth.onAuthStateChange((event,s)=>{if(event==='SIGNED_OUT'){user=null;updateAccountButton();showGate(false)}else if(event==='USER_UPDATED'){user=s?.user||user;updateAccountButton();renderAccount()}});}else{showGate(false);$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';updateVisitorCounter();}
+document.querySelectorAll('[data-photo]').forEach(i=>i.addEventListener('change',()=>{const f=i.files[0];if(!f)return;const idx=+i.dataset.photo;if(photoPreviewUrls[idx])URL.revokeObjectURL(photoPreviewUrls[idx]);const url=URL.createObjectURL(f);photoPreviewUrls[idx]=url;photos[idx]='';photoFiles[idx]=f;const l=i.parentElement;l.textContent='';const img=document.createElement('img');img.src=url;img.alt=['Fotografia da frente','Fotografia do verso','Fotografia de detalhe'][idx]||'Fotografia Hot Wheels';l.append(img);l.append(i);}));
+$('addWatch')?.addEventListener('click',async()=>{const name=$('wanted').value.trim();if(!name)return;if(!user)return alert(tr('askLogin'));db.watch.unshift({id:crypto.randomUUID(),name,max:+$('limit').value||0,date:new Date().toISOString()});$('wanted').value='';$('limit').value='';await save();render()});
 
 async function callFunction(name,body){
   if(!sb)throw new Error('O serviço de análise não carregou. Atualiza a página e tenta novamente.');let {data:{session}}=await sb.auth.getSession();
@@ -320,7 +283,7 @@ async function callFunction(name,body){
   return data
 }
 function fileData(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>{const original=reader.result;const image=new Image();image.onload=()=>{const maxSide=1400,scale=Math.min(1,maxSide/Math.max(image.width,image.height));const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));const context=canvas.getContext('2d');if(!context){resolve({data:original});return}context.drawImage(image,0,0,canvas.width,canvas.height);canvas.toBlob(blob=>{if(!blob){resolve({data:original});return}const output=new FileReader();output.onload=()=>resolve({data:output.result});output.onerror=reject;output.readAsDataURL(blob)},'image/jpeg',0.78)};image.onerror=()=>resolve({data:original});image.src=original};reader.onerror=reject;reader.readAsDataURL(file)})}
-$('identify').onclick=async()=>{const files=photoFiles.filter(Boolean);if(!files.length)return alert('Tira ou escolhe pelo menos uma fotografia.');$('aiStatus').textContent='A analisar fotografias com Gemini…';try{const imgs=await Promise.all(files.map(fileData));const out=await callFunction('hw-identify',{images:imgs});const a=out.analysis||{};$('aiStatus').textContent='Análise concluída · '+(out.model||'Gemini');if(a.model)$('model').value=a.model;if(a.year)$('year').value=[a.year,a.series,a.number,a.reference_code].filter(Boolean).join(' · ');if(a.classification&&['mainline','th','sth','premium'].includes(a.classification))$('type').value=a.classification;if(a.th_sth_status)$('certainty').value=a.th_sth_status;$('aiResult').innerHTML='<div class="card"><b>'+safe(a.model||'Identificação inconclusiva')+'</b><p class="muted">'+safe(a.notes||'')+'</p><p class="note">Classificação: '+safe(a.classification||'unknown')+' · TH/STH: '+safe(a.th_sth_status||'inconclusive')+' · Confiança: '+safe(a.confidence??'—')+'%</p><p>'+safe((a.visible_evidence||[]).join(' · '))+'</p><p class="note">Fotos adicionais: '+safe((a.missing_photos||[]).join(', ')||'Não indicadas')+'</p></div>';if(a.model){const query=[$('model').value.trim(),$('year').value.trim()].filter(Boolean).join(' ');$('aiStatus').textContent='Identificação concluída · a pesquisar vendas reais no eBay…';$('aiResult').insertAdjacentHTML('beforeend','<p class="note sold-auto-status">'+soldTr('autoCredit')+'</p>');try{const soldOut=await callFunction('hw-sold-comps',{query,site:$('soldSite').value,limit:30});renderSoldHistory(soldOut,'aiResult');const q=soldOut.quota||{};$('aiStatus').textContent='Identificação e pesquisa concluídas'+(Number.isFinite(q.remaining)?' · '+q.remaining+' pesquisas restantes':'')}catch(soldError){$('aiResult').insertAdjacentHTML('beforeend','<div class="card sold-history-card"><b>'+soldTr('unavailable')+'</b><p class="muted">'+safe(soldError.message)+'</p></div>');$('aiStatus').textContent='Identificação concluída · pesquisa de vendas indisponível'}}}catch(e){$('aiStatus').textContent='Falha na análise: '+e.message}};
+$('identify')?.addEventListener('click',async()=>{const files=photoFiles.filter(Boolean);if(!files.length)return alert('Tira ou escolhe pelo menos uma fotografia.');$('aiStatus').textContent='A analisar fotografias com Gemini…';try{const imgs=await Promise.all(files.map(fileData));const out=await callFunction('hw-identify',{images:imgs});const a=out.analysis||{};$('aiStatus').textContent='Análise concluída · '+(out.model||'Gemini');if(a.model)$('model').value=a.model;if(a.year)$('year').value=[a.year,a.series,a.number,a.reference_code].filter(Boolean).join(' · ');if(a.classification&&['mainline','th','sth','premium'].includes(a.classification))$('type').value=a.classification;if(a.th_sth_status&&$('certainty'))$('certainty').value=a.th_sth_status;$('aiResult').innerHTML='<div class="card"><b>'+safe(a.model||'Identificação inconclusiva')+'</b><p class="muted">'+safe(a.notes||'')+'</p><p class="note">Classificação: '+safe(a.classification||'unknown')+' · TH/STH: '+safe(a.th_sth_status||'inconclusive')+' · Confiança: '+safe(a.confidence??'—')+'%</p><p>'+safe((a.visible_evidence||[]).join(' · '))+'</p><p class="note">Fotos adicionais: '+safe((a.missing_photos||[]).join(', ')||'Não indicadas')+'</p></div>';if(a.model){const query=$('model').value.trim();$('aiStatus').textContent='Identificação concluída · a pesquisar vendas reais no eBay…';$('aiResult').insertAdjacentHTML('beforeend','<p class="note sold-auto-status">'+soldTr('autoCredit')+'</p>');try{const soldOut=await callFunction('hw-sold-comps',{query,site:$('soldSite').value,limit:30});renderSoldHistory(soldOut,'aiResult');$('aiStatus').textContent='A pesquisar Vinted, eBay e Depop…';const marketOut=await callFunction('hw-marketplace-search',{query});renderMarketplaceSearch(marketOut,'aiResult');const q=soldOut.quota||{};$('aiStatus').textContent='Identificação e pesquisa concluídas'+(Number.isFinite(q.remaining)?' · '+q.remaining+' pesquisas restantes':'')}catch(soldError){$('aiResult').insertAdjacentHTML('beforeend','<div class="card sold-history-card"><b>'+soldTr('unavailable')+'</b><p class="muted">'+safe(soldError.message)+'</p></div>');$('aiStatus').textContent='Identificação concluída · pesquisa de vendas indisponível'}}}catch(e){$('aiStatus').textContent='Falha na análise: '+e.message}});
 
 let lastSoldOut=null;
 const SOLD_I18N={
@@ -339,6 +302,23 @@ function soldMoney(value,currency){
  try{return new Intl.NumberFormat(lang==='pt'||lang==='br'?'pt-PT':lang==='de'?'de-DE':lang==='fr'?'fr-FR':lang==='it'?'it-IT':lang==='nl'?'nl-NL':lang==='es'?'es-ES':'en-IE',{style:'currency',currency:code,maximumFractionDigits:2}).format(Number(value)||0)}
  catch(_){return (Number(value)||0).toFixed(2)+' '+code}
 }
+function marketplaceSearchLinks(query){
+ const q=encodeURIComponent(String(query||'').trim());
+ const links=[
+  ['eBay UK','https://www.ebay.co.uk/sch/i.html?_nkw='+q],
+  ['Vinted Portugal','https://www.vinted.pt/catalog?search_text='+q],
+  ['OLX Portugal','https://www.olx.pt/ads/q-'+q+'/'],
+  ['Wallapop','https://www.wallapop.com/app/search?keywords='+q],
+  ['Facebook Marketplace','https://www.facebook.com/marketplace/search/?query='+q],
+  ['Catawiki','https://www.catawiki.com/en/s?q='+q],
+  ['Etsy','https://www.etsy.com/search?q='+q],
+  ['Mercari','https://www.mercari.com/search/?keyword='+q],
+  ['Whatnot','https://www.whatnot.com/search?query='+q],
+  ['Leboncoin','https://www.leboncoin.fr/recherche?text='+q],
+  ['Subito','https://www.subito.it/annunci-italia/vendita/usato/?q='+q]
+ ];
+ return '<div class="marketplace-searches"><div class="sold-chart-title">Procurar anúncios activos noutros marketplaces</div><p class="note">Abre a pesquisa do modelo em cada plataforma. Estes são preços pedidos pelos vendedores, não vendas concluídas.</p><div class="marketplace-search-links">'+links.map(([name,url])=>'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">'+safe(name)+' ↗</a>').join('')+'</div></div>';
+}
 function renderSoldHistory(out,target='aiResult'){
  lastSoldOut=out;
  const stats=out.stats||{},rows=out.items||[],currency=stats.currency||'EUR';
@@ -354,16 +334,38 @@ function renderSoldHistory(out,target='aiResult'){
   chart='<div class="sold-chart-wrap"><div class="sold-chart-meta"><span>'+soldTr('low')+': <b>'+soldMoney(min,currency)+'</b></span><span>'+soldTr('high')+': <b>'+soldMoney(max,currency)+'</b></span></div><svg class="sold-chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+safe(soldTr('trend'))+'"><path d="M'+pad+' '+(h-pad)+' H'+(w-pad)+'" stroke="#49617d" stroke-width="1" fill="none"/><path d="'+path+'" fill="none" stroke="#ff6a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+circles+'</svg><div class="sold-chart-dates"><span>'+safe(first)+'</span><span>'+safe(last)+'</span></div></div>';
  }else chart='<p class="note sold-empty">'+soldTr('empty')+'</p>';
  const items=rows.slice(0,15).map(x=>'<div class="item"><div class="grow"><b>'+safe(x.title)+'</b><br><small>'+safe(x.sold_at)+' · '+safe(x.condition||'')+' · '+safe((x.flags||[]).join(', '))+'</small></div><b>'+soldMoney(x.sold_price?.value,currency)+'</b><a href="'+safe(x.url)+'" target="_blank" rel="noopener">↗</a></div>').join('');
- const host=$(target);host.querySelector('.sold-history-card')?.remove();host.insertAdjacentHTML('beforeend','<div class="card sold-history-card"><div class="eyebrow">'+soldTr('title')+'</div><div class="stats sold-summary"><div class="stat"><small>'+soldTr('median')+'</small><strong>'+soldMoney(stats.median,currency)+'</strong></div><div class="stat"><small>'+soldTr('central')+'</small><strong>'+soldMoney(stats.p25,currency)+'–'+soldMoney(stats.p75,currency)+'</strong></div><div class="stat"><small>'+soldTr('found')+'</small><strong>'+safe(out.count??rows.length)+'</strong></div></div><div class="sold-chart-title">'+soldTr('trend')+'</div>'+chart+'<p class="note sold-footnote">'+soldTr('currency')+': '+safe(currency)+' · '+soldTr('excluded')+': '+safe(stats.excluded??'—')+' · '+soldTr('credits')+': '+safe(out.credits?.charged??'—')+'</p><details class="sold-list"><summary>'+soldTr('sales')+'</summary>'+items+'</details></div>');
+ const host=$(target);host.querySelector('.sold-history-card')?.remove();host.insertAdjacentHTML('beforeend','<div class="card sold-history-card"><div class="eyebrow">'+soldTr('title')+'</div>'+marketplaceSearchLinks(out.query||$('model').value||'Hot Wheels')+'<div class="stats sold-summary"><div class="stat"><small>'+soldTr('median')+'</small><strong>'+soldMoney(stats.median,currency)+'</strong></div><div class="stat"><small>'+soldTr('central')+'</small><strong>'+soldMoney(stats.p25,currency)+'–'+soldMoney(stats.p75,currency)+'</strong></div><div class="stat"><small>'+soldTr('found')+'</small><strong>'+safe(out.count??rows.length)+'</strong></div></div><div class="sold-chart-title">'+soldTr('trend')+'</div>'+chart+'<p class="note sold-footnote">'+soldTr('currency')+': '+safe(currency)+' · '+soldTr('excluded')+': '+safe(stats.excluded??'—')+' · '+soldTr('credits')+': '+safe(out.credits?.charged??'—')+'</p><details class="sold-list"><summary>'+soldTr('sales')+'</summary>'+items+'</details></div>');
 }
-$('soldSearch').onclick=async()=>{
- const q=[$('model').value.trim(),$('year').value.trim()].filter(Boolean).join(' ');
- if(!q)return alert('Indica primeiro o modelo.');
- $('aiResult').querySelector('.sold-history-card')?.remove();$('soldResult').innerHTML='';$('aiResult').insertAdjacentHTML('beforeend','<p class="muted">'+soldTr('loading')+'</p>');
- try{const out=await callFunction('hw-sold-comps',{query:q,site:$('soldSite').value,limit:30});renderSoldHistory(out,'aiResult')}
- catch(e){$('aiResult').insertAdjacentHTML('beforeend','<div class="card sold-history-card"><b>'+soldTr('unavailable')+'</b><p class="muted">'+safe(e.message)+'</p></div>')}
-};
-
+function marketplacePrice(row){
+ const price=row.displayed_price;
+ if(price&&typeof price==='object'&&price.amount!=null)return soldMoney(price.amount,price.currency||'EUR');
+ return safe(row.displayed_price_text||row.price_text||row.price||'Preço indisponível');
+}
+function renderMarketplaceSearch(out,target='aiResult'){
+ const host=$(target);if(!host)return;
+ host.querySelector('.marketplace-live-card')?.remove();
+ const card=document.createElement('div');card.className='card marketplace-live-card';
+ const active=Array.isArray(out.active)?out.active:[],sold=Array.isArray(out.sold)?out.sold:[];
+ const makeRows=(rows)=>rows.slice(0,30).map(row=>{
+  const title=safe(row.title||'Anúncio Hot Wheels');
+  const source=safe(row.source||row.provider||'Marketplace');
+  const url=String(row.link||row.url||'');
+  const safeUrl=/^https:\/\//i.test(url)?url:'#';
+  const image=String(row.image||row.image_url||'');
+  const safeImage=/^https:\/\//i.test(image)?image:'';
+  const date=safe(row.sold_date||row.sold_date_text||'');
+  return '<article class="marketplace-result">'+(safeImage?'<img loading="lazy" src="'+safe(safeImage)+'" alt="">':'')+'<div class="marketplace-result-copy"><strong>'+title+'</strong><small>'+source+(date?' · '+date:'')+'</small></div><b>'+marketplacePrice(row)+'</b>'+(safeUrl!=='#'?'<a href="'+safe(safeUrl)+'" target="_blank" rel="noopener noreferrer">Abrir ↗</a>':'')+'</article>';
+ }).join('');
+ card.innerHTML='<div class="eyebrow">PESQUISA MULTIMARKETPLACE · SOLDGRAPH</div>'+
+  '<p class="note">Anúncios activos são preços pedidos. Vendas concluídas são transacções observadas; não misturamos as duas categorias.</p>'+
+  '<div class="sold-chart-title">Anúncios activos · '+active.length+'</div>'+
+  (active.length?'<div class="marketplace-results">'+makeRows(active)+'</div>':'<p class="note">Sem anúncios activos devolvidos nesta pesquisa.</p>')+
+  '<div class="sold-chart-title">Vendas concluídas · '+sold.length+'</div>'+
+  (sold.length?'<div class="marketplace-results">'+makeRows(sold)+'</div>':'<p class="note">Sem vendas concluídas devolvidas nesta pesquisa.</p>')+
+  '<p class="note">Fontes: Vinted Portugal, eBay UK e Depop UK para anúncios; eBay UK para vendas. '+(out.status==='partial'?'Algumas fontes ainda não terminaram. ':'')+'Créditos Soldgraph: '+safe(out.credits?.charged??0)+'</p>'+
+  (out.errors?.length?'<p class="note">Fontes indisponíveis: '+safe(out.errors.join(' · '))+'</p>':'');
+ host.append(card);
+}
 function render(){const items=db.items||[],watch=db.watch||[];$('count').textContent=items.length;$('invested').textContent=money(items.reduce((a,x)=>a+(+x.ask||0)+(+x.shipping||0),0));$('worth').textContent=money(items.reduce((a,x)=>a+(+x.min||0),0));const box=$('items');box.innerHTML='';const q=$('search').value?.toLowerCase()||'';const filtered=items.filter(x=>x.model.toLowerCase().includes(q));if(!filtered.length){box.className='empty';box.textContent=tr('empty')}else{box.className='';filtered.forEach(x=>{const row=document.createElement('div');row.className='item';const grow=document.createElement('div');grow.className='grow';grow.innerHTML='<b>'+safe(x.model)+'</b><br><small>'+safe(x.year||'')+' · '+money((+x.ask||0)+(+x.shipping||0))+' · '+money(x.min||0)+'</small>';const badge=document.createElement('span');badge.className='note';badge.textContent=tr(x.decision);const del=document.createElement('button');del.className='btn red';del.textContent='×';del.onclick=async()=>{db.items=db.items.filter(y=>y.id!==x.id);await save();render()};row.append(grow,badge,del);box.append(row)})}const wb=$('watchItems');wb.innerHTML='';if(!watch.length){wb.className='empty';wb.textContent=tr('watchEmpty')}else{wb.className='';watch.forEach(x=>{const row=document.createElement('div');row.className='item';const grow=document.createElement('div');grow.className='grow';grow.textContent=x.name+' · até '+money(x.max);const del=document.createElement('button');del.className='btn red';del.textContent='×';del.onclick=async()=>{db.watch=db.watch.filter(y=>y.id!==x.id);await save();render()};row.append(grow,del);wb.append(row)})}}
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
@@ -389,14 +391,12 @@ function applyAccountPreferences(){
   const prefs=user.user_metadata||{};
   if(prefs.preferred_language&&T[prefs.preferred_language]){
     lang=prefs.preferred_language;
-    localStorage.setItem('hwpc_lang',lang);
     $('language').value=lang;
   }
   if(prefs.appearance==='light'||prefs.appearance==='dark'){
     const light=prefs.appearance==='light';
     document.body.classList.toggle('theme-light',light);
-    localStorage.setItem('hwpc_theme',light?'light':'dark');
-    $('themeToggle').textContent=light?'☀':'☾';
+    const themeToggle=$('themeToggle');if(themeToggle)themeToggle.textContent=light?'☀':'☾';
   }
 }
 function accountNotice(message,type='success'){
@@ -489,7 +489,7 @@ function renderAccount(){
 
   if(document.activeElement!==$('accountProfileName'))$('accountProfileName').value=meta.display_name||meta.full_name||'';
   $('accountLanguage').value=lang;
-  $('accountAppearance').value=localStorage.getItem('hwpc_theme')||'dark';
+  $('accountAppearance').value=document.body.classList.contains('theme-light')?'light':'dark';
   $('accountRecentActivity').innerHTML=buildAccountActivity(3);
   $('accountFullActivity').innerHTML=buildAccountActivity(30);
 }
@@ -498,7 +498,7 @@ function setAccountSection(name){
   document.querySelectorAll('[data-account-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.accountPanel===name));
 }
 document.querySelectorAll('[data-account-section]').forEach(btn=>btn.addEventListener('click',()=>setAccountSection(btn.dataset.accountSection)));
-$('accountProfileSave').onclick=async()=>{
+$('accountProfileSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para editar o perfil.','error');
   const button=$('accountProfileSave'),name=$('accountProfileName').value.trim();
   if(name.length>60)return accountNotice('O nome de perfil não pode ultrapassar 60 caracteres.','error');
@@ -510,8 +510,8 @@ $('accountProfileSave').onclick=async()=>{
     accountNotice('Perfil atualizado com sucesso.','success');
   }catch(error){accountNotice('Não foi possível guardar o perfil: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='✓ Guardar perfil'}
-};
-$('accountEmailSave').onclick=async()=>{
+});
+$('accountEmailSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para alterar o email.','error');
   const button=$('accountEmailSave'),email=$('accountNewEmail').value.trim().toLowerCase();
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return accountNotice('Introduz um endereço de email válido.','error');
@@ -525,8 +525,8 @@ $('accountEmailSave').onclick=async()=>{
     $('accountNewEmail').value='';
   }catch(error){accountNotice('Não foi possível pedir a alteração do email: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='Enviar pedido de alteração'}
-};
-$('accountPasswordSave').onclick=async()=>{
+});
+$('accountPasswordSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para alterar a palavra-passe.','error');
   const button=$('accountPasswordSave'),password=$('accountNewPassword').value,confirmPassword=$('accountConfirmPassword').value;
   if(password.length<8)return accountNotice('A nova palavra-passe deve ter pelo menos 8 caracteres.','error');
@@ -540,14 +540,14 @@ $('accountPasswordSave').onclick=async()=>{
     accountNotice('Palavra-passe atualizada com sucesso.','success');
   }catch(error){accountNotice('Não foi possível atualizar a palavra-passe: '+(error.message||error),'error')}
   finally{button.disabled=false;button.textContent='🔐 Atualizar palavra-passe'}
-};
-$('accountPreferencesSave').onclick=async()=>{
+});
+$('accountPreferencesSave')?.addEventListener('click',async()=>{
   if(!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta para guardar preferências.','error');
   const button=$('accountPreferencesSave'),newLang=$('accountLanguage').value,appearance=$('accountAppearance').value;
   button.disabled=true;button.textContent='A guardar…';
-  lang=newLang;localStorage.setItem('hwpc_lang',lang);$('language').value=lang;
+  lang=newLang;$('language').value=lang;
   document.body.classList.toggle('theme-light',appearance==='light');
-  localStorage.setItem('hwpc_theme',appearance);$('themeToggle').textContent=appearance==='light'?'☀':'☾';
+  const themeToggle=$('themeToggle');if(themeToggle)themeToggle.textContent=appearance==='light'?'☀':'☾';
   try{
     const {data,error}=await sb.auth.updateUser({data:{...(user.user_metadata||{}),preferred_language:lang,appearance}});
     if(error)throw error;
@@ -558,7 +558,7 @@ $('accountPreferencesSave').onclick=async()=>{
     translate();renderAccount();
     accountNotice('Preferências aplicadas neste dispositivo, mas não foi possível sincronizá-las com a conta: '+(error.message||error),'error');
   }finally{button.disabled=false;button.textContent='✓ Guardar preferências'}
-};
+});
 async function accountSignOut(){
   if(!user||user.is_anonymous)return;
   const button=$('accountLogout');if(button)button.disabled=true;
@@ -602,8 +602,8 @@ async function runBillingAction(action){
     renderAccount();
   }
 }
-$('premiumSubscribeBtn').onclick=()=>runBillingAction('checkout');
-$('premiumManageBtn').onclick=()=>runBillingAction('portal');
+$('premiumSubscribeBtn')?.addEventListener('click',()=>runBillingAction('checkout'));
+$('premiumManageBtn')?.addEventListener('click',()=>runBillingAction('portal'));
 
 function handleSubscriptionReturn(){
   const params=new URLSearchParams(window.location.search);
@@ -620,10 +620,10 @@ function handleSubscriptionReturn(){
     accountNotice('O pagamento foi cancelado. Não foi criada nenhuma subscrição.','error');
   }
 }
-$('accountLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
-$('accountSecurityLogout').onclick=async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()};
-$('search').oninput=render;
-$('export').onclick=()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()};
+$('accountLogout')?.addEventListener('click',async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()});
+$('accountSecurityLogout')?.addEventListener('click',async()=>{if(confirm('Queres terminar a sessão do HW Price Check neste dispositivo?'))await accountSignOut()});
+$('search')?.addEventListener('input',render);
+$('export')?.addEventListener('click',()=>{const rows=[['Modelo','Ano','Preço','Portes','Valor mínimo','Decisão'],...db.items.map(x=>[x.model,x.year,x.ask,x.shipping,x.min,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()});
 
 $('newsletterForm')?.addEventListener('submit',async e=>{
  e.preventDefault();
@@ -640,4 +640,4 @@ $('newsletterForm')?.addEventListener('submit',async e=>{
  finally{button.disabled=false;button.textContent='Subscrever'}
 });
 
-window.HWPC_MAIN_READY=true;updateVisitorCounter();translate();$('contactLink').onclick=e=>{e.preventDefault();alert('O contacto de suporte será publicado aqui assim que estiver definido.');};$('termsLink').onclick=e=>{e.preventDefault();alert('Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');};$('privacyLink').onclick=e=>{e.preventDefault();alert('Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');};$('cookiesLink').onclick=e=>{e.preventDefault();alert('A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');};if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.HWPC_MAIN_READY=true;translate();const bindInfoLink=(id,message)=>{const link=$(id);if(link)link.onclick=e=>{e.preventDefault();alert(message)}};bindInfoLink('contactLink','O contacto de suporte será publicado aqui assim que estiver definido.');bindInfoLink('termsLink','Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');bindInfoLink('privacyLink','Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');bindInfoLink('cookiesLink','A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});

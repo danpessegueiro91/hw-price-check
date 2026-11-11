@@ -223,9 +223,8 @@ const idx={en:0,es:1,fr:2,de:3,it:4,nl:5,br:6};
 const originals=new WeakMap(),attrs=new WeakMap();
 const languageSelect=document.getElementById('language');
 const validLanguages=['pt','en','es','fr','de','it','nl','br'];
-const savedLanguage=()=>{try{return localStorage.getItem('hwpc-language')||localStorage.getItem('hwpc_lang')||'pt'}catch(_){return 'pt'}};
-const lang=()=>languageSelect?.value||savedLanguage();
-if(languageSelect){const saved=savedLanguage();if(validLanguages.includes(saved))languageSelect.value=saved;}
+const lang=()=>languageSelect?.value||'pt';
+if(languageSelect&&!validLanguages.includes(languageSelect.value))languageSelect.value='pt';
 const dictionaryKeys=Object.keys(D).sort((a,b)=>b.length-a.length);
 const translateValue=(raw,L,col)=>{
  if(L==='pt')return raw;
@@ -275,7 +274,7 @@ const translateText=()=>{
   heroSearch.setAttribute('aria-label',translateValue('Pesquisar modelo',L,col));
  }
  document.documentElement.lang=({pt:'pt-PT',br:'pt-BR',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
- try{localStorage.setItem('hwpc-language',L);localStorage.setItem('hwpc_lang',L)}catch(_){}
+ // Language stays in the active UI; authenticated users sync it through account metadata.
  // MyMemory: tradução automática de fallback para textos ainda não existentes no dicionário.
  const mmCacheKey='hwpc-mymemory-cache-v1';
  const mmUsageKey='hwpc-mymemory-usage-v1';
@@ -336,7 +335,7 @@ const translateText=()=>{
  translateUnknown();
 };
 let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFrame(()=>{queued=false;translateText()})};
-languageSelect?.addEventListener('change',()=>{try{localStorage.setItem('hwpc-language',languageSelect.value)}catch(_){};run()});
+languageSelect?.addEventListener('change',run);
 new MutationObserver(run).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
 document.addEventListener('DOMContentLoaded',run);setTimeout(run,0);
 })();
