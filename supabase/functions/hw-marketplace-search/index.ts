@@ -40,8 +40,9 @@ async function soldgraph(path: string, params: Record<string, string>) {
   let response = await fetch(url, { headers, signal: AbortSignal.timeout(30000) });
   let data = await response.json();
   if (!response.ok) throw new Error("Soldgraph " + response.status + ": " + JSON.stringify(data).slice(0, 400));
-  for (let attempt = 0; response.status === 202 && data?.poll_url && attempt < 3; attempt++) {
-    const poll = new URL(String(data.poll_url), BASE);
+  const pollPath = data?.poll_url;
+  for (let attempt = 0; data?.status === "pending" && pollPath && attempt < 4; attempt++) {
+    const poll = new URL(String(pollPath), BASE);
     poll.searchParams.set("wait", "20");
     response = await fetch(poll, { headers, signal: AbortSignal.timeout(25000) });
     data = await response.json();
