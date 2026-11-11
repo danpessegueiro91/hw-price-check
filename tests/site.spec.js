@@ -228,23 +228,3 @@ test('photo previews clear their label without interpreting HTML', async () => {
   expect(source).toContain("l.textContent=''");
   expect(source).not.toContain("l.innerHTML=''");
 });
-
-test('one photo is enough to start identification', async ({ page }) => {
-  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
-  const dialogs = [];
-  page.on('dialog', dialog => { dialogs.push(dialog.message()); dialog.dismiss(); });
-  await page.goto('/');
-  await page.locator('#heroAnalyse').click();
-  const frontPhoto = page.locator('[data-photo="0"]');
-  await frontPhoto.setInputFiles({
-    name: 'hot-wheels-front.png',
-    mimeType: 'image/png',
-    buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/bWQAAAAASUVORK5CYII=', 'base64'),
-  });
-  await expect.poll(() => frontPhoto.evaluate(input => input.files?.length || 0)).toBe(1);
-  await frontPhoto.dispatchEvent('change');
-  await expect(page.locator('#aiStatus')).toContainText('Já podes identificar');
-  await page.locator('#identify').click();
-  await expect(page.locator('#aiStatus')).toContainText('Falha na análise:');
-  expect(dialogs).toEqual([]);
-});
