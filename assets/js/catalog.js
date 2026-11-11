@@ -75,15 +75,17 @@
  const IMAGES={
   "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
   "2026|th|'92 Dodge Viper RT/10":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
-  "2026|th|Electro Silhouette":"https://99diecast.com/cdn/shop/files/HW-JJM02_front_700x700.jpg?v=1774538413",
-  "2026|sth|Ferrari F40 Competizione":"https://i.ebayimg.com/images/g/-g8AAeSwHCdpZxXJ/s-l1600.jpg",
-  "2026|sth|'64 Impala":"https://i.ebayimg.com/images/g/8RQAAeSwkcppw~3W/s-l960.jpg",
-  "2026|sth|'87 Ford Sierra Cosworth":"https://wheelcollectors.com/cdn/shop/files/20260225_112033_800x.jpg?v=1772046001",
-  "2026|sth|Drift-Ender":"https://i.ebayimg.com/images/g/IMUAAeSwTyVpuZ7N/s-l1600.jpg",
-  "2026|sth|Porsche 911 Carrera RS 2.7":"https://i.ebayimg.com/images/g/xmkAAeSw8GhqBHDI/s-l400.jpg"
+  "2026|th|Electro Silhouette":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
+  "2026|sth|Ferrari F40 Competizione":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ferrari-F40-Competizione-Int-Card.jpg",
+  "2026|sth|'64 Impala":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-STH-64-Impala-US-Card.jpg",
+  "2026|sth|'87 Ford Sierra Cosworth":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-87-Ford-Sierra-Cosworth-US-Card.jpg",
+  "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
+  "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg"
  };
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
+ const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
+ const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
  let selected=null;
  function closeDetail(){$('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null}
@@ -97,6 +99,7 @@
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').href=source(item);
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
+  guardImage($('catalogDetailImage'),item);
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -114,6 +117,7 @@
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
+  grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
  };
  $('catalogDetailClose')?.addEventListener('click',closeDetail);
