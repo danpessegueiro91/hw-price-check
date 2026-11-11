@@ -30,11 +30,12 @@ async function consumeQuota(req: Request) {
   return data;
 }
 
-const BASE = "https://api.soldgraph.com";
+const API_ORIGIN = "https://api.soldgraph.com";
+const API_BASE = API_ORIGIN + "/v1";
 const KEY = () => Deno.env.get("SOLDGRAPH_API_KEY") || Deno.env.get("SOLDGRAPH_KEY") || "";
 
 async function soldgraph(path: string, params: Record<string, string>) {
-  const url = new URL(BASE + path);
+  const url = new URL(API_BASE + path);
   for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
   const headers = { Authorization: "Bearer " + KEY() };
   let response = await fetch(url, { headers, signal: AbortSignal.timeout(30000) });
@@ -42,7 +43,7 @@ async function soldgraph(path: string, params: Record<string, string>) {
   if (!response.ok) throw new Error("Soldgraph " + response.status + ": " + JSON.stringify(data).slice(0, 400));
   const pollPath = data?.poll_url;
   for (let attempt = 0; data?.status === "pending" && pollPath && attempt < 4; attempt++) {
-    const poll = new URL(String(pollPath), BASE);
+    const poll = new URL(String(pollPath), API_ORIGIN);
     poll.searchParams.set("wait", "20");
     response = await fetch(poll, { headers, signal: AbortSignal.timeout(25000) });
     data = await response.json();
