@@ -235,11 +235,14 @@ test('one photo is enough to start identification', async ({ page }) => {
   page.on('dialog', dialog => { dialogs.push(dialog.message()); dialog.dismiss(); });
   await page.goto('/');
   await page.locator('#heroAnalyse').click();
-  await page.locator('[data-photo="0"]').setInputFiles({
+  const frontPhoto = page.locator('[data-photo="0"]');
+  await frontPhoto.setInputFiles({
     name: 'hot-wheels-front.png',
     mimeType: 'image/png',
     buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/bWQAAAAASUVORK5CYII=', 'base64'),
   });
+  await expect.poll(() => frontPhoto.evaluate(input => input.files?.length || 0)).toBe(1);
+  await frontPhoto.dispatchEvent('change');
   await expect(page.locator('#aiStatus')).toContainText('Já podes identificar');
   await page.locator('#identify').click();
   await expect(page.locator('#aiStatus')).toContainText('Falha na análise:');
