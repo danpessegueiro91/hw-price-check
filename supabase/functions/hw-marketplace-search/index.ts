@@ -79,7 +79,7 @@ async function soldgraphSoldHistory(query: string) {
 
 
 function modelKey(value: string) {
-  return value.normalize("NFKD").replace(/[\u0300-\\u036f]/g, "").toLowerCase()
+  return value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase()
     .replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ").slice(0, 180);
 }
 function saleAmount(row: Record<string, any>): number | null {
