@@ -79,8 +79,8 @@ async function soldgraphSoldHistory(query: string) {
 
 
 function modelKey(value: string) {
-  return value.normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ").trim().replace(/\\s+/g, " ").slice(0, 180);
+  return value.normalize("NFKD").replace(/[\u0300-\\u036f]/g, "").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ").slice(0, 180);
 }
 function saleAmount(row: Record<string, any>): number | null {
   const candidates = [row.sold_price?.value, row.displayed_price?.amount, row.price?.amount,
@@ -130,7 +130,7 @@ Deno.serve(async (req: Request) => {
     const variant = String(body.variant || "").trim().slice(0, 180);
     if (body.action === "history") {
       if (!query) return json({ error: "missing_query", message: "Indica o modelo a consultar." }, 400);
-      const token = (req.headers.get("Authorization") || "").replace(/^Bearer\\s+/i, "");
+      const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
       const parts = token.split(".");
       if (parts.length !== 3) return json({ error: "authentication_required" }, 401);
       const encoded = parts[1].replace(/-/g, "+").replace(/_/g, "/");
