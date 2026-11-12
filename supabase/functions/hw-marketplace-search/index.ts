@@ -52,6 +52,31 @@ async function soldgraph(path: string, params: Record<string, string>) {
   return { status: data?.status || (response.status === 200 ? "complete" : "pending"), result: data?.result || null, error: data?.error || null, credits: Number(data?.credits || 0) };
 }
 
+async function soldgraphSoldHistory(query: string) {
+  const rows: Record<string, unknown>[] = [];
+  let page = 1;
+  let credits = 0;
+  let status = "complete";
+  // eBay exposes paginated sold results. Fetch up to five pages (1,000 sales)
+  // so quieter searches can reach further back than the first page.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const value = await soldgraph("/ebay/sold", {
+      q: query, country: "uk", page: String(page), count: "200", sort: "recently_sold"
+    });
+    credits += value.credits;
+    if (value.status !== "complete" || !value.result) {
+      status = value.status || "pending";
+      break;
+    }
+    const pageRows = Array.isArray(value.result.data) ? value.result.data : [];
+    rows.push(...pageRows);
+    const nextPage = Number(value.result.next_page);
+    if (!Number.isFinite(nextPage) || nextPage <= page || pageRows.length === 0) break;
+    page = nextPage;
+  }
+  return { status, result: { data: rows }, error: null, credits };
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
@@ -72,7 +97,7 @@ Deno.serve(async (req: Request) => {
       soldgraph("/vinted/listings", { q: query, country: "pt", page: "1" }),
       soldgraph("/ebay/listings", { q: query, country: "uk", page: "1" }),
       soldgraph("/depop/listings", { q: query, country: "uk", page: "1" }),
-      soldgraph("/ebay/sold", { q: query, country: "uk", page: "1", count: "40" })
+      soldgraphSoldHistory(query)
     ]);
     const sources = ["Vinted PT", "eBay UK", "Depop UK", "eBay UK · vendas"];
     const active: unknown[] = [];
