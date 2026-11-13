@@ -85,21 +85,27 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
 </style></head><body>
 <div id="authGate" class="hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="authTitle"><button id="authClose" class="auth-close auth-gate-close" type="button" aria-label="Fechar janela de conta" title="Fechar">×</button><div class="auth"><div class="brand">HW <b>PRICE CHECK</b></div><h2 id="authTitle">Entrar na tua conta</h2><p class="muted" id="authIntro">Podes experimentar sem conta. Depois das 3 pesquisas gratuitas, cria uma conta ou inicia sessão para continuar.</p><div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div><div class="field"><label id="pwLabel">Palavra-passe</label><input id="password" type="password" minlength="8" autocomplete="current-password"></div><div class="actions"><button class="btn primary" id="login">Entrar</button><button class="btn" id="signup">Criar conta</button></div><p class="note" id="authStatus">Os teus dados ficam privados na tua conta.</p></div></div>
 
-<header class="top site-header" id="top">
+<header class="top site-header hwpc-topbar" id="top">
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" title="Menu"><span></span><span></span><span></span></button>
   <a class="brand brand-lockup" href="./" aria-label="HW Price Check - página inicial" title="Ir para a página inicial"><img class="site-logo" src="./assets/hwpc-logo-original.png?v=20261109" alt="HW Price Check — logótipo com gato preto e chama"></a>
-  <nav class="primary-nav" aria-label="Navegação principal">
-    <button class="nav-link active" data-page="home">⌂ <span>Início</span></button>
-    <button class="nav-link" data-page="analyse">⌕ <span>Pesquisar</span></button>
-    <button class="nav-link" data-page="collection" id="heroCollection">♧ <span>Coleções</span></button>
-    <button class="nav-link" data-page="guides">▤ <span>Guias</span></button>
-    <button class="nav-link" data-page="blog">▣ <span>Blog</span></button>
-    <button class="nav-link" data-page="about">ⓘ <span>Sobre</span></button>
+  <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
+    <button class="nav-link active" data-page="home"><span>Início</span></button>
+    <button class="nav-link" data-page="analyse"><span>Pesquisar</span></button>
+    <button class="nav-link" data-page="collection" id="heroCollection"><span>Coleções</span></button>
+    <button class="nav-link" data-page="guides"><span>Guias</span></button>
+    <button class="nav-link" data-page="blog"><span>Blog</span></button>
+    <button class="nav-link" data-page="about"><span>Sobre</span></button>
   </nav>
+  <form class="header-search" id="headerSearchForm" role="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 5 5"></path></svg>
+    <input id="headerSearchInput" type="search" placeholder="Procura um Hot Wheels, série ou código..." aria-label="Pesquisar Hot Wheels">
+    <button type="submit" aria-label="Pesquisar">Pesquisar</button>
+  </form>
   <div class="header-actions">
     <select id="language" class="lang" aria-label="Idioma"><option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option><option value="fr">FR</option><option value="de">DE</option><option value="it">IT</option><option value="nl">NL</option><option value="br">PT-BR</option></select>
     <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">☾</button>
-    <button class="btn" id="account">♙ <span>Entrar</span></button>
-    <button class="btn primary" id="signupTop">♟ <span>Criar Conta</span></button>
+    <button class="icon-action" id="account" aria-label="A minha conta" title="A minha conta"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21c.5-4.2 3-6.5 7.5-6.5s7 2.3 7.5 6.5"></path></svg></button>
+    <button class="btn primary" id="signupTop"><span>Criar conta</span></button>
   </div>
 </header>
 <main>
@@ -742,4 +748,30 @@ button.account-shortcut:hover,a.btn:hover,#homePage .camera-button:hover{
 .free-plan-strip .signup-car-icon{width:22px;height:22px;vertical-align:middle;margin-right:8px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .free-plan-strip .free-intro,.free-plan-strip .plan-detail{gap:13px}
 @media(max-width:560px){.free-plan-strip .plan-icon{width:38px;height:38px;flex-basis:38px}.free-plan-strip .plan-icon svg{width:22px;height:22px}}
+</style><style id="HWPC_PCDIGA_STYLE_HEADER">
+/* Barra superior compacta inspirada em lojas de tecnologia, adaptada à identidade HW Price Check */
+#top.hwpc-topbar{height:76px;padding:0 clamp(14px,2.2vw,34px);gap:18px;background:#242424;border-bottom:1px solid #3b3b3b;box-shadow:0 3px 16px #0003;display:flex;align-items:center;position:relative;z-index:50}
+#top.hwpc-topbar .menu-toggle{width:28px;height:36px;padding:6px 2px;border:0;background:transparent;display:flex;flex-direction:column;justify-content:center;gap:5px;flex:none;cursor:pointer}
+#top.hwpc-topbar .menu-toggle span{display:block;width:23px;height:2px;border-radius:2px;background:#f2f2f2}
+#top.hwpc-topbar .brand-lockup{flex:0 0 158px;min-width:0;height:60px;margin:0}
+#top.hwpc-topbar .site-logo{width:158px;height:58px;object-fit:contain}
+#top.hwpc-topbar .primary-nav{flex:0 0 auto;gap:clamp(8px,1.1vw,18px);height:100%;justify-content:flex-start}
+#top.hwpc-topbar .nav-link{font-size:13px;font-weight:750;padding:0 2px;color:#e8e8e8}
+#top.hwpc-topbar .nav-link.active,#top.hwpc-topbar .nav-link:hover{color:#ff6747}
+#top.hwpc-topbar .nav-link.active:after{height:2px;background:#ff6747}
+#top.hwpc-topbar .header-search{height:46px;min-width:150px;flex:1;display:flex;align-items:center;gap:10px;padding:0 13px;background:#3a3a3a;border:1px solid #444;border-radius:5px}
+#top.hwpc-topbar .header-search>svg{width:18px;height:18px;fill:none;stroke:#c9c9c9;stroke-width:1.8;flex:none}
+#top.hwpc-topbar .header-search input{min-width:0;flex:1;height:100%;border:0;outline:0;background:transparent;color:#fff;font-size:14px}
+#top.hwpc-topbar .header-search input::placeholder{color:#c4c4c4}
+#top.hwpc-topbar .header-search button{height:32px;padding:0 13px;border:0;border-radius:4px;background:#ff6747;color:#171717;font-size:12px;font-weight:800;cursor:pointer}
+#top.hwpc-topbar .header-actions{gap:13px;flex:none}
+#top.hwpc-topbar .lang{display:inline-flex!important;min-width:48px;width:48px;height:34px;padding:5px 5px;border:1px solid #4a4a4a;border-radius:4px;background:#303030;color:#eee;font-size:12px}
+#top.hwpc-topbar .theme-toggle{width:34px;height:34px;border:0;background:transparent;color:#f5d66b;font-size:23px}
+#top.hwpc-topbar .icon-action{width:34px;height:34px;padding:5px;border:0;background:transparent;color:#eee;display:grid;place-items:center;cursor:pointer}
+#top.hwpc-topbar .icon-action svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#top.hwpc-topbar #signupTop{height:38px;padding:0 14px;border-radius:4px;background:#ff6747;color:#171717;font-size:12px;font-weight:850}
+body.theme-light #top.hwpc-topbar{background:#262626;border-color:#3c3c3c}
+@media(max-width:1180px){#top.hwpc-topbar{gap:12px}#top.hwpc-topbar .brand-lockup{flex-basis:132px}#top.hwpc-topbar .site-logo{width:132px}#top.hwpc-topbar .primary-nav{gap:7px}#top.hwpc-topbar .nav-link{font-size:12px}#top.hwpc-topbar .header-actions{gap:7px}}
+@media(max-width:900px){#top.hwpc-topbar{height:auto;min-height:72px;flex-wrap:wrap;padding:9px 14px;gap:10px}#top.hwpc-topbar .brand-lockup{flex:0 0 135px;height:48px}#top.hwpc-topbar .site-logo{height:48px}#top.hwpc-topbar .primary-nav{display:none;position:absolute;top:66px;left:12px;right:12px;height:auto;padding:10px;background:#292929;border:1px solid #454545;border-radius:7px;box-shadow:0 12px 30px #0008;flex-direction:column;align-items:stretch;gap:0}#top.hwpc-topbar.nav-open .primary-nav{display:flex}#top.hwpc-topbar .nav-link{height:42px;justify-content:flex-start;padding:0 12px}#top.hwpc-topbar .nav-link.active:after{left:0;right:auto;top:7px;bottom:7px;width:3px;height:auto}#top.hwpc-topbar .header-search{order:5;flex:1 0 100%;height:42px}#top.hwpc-topbar .header-actions{margin-left:auto}#top.hwpc-topbar .lang{display:none!important}}
+@media(max-width:560px){#top.hwpc-topbar{gap:8px;padding:8px 11px}#top.hwpc-topbar .brand-lockup{flex-basis:118px}#top.hwpc-topbar .site-logo{width:118px}#top.hwpc-topbar .header-actions{gap:4px}#top.hwpc-topbar #signupTop{height:34px;padding:0 9px;font-size:11px}#top.hwpc-topbar .icon-action{width:30px;height:32px}#top.hwpc-topbar .theme-toggle{width:30px;height:32px;font-size:20px}#top.hwpc-topbar .header-search button{padding:0 9px;font-size:11px}}
 </style></body></html>
