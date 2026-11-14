@@ -83,116 +83,56 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
 @media(max-width:850px){.account-layout{grid-template-columns:1fr}.account-sidebar{position:static;display:flex;gap:5px;overflow-x:auto;padding:8px}.account-sidebar-brand{display:none}.account-side-link{width:auto;flex:0 0 auto;padding:9px 10px;white-space:nowrap}.account-side-link.logout{margin:0;border:1px solid transparent;padding-top:9px;border-radius:10px}.account-overview-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.account-page{padding-top:1px}.account-hero{align-items:flex-start;flex-direction:column;padding:21px 18px}.account-user-chip{width:100%;min-width:0}.account-kpis{grid-template-columns:1fr 1fr}.account-overview-grid,.account-form-grid{grid-template-columns:1fr}.account-panel-head{align-items:flex-start;flex-direction:column}.account-sidebar{margin-bottom:3px}.account-side-link{font-size:10px;padding:8px}.account-kpi{padding:13px}.account-kpi strong{font-size:21px}.account-activity-date{display:none}}
 </style>
-<style id="HWPC_GLOBAL_BUTTON_TYPOGRAPHY_20261114">
-/* Tipografia comum e legível em todos os controlos clicáveis do site. */
-:where(button, .btn, a.btn, [role="button"], input[type="button"], input[type="submit"], input[type="reset"]),
-:where(button, .btn, a.btn, [role="button"]) :where(span, strong, em, b, small, i) {
-  -webkit-text-stroke: .85px #000 !important;
-  text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.65) !important;
-}
-:where(button, .btn, a.btn, [role="button"]) {
-  letter-spacing: normal !important;
+
+
+
+
+
+
+<style id="HWPC_RACING_BUTTON_TYPOGRAPHY_20261114">
+@import url("https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap");
+/* Linguagem visual inspirada na tipografia de corrida/Hot Wheels, sem contorno pesado. */
+body :is(button, .btn, .tab, [role="button"], input[type="button"], input[type="submit"], input[type="reset"]),
+body :is(button, .btn, .tab, [role="button"]) *,
+body input[type="button"],
+body input[type="submit"],
+body input[type="reset"] {
+  font-family: "Racing Sans One", "Arial Black", sans-serif !important;
+  font-style: italic !important;
+  font-weight: 400 !important;
+  -webkit-text-stroke: .3px rgba(0,0,0,.72) !important;
+  -webkit-text-fill-color: currentColor !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.48) !important;
+  paint-order: stroke fill;
+  letter-spacing: .01em !important;
   word-spacing: normal !important;
 }
-/* A etiqueta da conta tem espaço próprio e nunca comprime as letras. */
 #top #account.icon-action {
   display: inline-flex !important;
   flex-direction: row !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  width: auto !important;
-  min-width: 132px !important;
-  height: 40px !important;
-  padding: 0 13px !important;
-  white-space: nowrap !important;
-  letter-spacing: .015em !important;
-  word-spacing: normal !important;
-  font-size: 12px !important;
-  line-height: 1.25 !important;
-  font-weight: 800 !important;
-}
-#top #account.icon-action > span {
-  display: inline-block !important;
-  flex: 0 0 auto !important;
-  white-space: nowrap !important;
-  letter-spacing: .015em !important;
-  word-spacing: normal !important;
-  line-height: 1.25 !important;
-}
-#top #account.icon-action > span:first-child {
-  font-size: 16px !important;
-}
-@media(max-width:600px) {
-  #top #account.icon-action {
-    min-width: 120px !important;
-    height: 34px !important;
-    padding: 0 9px !important;
-    gap: 6px !important;
-    font-size: 11px !important;
-  }
-}
-@media(max-width:390px) {
-  #top #account.icon-action {
-    min-width: 116px !important;
-    padding: 0 7px !important;
-    font-size: 10px !important;
-  }
-}
-</style>
-
-
-<style id="HWPC_FORCE_VISIBLE_BUTTON_TEXT_20261114">
-/* Contorno visível em TODOS os textos de controlos clicáveis. */
-body :is(button, .btn, .tab, [role="button"], input[type="button"], input[type="submit"], input[type="reset"]),
-body :is(button, .btn, .tab, [role="button"]) *,
-body input[type="button"],
-body input[type="submit"],
-body input[type="reset"] {
-  -webkit-text-stroke: 1.25px #050505 !important;
-  -webkit-text-fill-color: currentColor !important;
-  text-shadow:
-    -1px -1px 0 #050505,
-     1px -1px 0 #050505,
-    -1px  1px 0 #050505,
-     1px  1px 0 #050505,
-     0 2px 3px rgba(0,0,0,.9) !important;
-  paint-order: stroke fill;
-}
-/* Mantém os textos dos botões com espaçamento normal e sem compressão. */
-body :is(button, .btn, .tab, [role="button"]) {
-  letter-spacing: normal !important;
-  word-spacing: normal !important;
-  font-kerning: normal !important;
-}
-#top #account.icon-action {
-  display: inline-flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 9px !important;
   width: 150px !important;
   min-width: 150px !important;
   max-width: 150px !important;
-  padding: 0 12px !important;
+  padding: 0 11px !important;
   white-space: nowrap !important;
-  overflow: visible !important;
   font-size: 13px !important;
-  font-weight: 850 !important;
-  letter-spacing: .035em !important;
-  word-spacing: .08em !important;
+  letter-spacing: .01em !important;
+  word-spacing: normal !important;
   line-height: 1.3 !important;
 }
 #top #account.icon-action > span {
   display: inline-block !important;
   flex: 0 0 auto !important;
   white-space: nowrap !important;
-  letter-spacing: .035em !important;
-  word-spacing: .08em !important;
+  letter-spacing: .01em !important;
   line-height: 1.3 !important;
-  font-size: 13px !important;
 }
 #top #account.icon-action > span:first-child {
+  font-family: Arial, sans-serif !important;
+  font-style: normal !important;
   font-size: 16px !important;
 }
 @media(max-width:600px) {
@@ -203,7 +143,6 @@ body :is(button, .btn, .tab, [role="button"]) {
     font-size: 12px !important;
     padding: 0 9px !important;
   }
-  #top #account.icon-action > span {font-size:12px!important}
 }
 </style>
 
