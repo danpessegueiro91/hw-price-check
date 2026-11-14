@@ -86,7 +86,6 @@ footer.site-footer .footer-brand-logo .site-logo{display:block;width:100%;height
 <div id="authGate" class="hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="authTitle"><button id="authClose" class="auth-close auth-gate-close" type="button" aria-label="Fechar janela de conta" title="Fechar">×</button><div class="auth"><div class="brand">HW <b>PRICE CHECK</b></div><h2 id="authTitle">Entrar na tua conta</h2><p class="muted" id="authIntro">Podes experimentar sem conta. Depois das 3 pesquisas gratuitas, cria uma conta ou inicia sessão para continuar.</p><div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div><div class="field"><label id="pwLabel">Palavra-passe</label><input id="password" type="password" minlength="8" autocomplete="current-password"></div><div class="actions"><button class="btn primary" id="login">Entrar</button><button class="btn" id="signup">Criar conta</button></div><p class="note" id="authStatus">Os teus dados ficam privados na tua conta.</p></div></div>
 
 <header class="top site-header hwpc-topbar" id="top">
-  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" title="Menu"><span></span><span></span><span></span></button>
   <a class="brand brand-lockup" href="./" aria-label="HW Price Check - página inicial" title="Ir para a página inicial"><img class="site-logo" src="./assets/hwpc-logo-original.png?v=20261109" alt="HW Price Check — logótipo com gato preto e chama"></a>
   <nav class="primary-nav" id="primaryNav" aria-label="Navegação principal">
     <button class="nav-link active" data-page="home"><span>Início</span></button>
@@ -767,4 +766,226 @@ body.theme-light #top.hwpc-topbar{background:rgba(3,10,21,.96);border-color:#243
 </style><style id="HWPC_HEADER_MODAL_LAYER_FIX">
 #top.hwpc-topbar{position:sticky;top:0;z-index:30}
 #authGate,.catalog-dialog-overlay{z-index:100!important}
-</style></body></html>
+</style>
+<style id="HWPC_CLEAN_HEADER_LAYOUT_20261114">
+/* Cabeçalho simplificado: logótipo, navegação legível e ações alinhadas. */
+#top.hwpc-topbar{
+  display:grid!important;
+  grid-template-columns:178px minmax(0,1fr) auto;
+  align-items:center;
+  gap:clamp(12px,1.8vw,26px);
+  width:100%;
+  min-height:78px;
+  height:78px;
+  padding:0 clamp(18px,3vw,42px);
+  background:rgba(5,13,26,.97);
+  border-bottom:1px solid #29405d;
+  box-shadow:0 7px 24px rgba(0,0,0,.28);
+}
+#top.hwpc-topbar .menu-toggle{display:none!important}
+#top.hwpc-topbar .brand-lockup{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:178px;
+  min-width:0;
+  height:64px;
+  margin:0;
+  padding:0;
+  flex:none;
+}
+#top.hwpc-topbar .site-logo{
+  display:block;
+  width:100%;
+  height:60px;
+  object-fit:contain;
+  object-position:left center;
+}
+#top.hwpc-topbar .primary-nav{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(4px,.7vw,10px);
+  width:auto;
+  min-width:0;
+  height:100%;
+  margin:0;
+  padding:0;
+  overflow:visible;
+  order:initial;
+  flex:none;
+}
+#top.hwpc-topbar .nav-link{
+  position:relative;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  flex:0 0 auto;
+  height:42px;
+  min-width:0;
+  padding:0 clamp(9px,1vw,15px);
+  border:1px solid transparent!important;
+  border-radius:10px!important;
+  background:transparent!important;
+  color:#d5e0ee!important;
+  font:700 13px/1.1 Inter,system-ui,sans-serif!important;
+  letter-spacing:.01em;
+  white-space:nowrap;
+  text-shadow:none!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:pointer;
+}
+#top.hwpc-topbar .nav-link span{display:inline-block;line-height:1.1}
+#top.hwpc-topbar .nav-link:after{
+  content:"";
+  position:absolute;
+  left:12px;
+  right:12px;
+  bottom:3px;
+  width:auto;
+  height:2px;
+  border:0;
+  border-radius:2px;
+  background:transparent;
+}
+#top.hwpc-topbar .nav-link:hover{
+  color:#ffd400!important;
+  background:#10213a!important;
+  border-color:#29405d!important;
+}
+#top.hwpc-topbar .nav-link.active{
+  color:#ffd400!important;
+  background:rgba(255,212,0,.09)!important;
+  border-color:rgba(255,212,0,.3)!important;
+}
+#top.hwpc-topbar .nav-link.active:after{background:#ffd400}
+#top.hwpc-topbar .header-actions{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:9px;
+  min-width:0;
+  margin:0;
+  flex:none;
+}
+#top.hwpc-topbar .header-actions #language.lang{
+  width:54px;
+  min-width:54px;
+  height:38px;
+  padding:0 7px;
+  border:1px solid #29405d;
+  border-radius:9px;
+  background:#0d1b2e;
+  color:#dce7f5;
+  font-size:12px;
+  font-weight:750;
+}
+#top.hwpc-topbar .theme-toggle{
+  display:grid;
+  place-items:center;
+  width:39px;
+  height:39px;
+  padding:0;
+  border:1px solid #29405d;
+  border-radius:10px;
+  background:#0d1b2e;
+  color:#ffd400;
+  font-size:19px;
+  box-shadow:none;
+}
+#top.hwpc-topbar .icon-action{
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  padding:0;
+  border:1px solid #29405d;
+  border-radius:10px;
+  background:#0d1b2e;
+  color:#e7eef8;
+}
+#top.hwpc-topbar .icon-action:hover,
+#top.hwpc-topbar .theme-toggle:hover{
+  border-color:#ffd400;
+  background:#142641;
+  color:#ffd400;
+}
+#top.hwpc-topbar #signupTop{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:40px;
+  min-width:112px;
+  padding:0 15px;
+  border:1px solid #ffe16a!important;
+  border-radius:10px!important;
+  background:linear-gradient(135deg,#ffe11b,#ffc400)!important;
+  color:#101827!important;
+  font-size:12px;
+  font-weight:850;
+  line-height:1;
+  text-shadow:none!important;
+  box-shadow:0 5px 16px rgba(255,207,0,.17)!important;
+  white-space:nowrap;
+}
+#top.hwpc-topbar #signupTop span{display:inline-block;line-height:1}
+body.theme-light #top.hwpc-topbar{background:rgba(5,13,26,.97);border-color:#29405d}
+@media(max-width:1050px){
+  #top.hwpc-topbar{
+    grid-template-columns:150px minmax(0,1fr);
+    grid-template-rows:58px 42px;
+    gap:2px 14px;
+    height:auto;
+    min-height:108px;
+    padding:7px 18px 8px;
+  }
+  #top.hwpc-topbar .brand-lockup{grid-column:1;grid-row:1;width:150px;height:54px}
+  #top.hwpc-topbar .site-logo{height:52px}
+  #top.hwpc-topbar .header-actions{grid-column:2;grid-row:1}
+  #top.hwpc-topbar .primary-nav{
+    grid-column:1/-1;
+    grid-row:2;
+    justify-content:flex-start;
+    gap:6px;
+    height:42px;
+  }
+  #top.hwpc-topbar .nav-link{height:36px;padding:0 12px;font-size:12px!important}
+}
+@media(max-width:600px){
+  #top.hwpc-topbar{
+    grid-template-columns: minmax(112px,1fr) auto;
+    grid-template-rows:48px 40px;
+    gap:3px 8px;
+    min-height:96px;
+    padding:6px 11px 7px;
+  }
+  #top.hwpc-topbar .brand-lockup{width:132px;height:46px}
+  #top.hwpc-topbar .site-logo{height:45px}
+  #top.hwpc-topbar .header-actions{gap:5px}
+  #top.hwpc-topbar .header-actions #language.lang{width:43px;min-width:43px;height:33px;padding:0 3px;font-size:11px}
+  #top.hwpc-topbar .theme-toggle{width:33px;height:33px;font-size:17px}
+  #top.hwpc-topbar .icon-action{width:33px;height:33px}
+  #top.hwpc-topbar .icon-action svg{width:19px;height:19px}
+  #top.hwpc-topbar #signupTop{height:34px;min-width:0;padding:0 9px;font-size:11px}
+  #top.hwpc-topbar .primary-nav{
+    width:100%;
+    height:40px;
+    gap:5px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    justify-content:flex-start;
+    scrollbar-width:none;
+  }
+  #top.hwpc-topbar .primary-nav::-webkit-scrollbar{display:none}
+  #top.hwpc-topbar .nav-link{height:34px;padding:0 10px;font-size:11px!important}
+}
+@media(max-width:390px){
+  #top.hwpc-topbar .brand-lockup{width:116px}
+  #top.hwpc-topbar .header-actions{gap:4px}
+  #top.hwpc-topbar .header-actions #language.lang{width:38px;min-width:38px}
+  #top.hwpc-topbar #signupTop{padding:0 7px;font-size:10px}
+}
+</style>
+</body></html>
