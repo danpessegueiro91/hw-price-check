@@ -175,7 +175,7 @@ body input[type="reset"] {
       <div class="hero-message">
         <img class="hero-hotwheels-logo" src="./assets/hwpc-logo-original.png?v=20261109" alt="Logótipo HW Price Check">
         <div class="hero-copy">
-          <h1 id="headline">Descobre o valor das tuas <em>Hot Wheels</em></h1>
+          <h1 id="headline"><span class="headline-intro">Descobre o valor das tuas</span><em>Hot Wheels</em></h1>
           <p class="hero-subtitle" id="subhead">Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.</p>
         </div>
       </div>
@@ -1169,6 +1169,45 @@ body.theme-light #top.hwpc-topbar{background:rgba(5,13,26,.97);border-color:#294
   }
   #homePage .hero-message h1{font-size:34px;max-width:100%}
   #homePage .hero-subtitle{font-size:14px;max-width:100%}
+}
+</style>
+
+
+<style id="HWPC_HEADLINE_TWO_LINE_20261117">
+/* Título do hero em duas linhas, com hierarquia tipográfica clara. */
+#homePage #headline{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:3px!important;
+  line-height:1.02!important;
+  letter-spacing:-.045em!important;
+}
+#homePage #headline .headline-intro{
+  display:block;
+  font-size:clamp(30px,3.05vw,43px);
+  line-height:1.12;
+  font-weight:850;
+  letter-spacing:-.035em;
+  color:#fff;
+}
+#homePage #headline em{
+  display:block!important;
+  margin:0!important;
+  font-size:clamp(43px,4.15vw,59px);
+  line-height:1.02!important;
+  font-weight:950!important;
+  font-style:italic!important;
+  letter-spacing:-.045em!important;
+}
+@media(max-width:850px){
+  #homePage #headline .headline-intro{font-size:clamp(29px,4.4vw,38px)}
+  #homePage #headline em{font-size:clamp(41px,5.5vw,52px)}
+}
+@media(max-width:560px){
+  #homePage #headline{gap:2px!important}
+  #homePage #headline .headline-intro{font-size:clamp(27px,7.1vw,33px)}
+  #homePage #headline em{font-size:clamp(39px,9vw,46px)}
 }
 </style>
 
