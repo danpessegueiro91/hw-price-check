@@ -1305,4 +1305,57 @@ body.theme-light #top.hwpc-topbar{background:rgba(5,13,26,.97);border-color:#294
 }
 </style>
 
+
+<style id="HWPC_HERO_HEADLINE_FINAL_WIDTH_AND_FONT_20261117">
+/* A largura do texto é independente da coluna da imagem: evita partir a frase. */
+#homePage .hero-copy{
+  width:min(650px,58vw)!important;
+  max-width:650px!important;
+}
+#homePage #headline{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+}
+#homePage #headline .headline-intro{
+  display:block!important;
+  width:max-content!important;
+  max-width:none!important;
+  white-space:nowrap!important;
+  font-size:clamp(31px,2.65vw,41px)!important;
+  line-height:1.12!important;
+  letter-spacing:-.045em!important;
+}
+/* Repõe a tipografia Racing Sans One original de “Hot Wheels”. */
+#homePage .hero-message h1 em,
+#homePage #headline em{
+  display:block!important;
+  width:max-content!important;
+  max-width:100%!important;
+  margin-top:7px!important;
+  font-family:"Racing Sans One","Arial Black",sans-serif!important;
+  font-style:italic!important;
+  font-weight:400!important;
+  letter-spacing:-.025em!important;
+  line-height:1.02!important;
+  color:#ffd800!important;
+  -webkit-text-fill-color:#ffd800!important;
+  -webkit-text-stroke:2px #ed1c24!important;
+  paint-order:stroke fill!important;
+  text-shadow:3px 3px 0 #ed1c24,5px 6px 0 #8f171b!important;
+  transform:skewX(-6deg)!important;
+}
+@media(max-width:850px){
+  #homePage .hero-copy{width:min(650px,72vw)!important;max-width:650px!important}
+  #homePage #headline .headline-intro{font-size:clamp(29px,3.6vw,36px)!important}
+}
+@media(max-width:560px){
+  #homePage .hero-copy{width:100%!important;max-width:100%!important}
+  #homePage #headline .headline-intro{
+    font-size:clamp(20px,5.1vw,27px)!important;
+    letter-spacing:-.05em!important;
+  }
+}
+</style>
+
 </body></html>
