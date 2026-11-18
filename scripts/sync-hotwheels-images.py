@@ -8,7 +8,7 @@ from __future__ import annotations
 import concurrent.futures, html, json, re, sys, time
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import quote, urljoin
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +41,8 @@ def catalog_items():
                 items.append({"year": year, "kind": kind, "name": name})
     if not items:
         raise RuntimeError("No catalog entries were parsed; refusing to overwrite manifest")
-    return items
+    # First rollout is deliberately limited to the current 2026 checklist.
+    return [item for item in items if item["year"] == "2026"]
 
 class MetaParser(HTMLParser):
     def __init__(self):
@@ -58,6 +59,15 @@ class MetaParser(HTMLParser):
     def handle_data(self, data):
         if self.in_title: self.title += data
         self.text_parts.append(data)
+
+def valid_image(url: str) -> bool:
+    try:
+        req = Request(url, headers={**HEADERS, "Range": "bytes=0-2047"})
+        with urlopen(req, timeout=20) as response:
+            content_type = response.headers.get("Content-Type", "").lower()
+            return response.status in (200, 206) and content_type.startswith("image/")
+    except Exception:
+        return False
 
 def search_item(item):
     query = quote(item["name"])
@@ -83,7 +93,7 @@ def search_item(item):
             if year not in text or not any(term in text for term in kind_terms) or (item["kind"] == "th" and is_super):
                 continue
             image = parser.meta.get("og:image") or parser.meta.get("twitter:image")
-            if image and image.startswith("https://"):
+            if image and image.startswith("https://") and valid_image(image):
                 return (f'{year}|{item["kind"]}|{item["name"]}', image, page_url)
         except Exception:
             continue
@@ -103,12 +113,14 @@ def main():
     if OUTPUT.exists():
         try: previous = json.loads(OUTPUT.read_text(encoding="utf-8")).get("images", {})
         except Exception: pass
-    # Preserve prior verified records when a source is temporarily unavailable.
+    # Keep only the 2026 pilot records; older years are intentionally out of scope.
+    previous = {key: value for key, value in previous.items() if key.startswith("2026|")}
     previous.update(found)
     expected = len(items)
     report = {
         "schemaVersion": 1,
         "source": "HWtreasure.com",
+        "scope": {"year": 2026, "types": ["th", "sth"]},
         "updatedAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "catalogModels": expected,
         "matchedImages": len(previous),
