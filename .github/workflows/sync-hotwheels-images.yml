@@ -1,0 +1,31 @@
+name: Sync Hot Wheels catalog photos
+on:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: hotwheels-photo-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Discover and verify catalog photos
+        run: python scripts/sync-hotwheels-images.py
+      - name: Commit updated photo manifest
+        run: |
+          if git diff --quiet -- assets/data/hotwheels-images.json; then
+            echo "Photo manifest is already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/hotwheels-images.json
+          git commit -m "chore: sync verified Hot Wheels catalog photos"
+          git push
