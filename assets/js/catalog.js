@@ -116,7 +116,7 @@
   th:{"'87 Buick Regal GNX":4.72,"'92 Dodge Viper RT/10":4.48,"Electro Silhouette":4.99,"Hot Wheengs":4.99,"Cone Shaker":4.99,"2016 Ford GT Race":8.06,"2 Jet Z":5.16,"Total Disposal":4.85,"Amaru GTC":4.99,"Sweet Driver":4.62,"Mad Manga":3.59,"Ford Model A Custom '31":2.77,"Fast Fish":4.48,"Nissan Skyline HT 2000GT-X":7.40,"Gazella GT":2.09},
   sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
  };
- const IMAGES={
+ let IMAGES={
   "2025|th|Ford Performance Supervan 4":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/10/2025-TH-Ford-Performance-Supervan-4-1.jpg",
   "2025|sth|'87 Audi quattro":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/09/2025-87-Audi-quattro-US-Card.jpg",
   "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
@@ -128,6 +128,12 @@
   "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg"
  };
+ // Images discovered by the scheduled, exact-match catalog synchronizer.
+ fetch("/assets/data/hotwheels-images.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{
+  if(!data?.images)return;
+  Object.entries(data.images).forEach(([key,record])=>{if(record?.verified&&record.image)IMAGES[key]=record.image;});
+  if(typeof renderCatalog==="function")renderCatalog();
+ }).catch(()=>{});
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
