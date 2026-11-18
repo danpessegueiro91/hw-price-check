@@ -1,9 +1,80 @@
 {
   "schemaVersion": 1,
   "source": "HWtreasure.com",
-  "updatedAt": null,
-  "catalogModels": 0,
-  "matchedImages": 0,
-  "images": {},
-  "pending": []
+  "scope": {
+    "year": 2026,
+    "types": [
+      "th",
+      "sth"
+    ]
+  },
+  "updatedAt": "2026-11-18T19:03:36.257Z",
+  "catalogModels": 30,
+  "matchedImages": 8,
+  "images": {
+    "2026|th|'87 Buick Regal GNX": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
+      "source": "https://www.hwtreasure.com/2026-2/",
+      "verified": true
+    },
+    "2026|th|'92 Dodge Viper RT/10": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
+      "source": "https://www.hwtreasure.com/2026-2/",
+      "verified": true
+    },
+    "2026|th|Electro Silhouette": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
+      "source": "https://www.hwtreasure.com/2026-2/",
+      "verified": true
+    },
+    "2026|sth|Ferrari F40 Competizione": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ferrari-F40-Competizione-Int-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/",
+      "verified": true
+    },
+    "2026|sth|'64 Impala": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-STH-64-Impala-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/",
+      "verified": true
+    },
+    "2026|sth|'87 Ford Sierra Cosworth": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-87-Ford-Sierra-Cosworth-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/",
+      "verified": true
+    },
+    "2026|sth|Drift-Ender": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/",
+      "verified": true
+    },
+    "2026|sth|Porsche 911 Carrera RS 2.7": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/",
+      "verified": true
+    }
+  },
+  "pending": [
+    "2026|th|Hot Wheengs",
+    "2026|th|Cone Shaker",
+    "2026|th|2016 Ford GT Race",
+    "2026|th|2 Jet Z",
+    "2026|th|Total Disposal",
+    "2026|th|Amaru GTC",
+    "2026|th|Sweet Driver",
+    "2026|th|Mad Manga",
+    "2026|th|Ford Model A Custom '31",
+    "2026|th|Fast Fish",
+    "2026|th|Nissan Skyline HT 2000GT-X",
+    "2026|th|Gazella GT",
+    "2026|sth|Ford Mustang GTD",
+    "2026|sth|Honda Civic Custom",
+    "2026|sth|Custom Otto",
+    "2026|sth|Lotus Sport Elise",
+    "2026|sth|Subaru Impreza",
+    "2026|sth|'94 Toyota Supra",
+    "2026|sth|Nissan Maxima Drift Car",
+    "2026|sth|'23 Ram 1500",
+    "2026|sth|'70 Plymouth AAR Cuda",
+    "2026|sth|'67 Pontiac Firebird 400"
+  ]
 }
