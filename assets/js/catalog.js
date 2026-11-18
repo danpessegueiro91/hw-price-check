@@ -3,6 +3,11 @@
  window.HWPC_UI_PATCH_NOV2026=true;
  const $=id=>document.getElementById(id);
 
+ const galleryStyle=document.createElement('style');
+ galleryStyle.id='HWPC_COLLECTOR_MARKET_GALLERY';
+ galleryStyle.textContent=`.catalog-market-summary{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:12px 0 18px;padding:17px 20px;border:1px solid #4c3c80;border-radius:15px;background:linear-gradient(110deg,#21123e,#11182d 72%);box-shadow:0 12px 28px #0004}.catalog-market-summary>div:first-child{display:grid;gap:3px;min-width:180px}.catalog-market-kicker{font-size:10px;letter-spacing:.14em;font-weight:900;color:#b8a3ff}.catalog-market-summary strong{font-size:clamp(25px,4vw,36px);line-height:1.05;color:#fff}.catalog-market-summary small,.catalog-market-note{font-size:11px;color:#b8bfd0}.catalog-market-note{max-width:360px;text-align:right;line-height:1.5}.catalog-thumb{cursor:zoom-in;transition:transform .18s,border-color .18s}.catalog-thumb:hover{transform:scale(1.025);border-color:#ffd629}.catalog-thumb img{cursor:zoom-in}.catalog-card{position:relative}.catalog-card .catalog-price{font-size:13px;font-weight:850;color:#ffe16a}.catalog-card .catalog-actions{margin-top:7px}@media(max-width:560px){.catalog-market-summary{align-items:flex-start;flex-direction:column;gap:8px;padding:14px}.catalog-market-note{text-align:left}}`;
+ document.head.append(galleryStyle);
+
  // Homepage follows the supplied reference; archive and secondary sections move to their own pages.
  const main=document.querySelector('main'),app=$('appWorkspace'),guide=$('guidesSection'),catalog=$('treasureCatalog'),about=$('aboutSection');
  if(main&&app&&guide&&catalog){
@@ -34,6 +39,8 @@
 
  // Verified historical lists. 2007–2011 STH are Super versions of the same TH casting.
  const Y={
+ "2025":{th:"Ford Performance Supervan 4|Fish'd & Chip'd|Mailed It!|Pedal Driver|Rig Storm|'85 Honda City Turbo II|Birthday Burner|Chill Mill|Nissan Leaf NISMO RC_02|Chevroletor|Honda S800 Racing|Shark Bite|1966 Triumph Tiger 100|'84 Audi Sport quattro|Triumph TR6",sth:"'87 Audi quattro|Hirohata Merc|Hi-Roller II|1975 Datsun Sunny Truck (B120)|Aston Martin DB4GT High-Speed Edition|'20 Jeep Gladiator|Porsche 911 Rallye|'71 Mustang Funny Car|'62 Corvette Gasser|McLaren Speedtail|'94 Bugatti EB110 SS|'73 Honda Civic Custom|'20 Dodge Charger Hellcat|BMW M3 Wagon|Ford RS200"},
+ "2024":{th:"'47 Chevy Fleetline|Ain't Fare|Tooligan|Custom '53 Chevy|Batman Forever Batmobile|Ford Mustang Mach-E 1400|Draggin' Wagon|Purple Passion|Honda Super Cub Custom|Bone Shaker|Car-de-Asada|Hot Wheels Ford Transit Connect|DMC DeLorean|'59 Chevy Impala|Porsche 928S Safari",sth:"Ford Escort RS2000|'18 Camaro SS|BMW 507|'89 Mercedes-Benz 560 SEC AMG|'60s Fiat 500D Modificado|'71 El Camino|Audi 90 quattro|Volvo P1800 Gasser|Mitsubishi Pajero Evolution|Mazda 787B|'77 Pontiac Firebird|'96 Nissan 180SX Type X|Celero GT|Lamborghini Huracán LP 620-2 Super Trofeo|'83 Chevy Silverado"},
  "2023":{th:"Raijin Express|Surf Crate|BMW R nineT Racer|Mad Propz|Mod Rod|Donut Drifter|Rise 'N Climb|Ducati 1199 Panigale|'95 Jeep Cherokee|Toyota Land Cruiser|Madfast|Time Shifter|Tooned Volkswagen Golf Mk1|2020 Ram 1500 Rebel|Volkswagen Baja Bug",sth:"Classic TV Series Batmobile|Mercedes-Benz 300 SL|'68 COPO Camaro|Lotus Evija|'68 Mazda Cosmo Sport|Renault Sport R.S. 01|'68 Corvette (Gas Monkey Garage)|Glory Chaser|'82 Toyota Supra|'69 Shelby GT-500|'65 Mercury Comet Cyclone|Mighty K|Porsche 935|Datsun Bluebird Wagon (510)|Volvo 240 Drift Wagon"},
  "2022":{th:"The Dark Knight Batmobile|Quick Bite|Pixel Shaker|Tooned Twin Mill|Draftnator|'17 Jeep Wrangler|Duck N' Roll|Morris Mini|Gotta Go|'87 Dodge D100|'58 Impala|HW Warp Speeder|'98 Subaru Impreza 22B STi-Version|Muscle and Blown|'71 Mustang Funny Car",sth:"'55 Chevy|'73 BMW 3.0 CSL Race Car|Dodge Van|'63 Studebaker Champ|2020 Corvette|'99 Honda Civic Type R (EK9)|Volkswagen Käfer Racer|2020 Jaguar F-Type|Custom '18 Ford Mustang GT|Nissan Skyline H/T 2000GT-X|'71 Lamborghini Miura SV|'84 Mustang SVO|'94 Audi Avant RS2|'32 Ford|'81 Camaro"},
  "2021":{th:"Baja Bone Shaker|Street Wiener|Custom '77 Dodge Van|Motosaurus|Skull Shaker|Tred Shredder|Deora II|Mustang Funny Car|Chrysler Pacifica|'91 Mazda MX-5 Miata|Ollie Rocket|1978 Dodge Li'l Red Express Truck|Justice League Batmobile|'65 Ford Galaxie|Lamborghini Countach Police Car",sth:"Nissan 300ZX Twin Turbo|Corvette Grand Sport Roadster|Rodger Dodger|'95 Mazda RX-7|Corvette C7 Z06 Convertible|Mazda RX-3|2020 Ford Mustang Shelby GT500|'71 Datsun 510|Porsche 356 Outlaw|2018 Honda Civic Type R|'68 Mercury Cougar|2019 Audi R8 Spyder|'49 Ford F1|'64 Nova Wagon Gasser|Shelby Cobra 427 S/C"},
@@ -67,6 +74,14 @@
  Object.entries(Y).forEach(([year,x])=>{CATALOG[year]={th:x.th.split("|"),sth:x.sth?x.sth.split("|"):[]};});
  ["2007","2008","2009","2010","2011"].forEach(y=>CATALOG[y].sth=CATALOG[y].th.slice());
 
+ // Painel de mercado: soma apenas valores documentados dos modelos actualmente visíveis.
+ const ensureMarketSummary=()=>{
+  const summary=$('catalogSummary'),grid=$('catalogGrid');
+  if(!summary||!grid||$('catalogMarketSummary'))return;
+  const panel=document.createElement('section');panel.id='catalogMarketSummary';panel.className='catalog-market-summary';
+  panel.innerHTML='<div><span class="catalog-market-kicker">VALOR DE MERCADO DOCUMENTADO</span><strong id="catalogMarketTotal">—</strong><small id="catalogMarketCount"></small></div><div class="catalog-market-note">Total parcial dos modelos com estimativa disponível. Modelos sem vendas comparáveis suficientes ficam sem preço.</div>';
+  summary.insertAdjacentElement('afterend',panel);
+ };
  // Individual 2026 collector medians only; other years intentionally have no made-up prices.
  const MARKET={
   th:{"'87 Buick Regal GNX":4.72,"'92 Dodge Viper RT/10":4.48,"Electro Silhouette":4.99,"Hot Wheengs":4.99,"Cone Shaker":4.99,"2016 Ford GT Race":8.06,"2 Jet Z":5.16,"Total Disposal":4.85,"Amaru GTC":4.99,"Sweet Driver":4.62,"Mad Manga":3.59,"Ford Model A Custom '31":2.77,"Fast Fish":4.48,"Nissan Skyline HT 2000GT-X":7.40,"Gazella GT":2.09},
@@ -110,6 +125,11 @@
   const total=rows.length;if(q)rows=rows.filter(x=>x.name.toLocaleLowerCase("pt-PT").includes(q));
   if(sort==="az")rows.sort((a,b)=>a.name.localeCompare(b.name,"pt-PT"));if(sort==="za")rows.sort((a,b)=>b.name.localeCompare(a.name,"pt-PT"));
   summary.textContent=rows.length+" de "+total+" modelos · "+(type==="all"?"TH + STH":type.toUpperCase())+" · "+year+(q?" · pesquisa: “"+q+"”":"");
+  ensureMarketSummary();
+  const priced=rows.map(market).filter(v=>typeof v==="number"&&Number.isFinite(v));
+  const totalValue=priced.reduce((a,b)=>a+b,0);
+  $('catalogMarketTotal').textContent=priced.length?"€"+totalValue.toFixed(2).replace(".",","):"Sem dados";
+  $('catalogMarketCount').textContent=priced.length+" de "+rows.length+" modelos com valor documentado";
   if(!rows.length){grid.innerHTML='<div class="empty catalog-empty">'+(type==="sth"&&Number(year)<2007?"Ainda não existiam Super Treasure Hunts antes de 2007.":"Não foram encontrados modelos com estes filtros.")+'</div>';return}
   grid.innerHTML=rows.map((item,i)=>{
    const p=market(item),img=IMAGES[item.year+"|"+item.kind+"|"+item.name]||"",sth=item.kind==="sth";
@@ -118,7 +138,8 @@
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
-  grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
+  grid.querySelectorAll("[data-catalog-index],.catalog-thumb").forEach(b=>b.addEventListener("click",()=>{const index=Number(b.dataset.catalogIndex??b.closest(".catalog-card")?.dataset.catalogIndex);const item=rows[index];if(item)openDetail(item)}));
+  grid.querySelectorAll(".catalog-card").forEach((card,i)=>card.dataset.catalogIndex=String(i));
  };
  $('catalogDetailClose')?.addEventListener('click',closeDetail);
  $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
