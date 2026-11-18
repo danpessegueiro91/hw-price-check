@@ -78,8 +78,9 @@ def search_item(item):
             parser = MetaParser(); parser.feed(get(page_url).decode("utf-8", "replace"))
             text = " ".join(parser.text_parts).lower()
             year = item["year"]
-            kind_terms = ("super treasure hunt", "super treasure hunts", "sth") if item["kind"] == "sth" else ("treasure hunt", "treasure hunts")
-            if year not in text or not any(term in text for term in kind_terms):
+            kind_terms = ("super treasure hunt", "super treasure hunts") if item["kind"] == "sth" else ("treasure hunt", "treasure hunts")
+            is_super = "super treasure hunt" in text
+            if year not in text or not any(term in text for term in kind_terms) or (item["kind"] == "th" and is_super):
                 continue
             image = parser.meta.get("og:image") or parser.meta.get("twitter:image")
             if image and image.startswith("https://"):
