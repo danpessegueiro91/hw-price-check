@@ -7,6 +7,35 @@
  galleryStyle.id='HWPC_COLLECTOR_MARKET_GALLERY';
  galleryStyle.textContent=`.catalog-market-summary{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:12px 0 18px;padding:17px 20px;border:1px solid #4c3c80;border-radius:15px;background:linear-gradient(110deg,#21123e,#11182d 72%);box-shadow:0 12px 28px #0004}.catalog-market-summary>div:first-child{display:grid;gap:3px;min-width:180px}.catalog-market-kicker{font-size:10px;letter-spacing:.14em;font-weight:900;color:#b8a3ff}.catalog-market-summary strong{font-size:clamp(25px,4vw,36px);line-height:1.05;color:#fff}.catalog-market-summary small,.catalog-market-note{font-size:11px;color:#b8bfd0}.catalog-market-note{max-width:360px;text-align:right;line-height:1.5}.catalog-thumb{cursor:zoom-in;transition:transform .18s,border-color .18s}.catalog-thumb:hover{transform:scale(1.025);border-color:#ffd629}.catalog-thumb img{cursor:zoom-in}.catalog-card{position:relative}.catalog-card .catalog-price{font-size:13px;font-weight:850;color:#ffe16a}.catalog-card .catalog-actions{margin-top:7px}@media(max-width:560px){.catalog-market-summary{align-items:flex-start;flex-direction:column;gap:8px;padding:14px}.catalog-market-note{text-align:left}}`;
  document.head.append(galleryStyle);
+ const photoStyle=document.createElement('style');
+ photoStyle.id='HWPC_PHOTO_DETAIL_VIEWER';
+ photoStyle.textContent=`
+ .catalog-grid{align-items:stretch}
+ .catalog-card{overflow:hidden;border:1px solid rgba(139,117,201,.3);border-radius:16px;background:linear-gradient(155deg,#17132a,#0d1020);box-shadow:0 9px 24px rgba(0,0,0,.2);transition:transform .18s,border-color .18s,box-shadow .18s}
+ .catalog-card:hover{transform:translateY(-3px);border-color:rgba(255,215,48,.55);box-shadow:0 14px 30px rgba(0,0,0,.32)}
+ .catalog-thumb{height:250px;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(ellipse at 50% 38%,#fff 0%,#e8e8ed 58%,#c7c8d2 100%);border-radius:12px;overflow:hidden;cursor:zoom-in}
+ .catalog-thumb img{height:100%;width:100%;object-fit:contain;filter:drop-shadow(0 8px 9px rgba(0,0,0,.16))}
+ .catalog-copy{padding:14px 15px 16px}
+ .catalog-copy h3{min-height:2.5em;line-height:1.25}
+ .catalog-detail-art{min-height:380px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#fff 0%,#ececf1 68%,#d7d8e0 100%);border-radius:14px;padding:14px;cursor:zoom-in;overflow:hidden}
+ .catalog-detail-art img{display:block;max-width:100%;max-height:72vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 12px 16px rgba(0,0,0,.18))}
+ .catalog-photo-lightbox{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(5,5,12,.96);backdrop-filter:blur(12px)}
+ .catalog-photo-lightbox[hidden]{display:none}
+ .catalog-photo-lightbox img{max-width:96vw;max-height:94vh;object-fit:contain;cursor:zoom-in;transition:transform .2s ease;transform-origin:center}
+ .catalog-photo-lightbox img.zoomed{transform:scale(1.7);cursor:zoom-out}
+ .catalog-photo-lightbox button{position:absolute;right:20px;top:16px;width:44px;height:44px;border:1px solid #ffffff55;border-radius:50%;background:#17132a;color:white;font-size:28px;cursor:pointer}
+ .catalog-photo-lightbox .photo-help{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#ddd;font-size:12px}
+ @media(max-width:640px){.catalog-thumb{height:210px}.catalog-detail-art{min-height:260px}.catalog-photo-lightbox{padding:10px}}
+ `;
+ document.head.append(photoStyle);
+ const photoViewer=document.createElement('div');photoViewer.className='catalog-photo-lightbox';photoViewer.hidden=true;photoViewer.setAttribute('role','dialog');photoViewer.setAttribute('aria-modal','true');photoViewer.innerHTML='<button type="button" aria-label="Fechar imagem ampliada">×</button><img alt="Fotografia Hot Wheels ampliada"><div class="photo-help">Clica na imagem para ampliar mais · ESC para fechar</div>';document.body.append(photoViewer);
+ const photoViewerImg=photoViewer.querySelector('img');
+ const closePhotoViewer=()=>{photoViewer.hidden=true;photoViewerImg.classList.remove('zoomed');photoViewerImg.removeAttribute('src')};
+ photoViewer.querySelector('button').addEventListener('click',closePhotoViewer);
+ photoViewer.addEventListener('click',e=>{if(e.target===photoViewer)closePhotoViewer()});
+ photoViewerImg.addEventListener('click',()=>photoViewerImg.classList.toggle('zoomed'));
+ const openPhotoViewer=img=>{if(!img?.src)return;photoViewerImg.src=img.src;photoViewerImg.alt=img.alt||'Fotografia Hot Wheels';photoViewer.hidden=false};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!photoViewer.hidden)closePhotoViewer()});
 
  // Homepage follows the supplied reference; archive and secondary sections move to their own pages.
  const main=document.querySelector('main'),app=$('appWorkspace'),guide=$('guidesSection'),catalog=$('treasureCatalog'),about=$('aboutSection');
@@ -88,6 +117,8 @@
   sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
  };
  const IMAGES={
+  "2025|th|Ford Performance Supervan 4":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/10/2025-TH-Ford-Performance-Supervan-4-1.jpg",
+  "2025|sth|'87 Audi quattro":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/09/2025-87-Audi-quattro-US-Card.jpg",
   "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
   "2026|th|'92 Dodge Viper RT/10":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
   "2026|th|Electro Silhouette":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
@@ -115,6 +146,8 @@
   $('catalogDetailSource').href=source(item);
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
+  const detailPhoto=$('catalogDetailImage').querySelector('img');
+  $('catalogDetailImage').onclick=()=>openPhotoViewer(detailPhoto);
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -137,7 +170,11 @@
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
-  grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
+  grid.querySelectorAll(".catalog-card").forEach((card,i)=>{
+   guardImage(card,rows[i]);
+   const photo=card.querySelector('.catalog-thumb img');
+   if(photo){photo.parentElement.setAttribute('role','button');photo.parentElement.setAttribute('tabindex','0');photo.parentElement.setAttribute('aria-label','Ampliar fotografia de '+rows[i].name);photo.parentElement.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const item=rows[i];openDetail(item)}})}
+  });
   grid.querySelectorAll("[data-catalog-index],.catalog-thumb").forEach(b=>b.addEventListener("click",()=>{const index=Number(b.dataset.catalogIndex??b.closest(".catalog-card")?.dataset.catalogIndex);const item=rows[index];if(item)openDetail(item)}));
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>card.dataset.catalogIndex=String(i));
  };
