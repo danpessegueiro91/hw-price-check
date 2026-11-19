@@ -32,7 +32,7 @@ jobs:
       - name: Check inline JavaScript and PWA manifest
         run: |
           python scripts/check-inline-js.py
-          python -m py_compile scripts/sync-hotwheels-images.py
+          python -m py_compile scripts/sync-hotwheels-images.py scripts/prepare-hotwheels-images.py
 
   browser-test:
     needs: validate
