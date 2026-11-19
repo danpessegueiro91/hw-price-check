@@ -22,11 +22,8 @@ test('2026 catalog cards load real photos and open the enlarged photo viewer', a
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogPage')).toBeVisible();
-  const manifestResponse = page.waitForResponse(response => response.url().includes('/assets/data/hotwheels-images.json') && response.ok());
-  await page.locator('#catalogYear').selectOption('2025');
-  await page.locator('#catalogYear').selectOption('2026');
   await expect(page.locator('.catalog-card')).toHaveCount(30);
-  await manifestResponse;
+  await page.waitForFunction(() => window.HWPC_IMAGES_READY === true);
   await page.locator('#catalogYear').selectOption('2025');
   await page.locator('#catalogYear').selectOption('2026');
 
