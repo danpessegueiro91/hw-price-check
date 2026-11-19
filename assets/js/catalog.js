@@ -133,14 +133,13 @@
  fetch("/assets/data/hotwheels-images.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{
   if(!data?.images)return;
   Object.entries(data.images).forEach(([key,record])=>{if(record?.verified&&record.image)IMAGES[key]=record.image;});
-  window.HWPC_IMAGE_DEBUG={manifestCount:Object.keys(data.images).length,acceptedCount:Object.keys(IMAGES).length,manifestKeys:Object.keys(data.images),sampleKey:Object.keys(data.images)[0],sampleValue:data.images[Object.keys(data.images)[0]]};
   window.HWPC_IMAGES_READY=true;
   if(typeof renderCatalog==="function")renderCatalog();
  }).catch(()=>{window.HWPC_IMAGES_READY=true;});
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
- const guardImage=(container,item)=>{const img=container?.querySelector("img");if(!img)return;img.addEventListener("error",()=>{const original=img.dataset.originalSrc||img.src;const attempt=Number(img.dataset.proxyAttempt||0);if(attempt===0){img.dataset.originalSrc=original;img.dataset.proxyAttempt="1";img.src="https://images.weserv.nl/?url="+encodeURIComponent(original);return;}if(attempt===1){img.dataset.proxyAttempt="2";img.src="https://wsrv.nl/?url="+encodeURIComponent(original);return;}img.replaceWith(fallbackArt(item));});};
+ const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true});};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
  let selected=null;
  function closeDetail(){$('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null}
@@ -153,7 +152,7 @@
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').href=source(item);
-  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
+  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector('img');
   $('catalogDetailImage').onclick=()=>openPhotoViewer(detailPhoto);
@@ -179,7 +178,6 @@
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
-  window.HWPC_IMAGE_DEBUG={...(window.HWPC_IMAGE_DEBUG||{}),renderYear:year,renderedCards:rows.length,imageCount:grid.querySelectorAll(".catalog-thumb img").length,firstItem:rows[0],firstImageKey:rows[0]?rows[0].year+"|"+rows[0].kind+"|"+rows[0].name:null,firstImageUrl:rows[0]?IMAGES[rows[0].year+"|"+rows[0].kind+"|"+rows[0].name]||null:null};
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>{
    guardImage(card,rows[i]);
    const photo=card.querySelector('.catalog-thumb img');
