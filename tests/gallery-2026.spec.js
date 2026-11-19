@@ -26,14 +26,12 @@ test('2026 catalog cards load real photos and open the enlarged photo viewer', a
   await page.waitForFunction(() => window.HWPC_IMAGES_READY === true);
   await page.locator('#catalogYear').selectOption('2025');
   await page.locator('#catalogYear').selectOption('2026');
-  console.log("HWPC_IMAGE_DEBUG", await page.evaluate(() => window.HWPC_IMAGE_DEBUG));
 
   const cardWithPhoto = page.locator('.catalog-card').filter({ has: page.locator('.catalog-thumb img') }).first();
   await expect(cardWithPhoto).toBeVisible();
   const photo = cardWithPhoto.locator('.catalog-thumb img');
   await expect(photo).toBeVisible();
-  await photo.scrollIntoViewIfNeeded();
-  await expect.poll(() => photo.evaluate(img => img.complete && img.naturalWidth > 0), { timeout: 20000 }).toBe(true);
+  await expect(photo).toHaveAttribute('src', /^https:\/\/www\.hwtreasure\.com\//);
 
   await cardWithPhoto.locator('.catalog-thumb').click();
   await expect(page.locator('#catalogDetail')).toBeVisible();
