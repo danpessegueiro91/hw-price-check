@@ -1,10 +1,5 @@
 name: Sync Hot Wheels catalog photos
 on:
-  push:
-    branches:
-      - "feat/yearly-th-sth-market-gallery-20261118"
-    paths-ignore:
-      - "assets/data/hotwheels-images.json"
   schedule:
     - cron: "23 5 * * 1"
   workflow_dispatch:
