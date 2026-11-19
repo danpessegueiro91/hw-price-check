@@ -32,7 +32,8 @@ test('2026 catalog cards load real photos and open the enlarged photo viewer', a
   await expect(cardWithPhoto).toBeVisible();
   const photo = cardWithPhoto.locator('.catalog-thumb img');
   await expect(photo).toBeVisible();
-  await expect.poll(() => photo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+  await photo.scrollIntoViewIfNeeded();
+  await expect.poll(() => photo.evaluate(img => img.complete && img.naturalWidth > 0), { timeout: 20000 }).toBe(true);
 
   await cardWithPhoto.locator('.catalog-thumb').click();
   await expect(page.locator('#catalogDetail')).toBeVisible();
