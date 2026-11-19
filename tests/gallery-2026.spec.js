@@ -18,7 +18,13 @@ test('2026 photo pilot manifest contains only 2026 TH/STH records and at least o
   expect(manifest.pending.length + manifest.matchedImages).toBe(30);
 });
 
-test('2026 catalog cards load real photos and open the enlarged photo viewer', async ({ page }) => {
+test('2026 catalog cards use verified photo URLs and open the enlarged photo viewer', async ({ page }) => {
+  // The origin blocks GitHub-hosted test runners (403); use a valid image response
+  // here to test the gallery UI while separately verifying the real source URLs.
+  const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/nWQAAAAASUVORK5CYII=', 'base64');
+  await page.route('https://www.hwtreasure.com/wp-content/uploads/cars/**', route =>
+    route.fulfill({ status: 200, contentType: 'image/png', body: pixel })
+  );
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogPage')).toBeVisible();
