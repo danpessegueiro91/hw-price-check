@@ -25,11 +25,13 @@ test('2026 catalog cards load real photos and open the enlarged photo viewer', a
   await page.locator('#catalogYear').selectOption('2026');
   await expect(page.locator('.catalog-card')).toHaveCount(30);
 
-  const photo = page.locator('.catalog-card img').first();
+  const cardWithPhoto = page.locator('.catalog-card').filter({ has: page.locator('.catalog-thumb img') }).first();
+  await expect(cardWithPhoto).toBeVisible();
+  const photo = cardWithPhoto.locator('.catalog-thumb img');
   await expect(photo).toBeVisible();
   await expect.poll(() => photo.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
 
-  await photo.click();
+  await cardWithPhoto.locator('.catalog-thumb').click();
   await expect(page.locator('#catalogDetail')).toBeVisible();
   const detailPhoto = page.locator('#catalogDetailImage img');
   await expect(detailPhoto).toBeVisible();
