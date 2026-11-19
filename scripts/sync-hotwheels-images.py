@@ -86,7 +86,12 @@ def discover_from_checklists(items):
     pages = {"th": f"{BASE}/2026-2/", "sth": f"{BASE}/2026-super/"}
     found = {}
     for kind, list_url in pages.items():
-        parser = LinkParser(); parser.feed(get(list_url).decode("utf-8", "replace"))
+        try:
+            listing_html = get(list_url).decode("utf-8", "replace")
+        except Exception as exc:
+            print(f"Checklist source temporarily unavailable for {kind}: {exc}")
+            continue
+        parser = LinkParser(); parser.feed(listing_html)
         wanted = {norm(x["name"]): x for x in items if x["kind"] == kind}
         for title, href in parser.links:
             key = norm(title)
