@@ -26,6 +26,7 @@ test('2026 catalog cards load real photos and open the enlarged photo viewer', a
   await page.waitForFunction(() => window.HWPC_IMAGES_READY === true);
   await page.locator('#catalogYear').selectOption('2025');
   await page.locator('#catalogYear').selectOption('2026');
+  console.log("HWPC_IMAGE_DEBUG", await page.evaluate(() => window.HWPC_IMAGE_DEBUG));
 
   const cardWithPhoto = page.locator('.catalog-card').filter({ has: page.locator('.catalog-thumb img') }).first();
   await expect(cardWithPhoto).toBeVisible();
