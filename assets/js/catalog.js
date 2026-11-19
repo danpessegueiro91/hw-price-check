@@ -3,6 +3,40 @@
  window.HWPC_UI_PATCH_NOV2026=true;
  const $=id=>document.getElementById(id);
 
+ const galleryStyle=document.createElement('style');
+ galleryStyle.id='HWPC_COLLECTOR_MARKET_GALLERY';
+ galleryStyle.textContent=`.catalog-market-summary{display:flex;align-items:center;justify-content:space-between;gap:22px;margin:12px 0 18px;padding:17px 20px;border:1px solid #4c3c80;border-radius:15px;background:linear-gradient(110deg,#21123e,#11182d 72%);box-shadow:0 12px 28px #0004}.catalog-market-summary>div:first-child{display:grid;gap:3px;min-width:180px}.catalog-market-kicker{font-size:10px;letter-spacing:.14em;font-weight:900;color:#b8a3ff}.catalog-market-summary strong{font-size:clamp(25px,4vw,36px);line-height:1.05;color:#fff}.catalog-market-summary small,.catalog-market-note{font-size:11px;color:#b8bfd0}.catalog-market-note{max-width:360px;text-align:right;line-height:1.5}.catalog-thumb{cursor:zoom-in;transition:transform .18s,border-color .18s}.catalog-thumb:hover{transform:scale(1.025);border-color:#ffd629}.catalog-thumb img{cursor:zoom-in}.catalog-card{position:relative}.catalog-card .catalog-price{font-size:13px;font-weight:850;color:#ffe16a}.catalog-card .catalog-actions{margin-top:7px}@media(max-width:560px){.catalog-market-summary{align-items:flex-start;flex-direction:column;gap:8px;padding:14px}.catalog-market-note{text-align:left}}`;
+ document.head.append(galleryStyle);
+ const photoStyle=document.createElement('style');
+ photoStyle.id='HWPC_PHOTO_DETAIL_VIEWER';
+ photoStyle.textContent=`
+ .catalog-grid{align-items:stretch}
+ .catalog-card{overflow:hidden;border:1px solid rgba(139,117,201,.3);border-radius:16px;background:linear-gradient(155deg,#17132a,#0d1020);box-shadow:0 9px 24px rgba(0,0,0,.2);transition:transform .18s,border-color .18s,box-shadow .18s}
+ .catalog-card:hover{transform:translateY(-3px);border-color:rgba(255,215,48,.55);box-shadow:0 14px 30px rgba(0,0,0,.32)}
+ .catalog-thumb{height:250px;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(ellipse at 50% 38%,#fff 0%,#e8e8ed 58%,#c7c8d2 100%);border-radius:12px;overflow:hidden;cursor:zoom-in}
+ .catalog-thumb img{height:100%;width:100%;object-fit:contain;filter:drop-shadow(0 8px 9px rgba(0,0,0,.16))}
+ .catalog-copy{padding:14px 15px 16px}
+ .catalog-copy h3{min-height:2.5em;line-height:1.25}
+ .catalog-detail-art{min-height:380px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#fff 0%,#ececf1 68%,#d7d8e0 100%);border-radius:14px;padding:14px;cursor:zoom-in;overflow:hidden}
+ .catalog-detail-art img{display:block;max-width:100%;max-height:72vh;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 12px 16px rgba(0,0,0,.18))}
+ .catalog-photo-lightbox{position:fixed;inset:0;z-index:10020;display:flex;align-items:center;justify-content:center;padding:22px;background:rgba(5,5,12,.96);backdrop-filter:blur(12px)}
+ .catalog-photo-lightbox[hidden]{display:none}
+ .catalog-photo-lightbox img{max-width:96vw;max-height:94vh;object-fit:contain;cursor:zoom-in;transition:transform .2s ease;transform-origin:center}
+ .catalog-photo-lightbox img.zoomed{transform:scale(1.7);cursor:zoom-out}
+ .catalog-photo-lightbox button{position:absolute;right:20px;top:16px;width:44px;height:44px;border:1px solid #ffffff55;border-radius:50%;background:#17132a;color:white;font-size:28px;cursor:pointer}
+ .catalog-photo-lightbox .photo-help{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#ddd;font-size:12px}
+ @media(max-width:640px){.catalog-thumb{height:210px}.catalog-detail-art{min-height:260px}.catalog-photo-lightbox{padding:10px}}
+ `;
+ document.head.append(photoStyle);
+ const photoViewer=document.createElement('div');photoViewer.className='catalog-photo-lightbox';photoViewer.hidden=true;photoViewer.setAttribute('role','dialog');photoViewer.setAttribute('aria-modal','true');photoViewer.innerHTML='<button type="button" aria-label="Fechar imagem ampliada">×</button><img alt="Fotografia Hot Wheels ampliada"><div class="photo-help">Clica na imagem para ampliar mais · ESC para fechar</div>';document.body.append(photoViewer);
+ const photoViewerImg=photoViewer.querySelector('img');
+ const closePhotoViewer=()=>{photoViewer.hidden=true;photoViewerImg.classList.remove('zoomed');photoViewerImg.removeAttribute('src')};
+ photoViewer.querySelector('button').addEventListener('click',closePhotoViewer);
+ photoViewer.addEventListener('click',e=>{if(e.target===photoViewer)closePhotoViewer()});
+ photoViewerImg.addEventListener('click',()=>photoViewerImg.classList.toggle('zoomed'));
+ const openPhotoViewer=img=>{if(!img?.src)return;photoViewerImg.src=img.src;photoViewerImg.alt=img.alt||'Fotografia Hot Wheels';photoViewer.hidden=false};
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!photoViewer.hidden)closePhotoViewer()});
+
  // Homepage follows the supplied reference; archive and secondary sections move to their own pages.
  const main=document.querySelector('main'),app=$('appWorkspace'),guide=$('guidesSection'),catalog=$('treasureCatalog'),about=$('aboutSection');
  if(main&&app&&guide&&catalog){
@@ -34,6 +68,9 @@
 
  // Verified historical lists. 2007–2011 STH are Super versions of the same TH casting.
  const Y={
+ "2026":{th:"'87 Buick Regal GNX|'92 Dodge Viper RT/10|Electro Silhouette|Hot Wheengs|Cone Shaker|2016 Ford GT Race|2 Jet Z|Total Disposal|Amaru GTC|Sweet Driver|Mad Manga|Ford Model A Custom '31|Fast Fish|Nissan Skyline HT 2000GT-X|Gazella GT",sth:"Drift-Ender|Ford Mustang GTD|Ferrari F40 Competizione|'64 Impala|'87 Ford Sierra Cosworth|Honda Civic Custom|Custom Otto|Lotus Sport Elise|Subaru Impreza|'94 Toyota Supra|Nissan Maxima Drift Car|Porsche 911 Carrera RS 2.7|'23 Ram 1500|'70 Plymouth AAR Cuda|'67 Pontiac Firebird 400"},
+ "2025":{th:"Ford Performance Supervan 4|Fish'd & Chip'd|Mailed It!|Pedal Driver|Rig Storm|'85 Honda City Turbo II|Birthday Burner|Chill Mill|Nissan Leaf NISMO RC_02|Chevroletor|Honda S800 Racing|Shark Bite|1966 Triumph Tiger 100|'84 Audi Sport quattro|Triumph TR6",sth:"'87 Audi quattro|Hirohata Merc|Hi-Roller II|1975 Datsun Sunny Truck (B120)|Aston Martin DB4GT High-Speed Edition|'20 Jeep Gladiator|Porsche 911 Rallye|'71 Mustang Funny Car|'62 Corvette Gasser|McLaren Speedtail|'94 Bugatti EB110 SS|'73 Honda Civic Custom|'20 Dodge Charger Hellcat|BMW M3 Wagon|Ford RS200"},
+ "2024":{th:"'47 Chevy Fleetline|Ain't Fare|Tooligan|Custom '53 Chevy|Batman Forever Batmobile|Ford Mustang Mach-E 1400|Draggin' Wagon|Purple Passion|Honda Super Cub Custom|Bone Shaker|Car-de-Asada|Hot Wheels Ford Transit Connect|DMC DeLorean|'59 Chevy Impala|Porsche 928S Safari",sth:"Ford Escort RS2000|'18 Camaro SS|BMW 507|'89 Mercedes-Benz 560 SEC AMG|'60s Fiat 500D Modificado|'71 El Camino|Audi 90 quattro|Volvo P1800 Gasser|Mitsubishi Pajero Evolution|Mazda 787B|'77 Pontiac Firebird|'96 Nissan 180SX Type X|Celero GT|Lamborghini Huracán LP 620-2 Super Trofeo|'83 Chevy Silverado"},
  "2023":{th:"Raijin Express|Surf Crate|BMW R nineT Racer|Mad Propz|Mod Rod|Donut Drifter|Rise 'N Climb|Ducati 1199 Panigale|'95 Jeep Cherokee|Toyota Land Cruiser|Madfast|Time Shifter|Tooned Volkswagen Golf Mk1|2020 Ram 1500 Rebel|Volkswagen Baja Bug",sth:"Classic TV Series Batmobile|Mercedes-Benz 300 SL|'68 COPO Camaro|Lotus Evija|'68 Mazda Cosmo Sport|Renault Sport R.S. 01|'68 Corvette (Gas Monkey Garage)|Glory Chaser|'82 Toyota Supra|'69 Shelby GT-500|'65 Mercury Comet Cyclone|Mighty K|Porsche 935|Datsun Bluebird Wagon (510)|Volvo 240 Drift Wagon"},
  "2022":{th:"The Dark Knight Batmobile|Quick Bite|Pixel Shaker|Tooned Twin Mill|Draftnator|'17 Jeep Wrangler|Duck N' Roll|Morris Mini|Gotta Go|'87 Dodge D100|'58 Impala|HW Warp Speeder|'98 Subaru Impreza 22B STi-Version|Muscle and Blown|'71 Mustang Funny Car",sth:"'55 Chevy|'73 BMW 3.0 CSL Race Car|Dodge Van|'63 Studebaker Champ|2020 Corvette|'99 Honda Civic Type R (EK9)|Volkswagen Käfer Racer|2020 Jaguar F-Type|Custom '18 Ford Mustang GT|Nissan Skyline H/T 2000GT-X|'71 Lamborghini Miura SV|'84 Mustang SVO|'94 Audi Avant RS2|'32 Ford|'81 Camaro"},
  "2021":{th:"Baja Bone Shaker|Street Wiener|Custom '77 Dodge Van|Motosaurus|Skull Shaker|Tred Shredder|Deora II|Mustang Funny Car|Chrysler Pacifica|'91 Mazda MX-5 Miata|Ollie Rocket|1978 Dodge Li'l Red Express Truck|Justice League Batmobile|'65 Ford Galaxie|Lamborghini Countach Police Car",sth:"Nissan 300ZX Twin Turbo|Corvette Grand Sport Roadster|Rodger Dodger|'95 Mazda RX-7|Corvette C7 Z06 Convertible|Mazda RX-3|2020 Ford Mustang Shelby GT500|'71 Datsun 510|Porsche 356 Outlaw|2018 Honda Civic Type R|'68 Mercury Cougar|2019 Audi R8 Spyder|'49 Ford F1|'64 Nova Wagon Gasser|Shelby Cobra 427 S/C"},
@@ -67,12 +104,22 @@
  Object.entries(Y).forEach(([year,x])=>{CATALOG[year]={th:x.th.split("|"),sth:x.sth?x.sth.split("|"):[]};});
  ["2007","2008","2009","2010","2011"].forEach(y=>CATALOG[y].sth=CATALOG[y].th.slice());
 
+ // Painel de mercado: soma apenas valores documentados dos modelos actualmente visíveis.
+ const ensureMarketSummary=()=>{
+  const summary=$('catalogSummary'),grid=$('catalogGrid');
+  if(!summary||!grid||$('catalogMarketSummary'))return;
+  const panel=document.createElement('section');panel.id='catalogMarketSummary';panel.className='catalog-market-summary';
+  panel.innerHTML='<div><span class="catalog-market-kicker">VALOR DE MERCADO DOCUMENTADO</span><strong id="catalogMarketTotal">—</strong><small id="catalogMarketCount"></small></div><div class="catalog-market-note">Total parcial dos modelos com estimativa disponível. Modelos sem vendas comparáveis suficientes ficam sem preço.</div>';
+  summary.insertAdjacentElement('afterend',panel);
+ };
  // Individual 2026 collector medians only; other years intentionally have no made-up prices.
  const MARKET={
   th:{"'87 Buick Regal GNX":4.72,"'92 Dodge Viper RT/10":4.48,"Electro Silhouette":4.99,"Hot Wheengs":4.99,"Cone Shaker":4.99,"2016 Ford GT Race":8.06,"2 Jet Z":5.16,"Total Disposal":4.85,"Amaru GTC":4.99,"Sweet Driver":4.62,"Mad Manga":3.59,"Ford Model A Custom '31":2.77,"Fast Fish":4.48,"Nissan Skyline HT 2000GT-X":7.40,"Gazella GT":2.09},
   sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
  };
- const IMAGES={
+ let IMAGES={
+  "2025|th|Ford Performance Supervan 4":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/10/2025-TH-Ford-Performance-Supervan-4-1.jpg",
+  "2025|sth|'87 Audi quattro":"https://www.hwtreasure.com/wp-content/uploads/cars/2024/09/2025-87-Audi-quattro-US-Card.jpg",
   "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
   "2026|th|'92 Dodge Viper RT/10":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
   "2026|th|Electro Silhouette":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
@@ -82,10 +129,17 @@
   "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg"
  };
+ // Images discovered by the scheduled, exact-match catalog synchronizer.
+ fetch("/assets/data/hotwheels-images.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{
+  if(!data?.images)return;
+  Object.entries(data.images).forEach(([key,record])=>{if(record?.verified&&record.image)IMAGES[key]=record.image;});
+  window.HWPC_IMAGES_READY=true;
+  if(typeof renderCatalog==="function")renderCatalog();
+ }).catch(()=>{window.HWPC_IMAGES_READY=true;});
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
- const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
+ const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true});};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
  let selected=null;
  function closeDetail(){$('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null}
@@ -98,8 +152,10 @@
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').href=source(item);
-  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
+  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
+  const detailPhoto=$('catalogDetailImage').querySelector('img');
+  $('catalogDetailImage').onclick=()=>openPhotoViewer(detailPhoto);
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -110,6 +166,11 @@
   const total=rows.length;if(q)rows=rows.filter(x=>x.name.toLocaleLowerCase("pt-PT").includes(q));
   if(sort==="az")rows.sort((a,b)=>a.name.localeCompare(b.name,"pt-PT"));if(sort==="za")rows.sort((a,b)=>b.name.localeCompare(a.name,"pt-PT"));
   summary.textContent=rows.length+" de "+total+" modelos · "+(type==="all"?"TH + STH":type.toUpperCase())+" · "+year+(q?" · pesquisa: “"+q+"”":"");
+  ensureMarketSummary();
+  const priced=rows.map(market).filter(v=>typeof v==="number"&&Number.isFinite(v));
+  const totalValue=priced.reduce((a,b)=>a+b,0);
+  $('catalogMarketTotal').textContent=priced.length?"€"+totalValue.toFixed(2).replace(".",","):"Sem dados";
+  $('catalogMarketCount').textContent=priced.length+" de "+rows.length+" modelos com valor documentado";
   if(!rows.length){grid.innerHTML='<div class="empty catalog-empty">'+(type==="sth"&&Number(year)<2007?"Ainda não existiam Super Treasure Hunts antes de 2007.":"Não foram encontrados modelos com estes filtros.")+'</div>';return}
   grid.innerHTML=rows.map((item,i)=>{
    const p=market(item),img=IMAGES[item.year+"|"+item.kind+"|"+item.name]||"",sth=item.kind==="sth";
@@ -117,8 +178,13 @@
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
-  grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
-  grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
+  grid.querySelectorAll(".catalog-card").forEach((card,i)=>{
+   guardImage(card,rows[i]);
+   const photo=card.querySelector('.catalog-thumb img');
+   if(photo){photo.parentElement.setAttribute('role','button');photo.parentElement.setAttribute('tabindex','0');photo.parentElement.setAttribute('aria-label','Ampliar fotografia de '+rows[i].name);photo.parentElement.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const item=rows[i];openDetail(item)}})}
+  });
+  grid.querySelectorAll("[data-catalog-index],.catalog-thumb").forEach(b=>b.addEventListener("click",()=>{const index=Number(b.dataset.catalogIndex??b.closest(".catalog-card")?.dataset.catalogIndex);const item=rows[index];if(item)openDetail(item)}));
+  grid.querySelectorAll(".catalog-card").forEach((card,i)=>card.dataset.catalogIndex=String(i));
  };
  $('catalogDetailClose')?.addEventListener('click',closeDetail);
  $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
