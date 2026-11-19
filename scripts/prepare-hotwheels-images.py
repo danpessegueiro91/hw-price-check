@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import re
 import sys
@@ -31,7 +32,7 @@ def fetch(url: str) -> bytes:
     for candidate in candidates:
         try:
             request = urllib.request.Request(candidate, headers=HEADERS)
-            with urllib.request.urlopen(request, timeout=30) as response:
+            with urllib.request.urlopen(request, timeout=12) as response:
                 data = response.read()
                 content_type = response.headers.get("Content-Type", "")
             if not data or not (data.startswith(b"\xff\xd8\xff") or data.startswith(b"\x89PNG\r\n\x1a\n") or data[:4] == b"RIFF"):
@@ -53,26 +54,34 @@ def main() -> int:
     data = json.loads(MANIFEST.read_text(encoding="utf-8"))
     OUT.mkdir(parents=True, exist_ok=True)
     success, failures = 0, []
-    for key, record in data.get("images", {}).items():
+    records = list(data.get("images", {}).items())
+    def process(entry):
+        key, record = entry
         if not record.get("verified") or not record.get("image"):
-            failures.append((key, "not verified or missing URL"))
-            continue
+            return key, None, "not verified or missing URL"
         parts = key.split("|", 2)
         if len(parts) != 3:
-            failures.append((key, "invalid manifest key"))
-            continue
+            return key, None, "invalid manifest key"
         year, kind, name = parts
         filename = f"{year}-{kind}-{slug(name)}.jpg"
         target = OUT / filename
         try:
             if not target.exists() or target.stat().st_size < 1000:
                 target.write_bytes(fetch(record["image"]))
-            record["image"] = f"/assets/hotwheels/{filename}"
-            success += 1
-            print(f"OK {key} -> {record['image']}")
+            return key, f"/assets/hotwheels/{filename}", None
         except Exception as exc:
-            failures.append((key, str(exc)))
-            print(f"FAIL {key}: {exc}", file=sys.stderr)
+            return key, None, str(exc)
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = [pool.submit(process, entry) for entry in records]
+        for future in as_completed(futures):
+            key, local_path, error = future.result()
+            if error:
+                failures.append((key, error))
+                print(f"FAIL {key}: {error}", file=sys.stderr)
+            else:
+                data["images"][key]["image"] = local_path
+                success += 1
+                print(f"OK {key} -> {local_path}")
     data["matchedImages"] = success
     data["pending"] = [key for key, _ in failures]
     MANIFEST.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
