@@ -32,7 +32,7 @@ jobs:
       - name: Check inline JavaScript and PWA manifest
         run: |
           python scripts/check-inline-js.py
-          python -m py_compile scripts/sync-hotwheels-images.py scripts/prepare-hotwheels-images.py
+          python -m py_compile scripts/sync-hotwheels-images.py
 
   browser-test:
     needs: validate
@@ -49,8 +49,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: Prepare verified local Hot Wheels photos
-        run: python scripts/prepare-hotwheels-images.py --require-all
       - name: Install browser test dependencies
         run: |
           npm install --no-audit --no-fund
@@ -66,14 +64,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Prepare verified local Hot Wheels photos
-        run: python scripts/prepare-hotwheels-images.py --require-all
 
       - name: Create Pages project if it does not exist
         env:
@@ -121,12 +111,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-      - name: Prepare verified local Hot Wheels photos
-        run: python scripts/prepare-hotwheels-images.py --require-all
       - name: Publish PR preview (not production)
         uses: cloudflare/wrangler-action@v3
         with:
