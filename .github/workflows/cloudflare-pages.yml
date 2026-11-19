@@ -49,6 +49,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+      - name: Prepare verified local Hot Wheels photos
+        run: python scripts/prepare-hotwheels-images.py --require-all
       - name: Install browser test dependencies
         run: |
           npm install --no-audit --no-fund
@@ -64,6 +66,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Prepare verified local Hot Wheels photos
+        run: python scripts/prepare-hotwheels-images.py --require-all
 
       - name: Create Pages project if it does not exist
         env:
@@ -100,4 +110,27 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: "290ebea135897d3733df7a3a9afede94"
           command: pages deploy . --project-name=hwpricecheck --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+
+  preview:
+    if: github.event_name == 'pull_request'
+    needs: [validate, browser-test]
+    name: Publish review preview to Cloudflare Pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Prepare verified local Hot Wheels photos
+        run: python scripts/prepare-hotwheels-images.py --require-all
+      - name: Publish PR preview (not production)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: "290ebea135897d3733df7a3a9afede94"
+          command: pages deploy . --project-name=hwpricecheck --branch=pr-52
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
