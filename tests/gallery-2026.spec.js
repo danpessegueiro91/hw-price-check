@@ -10,7 +10,7 @@ test('2026 photo pilot manifest contains only 2026 TH/STH records and at least o
   expect(manifest.matchedImages).toBeGreaterThan(0);
   expect(Object.keys(manifest.images)).toHaveLength(manifest.matchedImages);
   for (const [key, record] of Object.entries(manifest.images)) {
-    expect(key).toMatch(/^2026\\|(th|sth)\\|.+$/);
+    expect(key).toMatch(/^2026\|(th|sth)\|.+$/);
     expect(record.verified).toBe(true);
     expect(record.image.startsWith('https://')).toBe(true);
     expect(record.source).toContain('hwtreasure.com');
