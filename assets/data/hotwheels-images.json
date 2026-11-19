@@ -8,9 +8,9 @@
       "sth"
     ]
   },
-  "updatedAt": "2026-11-19T15:47:20.950Z",
+  "updatedAt": "2026-11-19T15:47:49.028Z",
   "catalogModels": 30,
-  "matchedImages": 20,
+  "matchedImages": 30,
   "images": {
     "2026|th|'87 Buick Regal GNX": {
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
@@ -34,22 +34,22 @@
     },
     "2026|sth|'64 Impala": {
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-STH-64-Impala-US-Card.jpg",
-      "source": "https://www.hwtreasure.com/2026-super/",
+      "source": "https://www.hwtreasure.com/2026-super/64-impala/",
       "verified": true
     },
     "2026|sth|'87 Ford Sierra Cosworth": {
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-87-Ford-Sierra-Cosworth-US-Card.jpg",
-      "source": "https://www.hwtreasure.com/2026-super/",
+      "source": "https://www.hwtreasure.com/2026-super/87-ford-sierra-cosworth/",
       "verified": true
     },
     "2026|sth|Drift-Ender": {
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
-      "source": "https://www.hwtreasure.com/2026-super/",
+      "source": "https://www.hwtreasure.com/2026-super/drift-ender/",
       "verified": true
     },
     "2026|sth|Porsche 911 Carrera RS 2.7": {
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
-      "source": "https://www.hwtreasure.com/2026-super/",
+      "source": "https://www.hwtreasure.com/2026-super/porsche-911-carrera-rs-2-7/",
       "verified": true
     },
     "2026|th|Hot Wheengs": {
@@ -111,18 +111,57 @@
       "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/26-TH-Gazella-GT-1.jpg",
       "source": "https://www.hwtreasure.com/2026-2/gazella-gt/",
       "verified": true
+    },
+    "2026|sth|Ford Mustang GTD": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ford-Mustang-GTD-Int-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/ford-mustang-gtd/",
+      "verified": true
+    },
+    "2026|sth|Honda Civic Custom": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-Honda-Civic-Custom-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/honda-civic-custom/",
+      "verified": true
+    },
+    "2026|sth|Custom Otto": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Custom-Otto-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/custom-otto/",
+      "verified": true
+    },
+    "2026|sth|Lotus Sport Elise": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Lotus-Sport-Elise-US-Card-1.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/lotus-sport-elise/",
+      "verified": true
+    },
+    "2026|sth|Subaru Impreza": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-Subaru-Impreza-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/subaru-impreza/",
+      "verified": true
+    },
+    "2026|sth|'94 Toyota Supra": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-94-Toyota-Supra-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/94-toyota-supra/",
+      "verified": true
+    },
+    "2026|sth|Nissan Maxima Drift Car": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-STH-Nissan-Maxima-Drift-Car-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/nissan-maxima-drift-car/",
+      "verified": true
+    },
+    "2026|sth|'23 Ram 1500": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-23-Ram-1500-Int-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/23-ram-1500/",
+      "verified": true
+    },
+    "2026|sth|'70 Plymouth AAR Cuda": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/2026-STH-70-Plymouth-AAR-Cuda-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/70-plymouth-aar-cuda/",
+      "verified": true
+    },
+    "2026|sth|'67 Pontiac Firebird 400": {
+      "image": "https://www.hwtreasure.com/wp-content/uploads/cars/2026/09/2026-STH-67-Pontiac-Firebird-400-US-Card.jpg",
+      "source": "https://www.hwtreasure.com/2026-super/67-pontiac-firebird-400/",
+      "verified": true
     }
   },
-  "pending": [
-    "2026|sth|Ford Mustang GTD",
-    "2026|sth|Honda Civic Custom",
-    "2026|sth|Custom Otto",
-    "2026|sth|Lotus Sport Elise",
-    "2026|sth|Subaru Impreza",
-    "2026|sth|'94 Toyota Supra",
-    "2026|sth|Nissan Maxima Drift Car",
-    "2026|sth|'23 Ram 1500",
-    "2026|sth|'70 Plymouth AAR Cuda",
-    "2026|sth|'67 Pontiac Firebird 400"
-  ]
+  "pending": []
 }
