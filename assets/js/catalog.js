@@ -133,6 +133,7 @@
  fetch("/assets/data/hotwheels-images.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{
   if(!data?.images)return;
   Object.entries(data.images).forEach(([key,record])=>{if(record?.verified&&record.image)IMAGES[key]=record.image;});
+  window.HWPC_IMAGE_DEBUG={manifestCount:Object.keys(data.images).length,acceptedCount:Object.keys(IMAGES).length,manifestKeys:Object.keys(data.images),sampleKey:Object.keys(data.images)[0],sampleValue:data.images[Object.keys(data.images)[0]]};
   window.HWPC_IMAGES_READY=true;
   if(typeof renderCatalog==="function")renderCatalog();
  }).catch(()=>{window.HWPC_IMAGES_READY=true;});
@@ -178,6 +179,7 @@
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
   }).join("");
+  window.HWPC_IMAGE_DEBUG={...(window.HWPC_IMAGE_DEBUG||{}),renderYear:year,renderedCards:rows.length,imageCount:grid.querySelectorAll(".catalog-thumb img").length,firstItem:rows[0],firstImageKey:rows[0]?rows[0].year+"|"+rows[0].kind+"|"+rows[0].name:null,firstImageUrl:rows[0]?IMAGES[rows[0].year+"|"+rows[0].kind+"|"+rows[0].name]||null:null};
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>{
    guardImage(card,rows[i]);
    const photo=card.querySelector('.catalog-thumb img');
