@@ -133,8 +133,9 @@
  fetch("/assets/data/hotwheels-images.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(data=>{
   if(!data?.images)return;
   Object.entries(data.images).forEach(([key,record])=>{if(record?.verified&&record.image)IMAGES[key]=record.image;});
+  window.HWPC_IMAGES_READY=true;
   if(typeof renderCatalog==="function")renderCatalog();
- }).catch(()=>{});
+ }).catch(()=>{window.HWPC_IMAGES_READY=true;});
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
