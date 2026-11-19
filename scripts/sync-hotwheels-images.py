@@ -69,6 +69,40 @@ def valid_image(url: str) -> bool:
     except Exception:
         return False
 
+class LinkParser(HTMLParser):
+    def __init__(self):
+        super().__init__(); self.links=[]; self.href=None; self.parts=[]
+    def handle_starttag(self, tag, attrs):
+        if tag == "a":
+            self.href=dict(attrs).get("href"); self.parts=[]
+    def handle_data(self, data):
+        if self.href is not None: self.parts.append(data)
+    def handle_endtag(self, tag):
+        if tag == "a" and self.href is not None:
+            self.links.append((html.unescape(" ".join(self.parts)).strip(), self.href)); self.href=None; self.parts=[]
+
+def discover_from_checklists(items):
+    """Use HWtreasure's authoritative 2026 TH/STH checklists and detail-page og:image."""
+    pages = {"th": f"{BASE}/2026-2/", "sth": f"{BASE}/2026-super/"}
+    found = {}
+    for kind, list_url in pages.items():
+        parser = LinkParser(); parser.feed(get(list_url).decode("utf-8", "replace"))
+        wanted = {norm(x["name"]): x for x in items if x["kind"] == kind}
+        for title, href in parser.links:
+            key = norm(title)
+            if key not in wanted: continue
+            page_url = href if href.startswith("https://") else BASE + href
+            if not page_url.startswith(BASE + ("/2026-2/" if kind == "th" else "/2026-super/")): continue
+            try:
+                detail = MetaParser(); detail.feed(get(page_url).decode("utf-8", "replace"))
+                image = detail.meta.get("og:image") or detail.meta.get("twitter:image")
+                if image and image.startswith("https://") and valid_image(image):
+                    item = wanted[key]
+                    found[f'{item["year"]}|{kind}|{item["name"]}'] = {"image": image, "source": page_url, "verified": True}
+            except Exception:
+                continue
+    return found
+
 def search_item(item):
     query = quote(item["name"])
     endpoint = f"{BASE}/wp-json/wp/v2/search?search={query}&per_page=10"
@@ -101,7 +135,7 @@ def search_item(item):
 
 def main():
     items = catalog_items()
-    found = {}
+    found = discover_from_checklists(items)
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         futures = [pool.submit(search_item, item) for item in items]
         for future in concurrent.futures.as_completed(futures):
@@ -131,8 +165,8 @@ def main():
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f'Catalog models: {expected}; verified image records: {len(previous)}; pending: {len(report["pending"])}')
-    if not found and not previous:
-        raise RuntimeError("No verified images discovered; manifest was not populated")
+    if len(previous) < len(items):
+        print("Some checklist photos are still pending; no image has been guessed.")
 
 if __name__ == "__main__":
     main()
