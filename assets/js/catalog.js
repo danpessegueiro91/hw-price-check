@@ -198,11 +198,10 @@
    const p=market(item),img=photoFor(item),sth=item.kind==="sth";
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
-  grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar";img.addEventListener("click",()=>openPhotoViewer(img.currentSrc||img.src,img.alt))});
-  grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
+  grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar"});
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
    const {data:{session}}=await sb.auth.getSession();
@@ -253,10 +252,45 @@
  window.addEventListener('hwpc:auth-updated',()=>{loadCatalogImages().then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
  loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ const photoInteractionStyle=document.createElement("style");
+ photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art img{cursor:zoom-in!important}";
+ document.head.append(photoInteractionStyle);
  const photoStyle=document.createElement("style");
  photoStyle.textContent=".catalog-photo-upload{position:relative;display:inline-flex;align-items:center;cursor:pointer;background:#173a2d;border-color:#327455;color:#a8f0c4}.catalog-photo-upload:hover{border-color:#5fe09b}.catalog-photo-upload input{display:none!important}";
  document.head.append(photoStyle);
 
+ // Persistent delegated handlers: survive every catalogGrid.innerHTML refresh.
+ const catalogGrid=$('catalogGrid');
+ if(catalogGrid&&!catalogGrid.dataset.hwpcDelegated){
+  catalogGrid.dataset.hwpcDelegated="1";
+  catalogGrid.addEventListener("click",e=>{
+   const zoom=e.target.closest("[data-photo-index]");
+   if(zoom){
+    const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
+    if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
+    return;
+   }
+   const detail=e.target.closest("[data-catalog-index]");
+   if(detail){
+    const item={name:detail.dataset.modelName,year:detail.dataset.modelYear,kind:detail.dataset.modelKind};
+    if(item.name&&item.year&&item.kind)openDetail(item);
+   }
+  });
+ }
+ const detailImage=$('catalogDetailImage');
+ if(detailImage&&!detailImage.dataset.hwpcZoomDelegated){
+  detailImage.dataset.hwpcZoomDelegated="1";
+  detailImage.addEventListener("click",e=>{
+   const img=e.target.closest("img");if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
+  });
+ }
+ const detailModal=$('catalogDetail');
+ if(detailModal&&!detailModal.dataset.hwpcCloseDelegated){
+  detailModal.dataset.hwpcCloseDelegated="1";
+  detailModal.addEventListener("click",e=>{
+   if(e.target===detailModal||e.target.closest("#catalogDetailClose"))closeDetail();
+  });
+ }
  // Account modal can be closed with X, click outside or Escape.
  const originalShowGate=showGate;
  showGate=function(value){originalShowGate(value);$('authGate')?.setAttribute('aria-hidden',value?'false':'true')};
