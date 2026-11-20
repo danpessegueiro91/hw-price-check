@@ -198,7 +198,7 @@ $('forgotPassword')?.addEventListener('click',async()=>{
     if(error)throw error;
     status('Se existir uma conta associada a este email, receberás uma mensagem com uma ligação para criar uma nova palavra-passe. Verifica também o Spam.');
   }catch(error){status('Não foi possível pedir a recuperação: '+(error.message||error))}
-  finally{button.disabled=false;button.textContent='Esqueci-me da palavra-passe'}
+  finally{button.disabled=false;button.textContent='Forgot Password'}
 });
 function showPasswordRecovery(){
   let panel=document.getElementById('passwordRecoveryPanel');
