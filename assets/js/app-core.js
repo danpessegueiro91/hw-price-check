@@ -231,7 +231,7 @@ function showPasswordRecovery(){
   panel.style.display='grid';
   document.getElementById('recoveryPassword')?.focus();
 }
-$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);await load();mergeGuestBackup();renderAccount()});
+$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);window.dispatchEvent(new Event('hwpc:auth-updated'));await load();mergeGuestBackup();renderAccount()});
 $('signup')?.addEventListener('click',async()=>{
   const button=$('signup');
   if(button.disabled)return;
