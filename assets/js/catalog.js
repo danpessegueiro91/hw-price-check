@@ -131,7 +131,9 @@
  function openDetail(item){
   selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth";
   $('catalogDetailBadge').textContent=sth?"SUPER TREASURE HUNT":"TREASURE HUNT";$('catalogDetailBadge').className="catalog-badge "+item.kind;
-  $('catalogDetailYear').textContent="ANO "+item.year;$('catalogDetailArtType').textContent=sth?"STH":"TH";
+  const detailYear=$('catalogDetailYear'),detailArtType=$('catalogDetailArtType');
+  if(detailYear)detailYear.textContent="ANO "+item.year;
+  if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
