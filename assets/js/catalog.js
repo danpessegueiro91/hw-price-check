@@ -219,8 +219,28 @@
    const file=input.files?.[0];if(file)await uploadCatalogPhoto(item,file);input.value="";
   }));
  };
- $('catalogDetailClose')?.addEventListener('click',closeDetail);
- $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
+ const detailOverlay=$('catalogDetail');
+ if(detailOverlay&&!detailOverlay.dataset.hwpcModalEvents){
+  detailOverlay.dataset.hwpcModalEvents="1";
+  detailOverlay.addEventListener('click',e=>{
+   const target=e.target instanceof Element?e.target:e.target?.parentElement;
+   if(!target)return;
+   if(target.closest('#catalogDetailClose')||target===detailOverlay)closeDetail();
+  });
+ }
+ const detailImageHost=$('catalogDetailImage');
+ if(detailImageHost&&!detailImageHost.dataset.hwpcZoomEvents){
+  detailImageHost.dataset.hwpcZoomEvents="1";
+  detailImageHost.addEventListener('click',e=>{
+   const target=e.target instanceof Element?e.target:e.target?.parentElement;
+   if(!target)return;
+   const zoom=target.closest('[data-detail-photo-zoom], img');
+   if(zoom){
+    const img=detailImageHost.querySelector('img');
+    if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
+   }
+  });
+ }
  $('catalogDetailMarket')?.addEventListener('click',()=>{
   if(!selected)return;const item=selected;closeDetail();openWorkspace('analyse');
   $('model').value=item.name;$('year').value=item.year;$('type').value=item.kind;
@@ -279,11 +299,7 @@
     if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
     return;
    }
-   const detailZoom=target.closest("[data-detail-photo-zoom]");
-   if(detailZoom){
-    const img=$('catalogDetailImage')?.querySelector("img");
-    if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
-   }
+
   });
  }
  const detailModal=$('catalogDetail');
