@@ -139,14 +139,14 @@ test('catalog controls localize across all eight languages without changing mode
   await expect(page.locator('#catalogPage')).toBeVisible();
 
   const languages = [
-    { code: 'pt', detail: 'Ver ficha', photos: 'Ver fotos' },
-    { code: 'en', detail: 'View details', photos: 'View photos' },
-    { code: 'es', detail: 'Ver ficha', photos: 'Ver fotos' },
-    { code: 'fr', detail: 'Voir la fiche', photos: 'Voir les photos' },
-    { code: 'de', detail: 'Details ansehen', photos: 'Fotos ansehen' },
-    { code: 'it', detail: 'Vedi scheda', photos: 'Vedi foto' },
-    { code: 'nl', detail: 'Bekijk details', photos: "Bekijk foto's" },
-    { code: 'br', detail: 'Ver ficha', photos: 'Ver fotos' },
+    { code: 'pt', detail: 'Ver ficha', photos: 'Fonte externa' },
+    { code: 'en', detail: 'View details', photos: 'External source' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Fuente externa' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Source externe' },
+    { code: 'de', detail: 'Details ansehen', photos: 'Externe Quelle' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Fonte esterna' },
+    { code: 'nl', detail: 'Bekijk details', photos: 'Externe bron' },
+    { code: 'br', detail: 'Ver ficha', photos: 'Fonte externa' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
