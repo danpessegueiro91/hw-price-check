@@ -139,14 +139,14 @@ test('catalog controls localize across all eight languages without changing mode
   await expect(page.locator('#catalogPage')).toBeVisible();
 
   const languages = [
-    { code: 'pt', detail: 'Ver ficha', photos: 'Fonte externa' },
-    { code: 'en', detail: 'View details', photos: 'External source' },
-    { code: 'es', detail: 'Ver ficha', photos: 'Fuente externa' },
-    { code: 'fr', detail: 'Voir la fiche', photos: 'Source externe' },
-    { code: 'de', detail: 'Details ansehen', photos: 'Externe Quelle' },
-    { code: 'it', detail: 'Vedi scheda', photos: 'Fonte esterna' },
-    { code: 'nl', detail: 'Bekijk details', photos: 'Externe bron' },
-    { code: 'br', detail: 'Ver ficha', photos: 'Fonte externa' },
+    { code: 'pt', detail: 'Ver ficha', photos: 'Fonte externa', forgot: 'Esqueci-me da palavra-passe' },
+    { code: 'en', detail: 'View details', photos: 'External source', forgot: 'Forgot Password' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Fuente externa', forgot: 'Olvidé mi contraseña' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Source externe', forgot: 'Mot de passe oublié' },
+    { code: 'de', detail: 'Details ansehen', photos: 'Externe Quelle', forgot: 'Passwort vergessen' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Fonte esterna', forgot: 'Password dimenticata' },
+    { code: 'nl', detail: 'Bekijk details', photos: 'Externe bron', forgot: 'Wachtwoord vergeten' },
+    { code: 'br', detail: 'Ver ficha', photos: 'Fonte externa', forgot: 'Esqueci minha senha' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
@@ -156,6 +156,7 @@ test('catalog controls localize across all eight languages without changing mode
     await page.locator('#language').selectOption(language.code);
     await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
     await expect(firstCard.locator('.catalog-actions a')).toContainText(language.photos);
+    await expect(page.locator('#forgotPassword')).toHaveText(language.forgot);
     await expect(firstCard.locator('h3')).toHaveText(modelName);
     await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
 
