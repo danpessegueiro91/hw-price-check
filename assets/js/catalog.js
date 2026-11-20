@@ -261,13 +261,6 @@
    }
   });
  }
- const detailModal=$('catalogDetail');
- if(detailModal&&!detailModal.dataset.hwpcCloseDelegated){
-  detailModal.dataset.hwpcCloseDelegated="1";
-  detailModal.addEventListener("click",e=>{
-   if(e.target===detailModal)closeDetail();
-  });
- }
  // Account modal can be closed with X, click outside or Escape.
  const originalShowGate=showGate;
  showGate=function(value){originalShowGate(value);$('authGate')?.setAttribute('aria-hidden',value?'false':'true')};
