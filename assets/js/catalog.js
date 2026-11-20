@@ -84,13 +84,47 @@
  };
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
+ // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
+ let uploadedImages={};
+ const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
+ const photoFor=item=>uploadedImages[imageKey(item)]||"";
+ const loadCatalogImages=async()=>{
+  if(!sb)return;
+  const {data,error}=await sb.from("catalog_images").select("model_year,model_kind,model_name,storage_path");
+  if(error){console.warn("Não foi possível carregar as fotografias do catálogo:",error.message);return}
+  uploadedImages={};
+  (data||[]).forEach(row=>{
+   const {data:publicData}=sb.storage.from("hw-catalog").getPublicUrl(row.storage_path);
+   if(publicData?.publicUrl)uploadedImages[row.model_year+"|"+row.model_kind+"|"+row.model_name]=publicData.publicUrl;
+  });
+ };
+ const slugify=value=>value.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ const uploadCatalogPhoto=async(item,file)=>{
+  if(!sb){alert("O serviço de fotografias não está disponível.");return}
+  if(!file||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Escolhe uma imagem JPG, PNG, WebP ou AVIF.");return}
+  if(file.size>5*1024*1024){alert("A imagem tem de ter até 5 MB.");return}
+  const {data:sessionData}=await sb.auth.getSession();
+  if(!sessionData?.session){showGate(true);alert("Inicia sessão para poderes adicionar fotografias ao arquivo.");return}
+  const path=item.year+"/"+item.kind+"/"+slugify(item.name)+"."+({"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[file.type]);
+  const {error:uploadError}=await sb.storage.from("hw-catalog").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
+  if(uploadError){alert("Não foi possível carregar a fotografia: "+uploadError.message);return}
+  const {error:saveError}=await sb.from("catalog_images").upsert({
+   model_year:Number(item.year),model_kind:item.kind,model_name:item.name,storage_path:path,alt_text:"Hot Wheels "+item.name+" "+item.year
+  },{onConflict:"model_year,model_kind,model_name"});
+  if(saveError){alert("A fotografia foi carregada, mas não foi associada ao modelo: "+saveError.message);return}
+  await loadCatalogImages();
+  renderCatalog();
+  if(selected&&imageKey(selected)===imageKey(item))openDetail(item);
+  alert("Fotografia guardada no arquivo HW Price Check.");
+ };
+ const addPhotoControl=item=>'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>';
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
  const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
  let selected=null;
  function closeDetail(){$('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null}
  function openDetail(item){
-  selected=item;const p=market(item),img=IMAGES[item.year+"|"+item.kind+"|"+item.name]||"",sth=item.kind==="sth";
+  selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth";
   $('catalogDetailBadge').textContent=sth?"SUPER TREASURE HUNT":"TREASURE HUNT";$('catalogDetailBadge').className="catalog-badge "+item.kind;
   $('catalogDetailYear').textContent="ANO "+item.year;$('catalogDetailArtType').textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
@@ -112,13 +146,17 @@
   summary.textContent=rows.length+" de "+total+" modelos · "+(type==="all"?"TH + STH":type.toUpperCase())+" · "+year+(q?" · pesquisa: “"+q+"”":"");
   if(!rows.length){grid.innerHTML='<div class="empty catalog-empty">'+(type==="sth"&&Number(year)<2007?"Ainda não existiam Super Treasure Hunts antes de 2007.":"Não foram encontrados modelos com estes filtros.")+'</div>';return}
   grid.innerHTML=rows.map((item,i)=>{
-   const p=market(item),img=IMAGES[item.year+"|"+item.kind+"|"+item.name]||"",sth=item.kind==="sth";
+   const p=market(item),img=photoFor(item),sth=item.kind==="sth";
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button><a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Ver fotos ↗</a></div></div></article>';
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Checklist ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
+  grid.querySelectorAll("[data-catalog-upload]").forEach(input=>input.addEventListener("change",async()=>{
+   const item={name:input.dataset.catalogUpload,year:input.dataset.catalogYear,kind:input.dataset.catalogKind};
+   const file=input.files?.[0];if(file)await uploadCatalogPhoto(item,file);input.value="";
+  }));
  };
  $('catalogDetailClose')?.addEventListener('click',closeDetail);
  $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
@@ -151,6 +189,12 @@
  $('blogCatalogButton')?.addEventListener('click',showCatalog);
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
+
+ // Load the first-party image library on startup and refresh the visible catalog.
+ loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ const photoStyle=document.createElement("style");
+ photoStyle.textContent=".catalog-photo-upload{position:relative;display:inline-flex;align-items:center;cursor:pointer;background:#173a2d;border-color:#327455;color:#a8f0c4}.catalog-photo-upload:hover{border-color:#5fe09b}.catalog-photo-upload input{display:none!important}";
+ document.head.append(photoStyle);
 
  // Account modal can be closed with X, click outside or Escape.
  const originalShowGate=showGate;
