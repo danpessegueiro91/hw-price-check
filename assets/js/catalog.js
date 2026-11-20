@@ -167,8 +167,6 @@
  let selected=null;
  function closeDetail(){
   $('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null;
-  // Rebuild card actions after closing, so "Ver ficha" remains usable on every opening.
-  if(typeof renderCatalog==="function")renderCatalog();
  }
  function openDetail(item){
   selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth";
@@ -179,10 +177,10 @@
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').href=source(item);
-  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
+  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer"><button class="catalog-detail-zoom-trigger" type="button" data-detail-photo-zoom aria-label="Ampliar fotografia">⌕ Ampliar fotografia</button>':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
-  if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar";detailPhoto.addEventListener("click",()=>openPhotoViewer(detailPhoto.currentSrc||detailPhoto.src,detailPhoto.alt))}
+  if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar"}
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -259,11 +257,10 @@
  photoStyle.textContent=".catalog-photo-upload{position:relative;display:inline-flex;align-items:center;cursor:pointer;background:#173a2d;border-color:#327455;color:#a8f0c4}.catalog-photo-upload:hover{border-color:#5fe09b}.catalog-photo-upload input{display:none!important}";
  document.head.append(photoStyle);
 
- // Persistent delegated handlers: survive every catalogGrid.innerHTML refresh.
- const catalogGrid=$('catalogGrid');
- if(catalogGrid&&!catalogGrid.dataset.hwpcDelegated){
-  catalogGrid.dataset.hwpcDelegated="1";
-  catalogGrid.addEventListener("click",e=>{
+ // Document-level delegation survives replacement of cards or the grid itself.
+ if(!document.documentElement.dataset.hwpcCatalogActions){
+  document.documentElement.dataset.hwpcCatalogActions="1";
+  document.addEventListener("click",e=>{
    const zoom=e.target.closest("[data-photo-index]");
    if(zoom){
     const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
@@ -272,23 +269,22 @@
    }
    const detail=e.target.closest("[data-catalog-index]");
    if(detail){
+    e.preventDefault();
     const item={name:detail.dataset.modelName,year:detail.dataset.modelYear,kind:detail.dataset.modelKind};
     if(item.name&&item.year&&item.kind)openDetail(item);
    }
-  });
- }
- const detailImage=$('catalogDetailImage');
- if(detailImage&&!detailImage.dataset.hwpcZoomDelegated){
-  detailImage.dataset.hwpcZoomDelegated="1";
-  detailImage.addEventListener("click",e=>{
-   const img=e.target.closest("img");if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
-  });
+   const detailZoom=e.target.closest("[data-detail-photo-zoom]");
+   if(detailZoom){
+    const img=$('catalogDetailImage')?.querySelector("img");
+    if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
+   }
+  },true);
  }
  const detailModal=$('catalogDetail');
  if(detailModal&&!detailModal.dataset.hwpcCloseDelegated){
   detailModal.dataset.hwpcCloseDelegated="1";
   detailModal.addEventListener("click",e=>{
-   if(e.target===detailModal||e.target.closest("#catalogDetailClose"))closeDetail();
+   if(e.target===detailModal)closeDetail();
   });
  }
  // Account modal can be closed with X, click outside or Escape.
