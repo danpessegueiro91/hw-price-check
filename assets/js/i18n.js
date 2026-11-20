@@ -269,6 +269,11 @@ const translateText=()=>{
   });
  });
  // Tradução explícita do campo principal para garantir a mudança de idioma do placeholder.
+ const forgotPassword=document.getElementById('forgotPassword');
+ if(forgotPassword){
+  const labels={pt:'Esqueci-me da palavra-passe',en:'Forgot Password',es:'Olvidé mi contraseña',fr:'Mot de passe oublié',de:'Passwort vergessen',it:'Password dimenticata',nl:'Wachtwoord vergeten',br:'Esqueci minha senha'};
+  forgotPassword.textContent=labels[L]||labels.pt;
+ }
  const heroSearch=document.getElementById('heroSearch');
  if(heroSearch){
   heroSearch.setAttribute('placeholder',translateValue('Pesquisa um modelo Hot Wheels...',L,col));
