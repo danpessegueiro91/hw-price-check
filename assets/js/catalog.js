@@ -87,7 +87,7 @@
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
  let uploadedImages={},canManageCatalogPhotos=false;
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||"";
+ const photoFor=item=>uploadedImages[imageKey(item)]||IMAGES[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   const {data:adminFlag}=await sb.rpc("is_catalog_image_admin");
