@@ -120,7 +120,7 @@
   if(selected&&imageKey(selected)===imageKey(item))openDetail(item);
   alert("Fotografia guardada no arquivo HW Price Check.");
  };
- const addPhotoControl=item=>canManageCatalogPhotos?'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>':'';
+ const addPhotoControl=item=>canManageCatalogPhotos?'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>':'<button class="btn catalog-photo-login" type="button" data-catalog-login>Adicionar foto</button>';
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
  const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
@@ -156,6 +156,16 @@
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
+  grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
+   if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
+   const {data:{session}}=await sb.auth.getSession();
+   if(!session||session.user?.is_anonymous){showGate(true);status("Entra com a conta autorizada para gerir as fotografias. Depois volta a clicar em Adicionar foto.");return}
+   const {data:adminFlag,error}=await sb.rpc("is_catalog_image_admin");
+   if(error){alert("Não foi possível verificar as permissões: "+error.message);return}
+   canManageCatalogPhotos=adminFlag===true;
+   if(canManageCatalogPhotos)renderCatalog();
+   else alert("Esta conta não tem permissões para gerir fotografias do catálogo.");
+  }));
   grid.querySelectorAll("[data-catalog-upload]").forEach(input=>input.addEventListener("change",async()=>{
    const item={name:input.dataset.catalogUpload,year:input.dataset.catalogYear,kind:input.dataset.catalogKind};
    const file=input.files?.[0];if(file)await uploadCatalogPhoto(item,file);input.value="";
