@@ -181,6 +181,12 @@
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
   if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar"}
+  const detailZoomButton=$('catalogDetailImage').querySelector("[data-detail-photo-zoom]");
+  if(detailZoomButton)detailZoomButton.addEventListener("click",event=>{
+   event.preventDefault();event.stopPropagation();
+   const image=$('catalogDetailImage').querySelector("img");
+   if(image)openPhotoViewer(image.currentSrc||image.src,image.alt);
+  });
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -200,6 +206,11 @@
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   // Detail actions are handled through document-level delegation below.
+  grid.querySelectorAll(".catalog-view-detail").forEach(button=>button.addEventListener("click",event=>{
+   event.preventDefault();event.stopPropagation();
+   const item={name:button.dataset.modelName,year:button.dataset.modelYear,kind:button.dataset.modelKind};
+   if(item.name&&item.year&&item.kind)openDetail(item);
+  }));
   grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar"});
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
