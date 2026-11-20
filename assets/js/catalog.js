@@ -199,11 +199,7 @@
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
-  // Bind each freshly rendered action directly to its model. Re-rendering the grid
-  // recreates these handlers, while closing the detail dialog leaves them intact.
-  grid.querySelectorAll(".catalog-view-detail").forEach(button=>button.addEventListener("click",()=>{
-   const item=rows[Number(button.dataset.catalogIndex)];if(item)openDetail(item);
-  }));
+  // Detail actions are handled through document-level delegation below.
   grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar"});
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
@@ -266,6 +262,12 @@
  if(!document.documentElement.dataset.hwpcCatalogActions){
   document.documentElement.dataset.hwpcCatalogActions="1";
   document.addEventListener("click",e=>{
+   const detail=e.target.closest(".catalog-view-detail");
+   if(detail){
+    const item={name:detail.dataset.modelName,year:detail.dataset.modelYear,kind:detail.dataset.modelKind};
+    if(item.name&&item.year&&item.kind)openDetail(item);
+    return;
+   }
    const zoom=e.target.closest("[data-photo-index]");
    if(zoom){
     const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
