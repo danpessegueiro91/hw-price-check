@@ -241,10 +241,11 @@
  photoStyle.textContent=".catalog-photo-upload{position:relative;display:inline-flex;align-items:center;cursor:pointer;background:#173a2d;border-color:#327455;color:#a8f0c4}.catalog-photo-upload:hover{border-color:#5fe09b}.catalog-photo-upload input{display:none!important}";
  document.head.append(photoStyle);
 
- // Document-level delegation survives replacement of cards or the grid itself.
- if(!document.documentElement.dataset.hwpcCatalogActions){
-  document.documentElement.dataset.hwpcCatalogActions="1";
-  document.addEventListener("click",e=>{
+ // The catalog grid remains mounted while its cards are rendered again.
+ const catalogGrid=$('catalogGrid');
+ if(catalogGrid&&!catalogGrid.dataset.hwpcCatalogActions){
+  catalogGrid.dataset.hwpcCatalogActions="1";
+  catalogGrid.addEventListener("click",e=>{
    const target=e.target instanceof Element?e.target:e.target?.parentElement;
    if(!target)return;
    const detail=target.closest(".catalog-view-detail");
@@ -253,13 +254,11 @@
     if(item.name&&item.year&&item.kind)openDetail(item);
     return;
    }
-   const zoom=target.closest("[data-photo-index]");
+   const zoom=target.closest("[data-photo-index], .catalog-thumb img");
    if(zoom){
     const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
     if(img)window.HWPCPhotoViewer.open(img.currentSrc||img.src,img.alt);
-    return;
    }
-
   });
  }
  const detailModal=$('catalogDetail');
