@@ -177,6 +177,8 @@
   $('catalogDetailSource').href=source(item);
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
+  const detailPhoto=$('catalogDetailImage').querySelector("img");
+  if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar";detailPhoto.addEventListener("click",()=>openPhotoViewer(detailPhoto.currentSrc||detailPhoto.src,detailPhoto.alt))}
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -195,6 +197,7 @@
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
+  grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar";img.addEventListener("click",()=>openPhotoViewer(img.currentSrc||img.src,img.alt))});
   grid.querySelectorAll("[data-catalog-index]").forEach(b=>b.addEventListener("click",()=>{const item=rows[Number(b.dataset.catalogIndex)];if(item)openDetail(item)}));
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
@@ -257,6 +260,7 @@
  $('authGate')?.addEventListener('click',e=>{if(e.target===$('authGate'))showGate(false)});
  document.addEventListener('keydown',e=>{
   if(e.key==="Escape"){
+   if(photoViewer&&!photoViewer.hidden){photoViewer.hidden=true;photoViewer.querySelector("img").removeAttribute("src")}
    if($('catalogDetail')&&!$('catalogDetail').classList.contains('hidden'))closeDetail();
    else if($('authGate')&&!$('authGate').classList.contains('hidden'))showGate(false);
   }
