@@ -203,6 +203,7 @@
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
 
+ window.addEventListener('hwpc:auth-updated',()=>{loadCatalogImages().then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
  loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoStyle=document.createElement("style");
