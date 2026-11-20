@@ -98,7 +98,7 @@
    if(publicData?.publicUrl)uploadedImages[row.model_year+"|"+row.model_kind+"|"+row.model_name]=publicData.publicUrl;
   });
  };
- const slugify=value=>value.normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ const slugify=value=>value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  const uploadCatalogPhoto=async(item,file)=>{
   if(!sb){alert("O serviço de fotografias não está disponível.");return}
   if(!file||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Escolhe uma imagem JPG, PNG, WebP ou AVIF.");return}
