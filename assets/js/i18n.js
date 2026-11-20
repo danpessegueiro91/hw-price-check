@@ -9,6 +9,7 @@ const D={
 "Guias":["Guides","Guías","Guides","Guides","Guide","Gidsen","Guias"],
 "Sobre":["About","Acerca de","À propos","Über uns","Informazioni","Over","Sobre"],
 "Entrar":["Log in","Entrar","Connexion","Anmelden","Accedi","Inloggen","Entrar"],
+"Forgot Password":["Forgot Password","Olvidé mi contraseña","Mot de passe oublié","Passwort vergessen","Password dimenticata","Wachtwoord vergeten","Esqueci minha senha"],
 "Criar Conta":["Sign up","Crear cuenta","Créer un compte","Konto erstellen","Crea account","Account maken","Criar conta"],
 "Criar conta":["Create account","Crear cuenta","Créer un compte","Konto erstellen","Crea account","Account maken","Criar conta"],
 "Fotografias":["Photos","Fotos","Photos","Fotos","Foto","Foto’s","Fotos"],
