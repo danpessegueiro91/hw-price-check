@@ -181,12 +181,8 @@
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
   if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar"}
-  const detailZoomButton=$('catalogDetailImage').querySelector("[data-detail-photo-zoom]");
-  if(detailZoomButton)detailZoomButton.addEventListener("click",event=>{
-   event.preventDefault();event.stopPropagation();
-   const image=$('catalogDetailImage').querySelector("img");
-   if(image)openPhotoViewer(image.currentSrc||image.src,image.alt);
-  });
+  // The single document-level handler below owns all zoom clicks. Avoid
+  // per-render listeners here: the detail image is replaced on every open.
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -205,12 +201,8 @@
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
-  // Detail actions are handled through document-level delegation below.
-  grid.querySelectorAll(".catalog-view-detail").forEach(button=>button.addEventListener("click",event=>{
-   event.preventDefault();event.stopPropagation();
-   const item={name:button.dataset.modelName,year:button.dataset.modelYear,kind:button.dataset.modelKind};
-   if(item.name&&item.year&&item.kind)openDetail(item);
-  }));
+  // Catalog detail and zoom actions use one delegated handler so replacing
+  // the grid never leaves stale or duplicate listeners behind.
   grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar"});
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
@@ -273,24 +265,26 @@
  if(!document.documentElement.dataset.hwpcCatalogActions){
   document.documentElement.dataset.hwpcCatalogActions="1";
   document.addEventListener("click",e=>{
-   const detail=e.target.closest(".catalog-view-detail");
+   const target=e.target instanceof Element?e.target:e.target?.parentElement;
+   if(!target)return;
+   const detail=target.closest(".catalog-view-detail");
    if(detail){
     const item={name:detail.dataset.modelName,year:detail.dataset.modelYear,kind:detail.dataset.modelKind};
     if(item.name&&item.year&&item.kind)openDetail(item);
     return;
    }
-   const zoom=e.target.closest("[data-photo-index]");
+   const zoom=target.closest("[data-photo-index]");
    if(zoom){
     const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
     if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
     return;
    }
-   const detailZoom=e.target.closest("[data-detail-photo-zoom]");
+   const detailZoom=target.closest("[data-detail-photo-zoom]");
    if(detailZoom){
     const img=$('catalogDetailImage')?.querySelector("img");
     if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
    }
-  },true);
+  });
  }
  const detailModal=$('catalogDetail');
  if(detailModal&&!detailModal.dataset.hwpcCloseDelegated){
