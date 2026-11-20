@@ -85,11 +85,13 @@
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
- let uploadedImages={};
+ let uploadedImages={},canManageCatalogPhotos=false;
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
  const photoFor=item=>uploadedImages[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
+  const {data:adminFlag}=await sb.rpc("is_catalog_image_admin");
+  canManageCatalogPhotos=adminFlag===true;
   const {data,error}=await sb.from("catalog_images").select("model_year,model_kind,model_name,storage_path");
   if(error){console.warn("Não foi possível carregar as fotografias do catálogo:",error.message);return}
   uploadedImages={};
@@ -104,7 +106,8 @@
   if(!file||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Escolhe uma imagem JPG, PNG, WebP ou AVIF.");return}
   if(file.size>5*1024*1024){alert("A imagem tem de ter até 5 MB.");return}
   const {data:sessionData}=await sb.auth.getSession();
-  if(!sessionData?.session){showGate(true);alert("Inicia sessão para poderes adicionar fotografias ao arquivo.");return}
+  if(!sessionData?.session){showGate(true);alert("Inicia sessão com a conta autorizada para gerir fotografias.");return}
+  if(!canManageCatalogPhotos){alert("Esta conta não tem permissões para gerir fotografias do catálogo.");return}
   const path=item.year+"/"+item.kind+"/"+slugify(item.name)+"."+({"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[file.type]);
   const {error:uploadError}=await sb.storage.from("hw-catalog").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
   if(uploadError){alert("Não foi possível carregar a fotografia: "+uploadError.message);return}
@@ -117,7 +120,7 @@
   if(selected&&imageKey(selected)===imageKey(item))openDetail(item);
   alert("Fotografia guardada no arquivo HW Price Check.");
  };
- const addPhotoControl=item=>'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>';
+ const addPhotoControl=item=>canManageCatalogPhotos?'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>':'';
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
  const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
