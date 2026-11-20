@@ -240,9 +240,16 @@ test('catalog detail can close and reopen repeatedly, and photo zoom is visible 
   await expect(page.locator('#catalogDetail')).toBeVisible();
   await expect(page.locator('#catalogDetailImage [data-detail-photo-zoom]')).toBeVisible();
   await page.locator('#catalogDetailImage [data-detail-photo-zoom]').click();
-  await expect(page.locator('.hwpc-photo-viewer')).toBeVisible();
-  await expect(page.locator('.hwpc-photo-viewer [data-photo-zoom="in"]')).toBeVisible();
-  await page.locator('.hwpc-photo-viewer .hwpc-photo-close').click();
+  const viewer = page.locator('.hwpc-photo-viewer');
+  await expect(viewer).toBeVisible();
+  await expect(viewer.locator('[data-photo-zoom="in"]')).toBeVisible();
+  await viewer.locator('[data-photo-zoom="in"]').click();
+  await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('125%');
+  await viewer.locator('[data-photo-zoom="reset"]').click();
+  await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('100%');
+  await viewer.locator('.hwpc-photo-close').click();
+  await expect(viewer).toBeHidden();
+  await expect(page.locator('#catalogDetail')).toBeVisible();
   await page.locator('#catalogDetailClose').click();
   await expect(page.locator('#catalogDetail')).toBeHidden();
   await open.click();
@@ -271,4 +278,16 @@ test('catalog detail labels follow all selected languages', async ({ page }) => 
     await expect(page.locator('#catalogDetailSource')).toContainText(source);
     await page.locator('#catalogDetailClose').click();
   }
+});
+
+
+test('interface translations do not depend on an external translation service', async ({ page }) => {
+  const externalTranslations = [];
+  page.on('request', request => {
+    if (request.url().includes('api.mymemory.translated.net')) externalTranslations.push(request.url());
+  });
+  await page.goto('/');
+  await page.locator('#language').selectOption('en');
+  await expect(page.locator('#headline')).toContainText('Discover the value');
+  await expect.poll(() => externalTranslations.length).toBe(0);
 });
