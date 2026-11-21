@@ -230,8 +230,10 @@
   grid.innerHTML=rows.map((item,i)=>{
    const p=market(item),img=photoFor(item),sth=item.kind==="sth";
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
-   const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
+   const info=marketInfo(item);
+   const value=p?"Mediana vendida: €"+p.toFixed(2).replace(".",","):"Sem amostra fiável";
+   const valueMeta=p?"Actualizado "+marketDate(info)+" · "+info.sales_count+" vendas":"Aguardando vendas comparáveis";
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><small class="catalog-price-meta">'+valueMeta+'</small><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   // Catalog detail and zoom actions use one delegated handler so replacing
@@ -291,9 +293,9 @@
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
 
- window.addEventListener('hwpc:auth-updated',()=>{loadCatalogImages().then(()=>renderCatalog())});
+ window.addEventListener('hwpc:auth-updated',()=>{Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
- loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoInteractionStyle=document.createElement("style");
  photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art{position:relative}.catalog-detail-art img{cursor:zoom-in!important}.catalog-detail-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:4;padding:8px 11px;border:1px solid rgba(255,255,255,.6);border-radius:8px;background:rgba(8,15,28,.94);color:#fff;font:600 12px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-detail-zoom-trigger:hover{background:#263d59}";
  document.head.append(photoInteractionStyle);
