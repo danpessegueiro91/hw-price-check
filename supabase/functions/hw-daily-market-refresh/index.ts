@@ -164,15 +164,14 @@ Deno.serve(async (req: Request) => {
         }
         const summary = item.summary;
         const resultRows = Array.isArray(item.result?.data) ? item.result.data : [];
-        const normalize = (value: string) => value.normalize("NFKD").replace(/\\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        const normalize = (value: string) => value.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
         const titleTokens = normalize(model.name).split(" ").filter((token) => token.length > 1);
-        const variantMatches = model.kind === "sth"
-          ? title.includes("super treasure hunt") || title.split(" ").includes("sth")
-          : (title.includes("treasure hunt") && !title.includes("super treasure hunt")) || title.split(" ").includes("th");
         const matchingRows = resultRows.filter((sale: any) => {
           const title = normalize(String(sale.title || ""));
           const modelMatches = titleTokens.every((token) => title.includes(token));
-          
+          const variantMatches = model.kind === "sth"
+            ? title.includes("super treasure hunt") || title.split(" ").includes("sth")
+            : (title.includes("treasure hunt") && !title.includes("super treasure hunt")) || title.split(" ").includes("th");
           return modelMatches && variantMatches && sale.best_offer_accepted !== true;
         });
         const prices = matchingRows
