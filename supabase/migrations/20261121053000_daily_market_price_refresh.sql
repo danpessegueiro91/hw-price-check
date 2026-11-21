@@ -6,7 +6,9 @@ alter table public.hw_model_price_history
   add column if not exists model_year integer,
   add column if not exists model_kind text,
   add column if not exists source_currency text,
-  add column if not exists fx_rate_to_eur numeric;
+  add column if not exists fx_rate_to_eur numeric,
+  add column if not exists latest_sold_date date,
+  add column if not exists best_offer_accepted_count integer not null default 0;
 
 create index if not exists hw_model_price_history_latest_idx
   on public.hw_model_price_history (model_year, model_kind, model_name, captured_at desc);
