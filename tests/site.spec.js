@@ -293,22 +293,24 @@ test('interface translations do not depend on an external translation service', 
 });
 
 
-test('2026 TH and STH catalog cards all have a mapped photo', async ({ page }) => {
-  // CI is intentionally offline: validate the mapped source URLs and image elements
-  // without depending on HWtreasure's availability during the test run.
-  const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pWQAAAAASUVORK5CYII=', 'base64');
-  await page.route('https://www.hwtreasure.com/**', route =>
-    route.fulfill({ status: 200, contentType: 'image/png', body: pixel })
-  );
+test('2026 catalog uses only first-party uploaded photos and no external product links', async ({ page }) => {
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogYear')).toHaveValue('2026');
   await expect(page.locator('.catalog-card')).toHaveCount(30);
+
   const photos = await page.locator('.catalog-thumb img').evaluateAll(images =>
-    images.map(image => ({ src: image.getAttribute('src'), alt: image.getAttribute('alt') }))
+    images.map(image => image.getAttribute('src'))
   );
-  expect(photos).toHaveLength(30);
-  expect(photos.every(photo => photo.src && photo.src.startsWith('https://') && photo.alt)).toBe(true);
-  expect(new Set(photos.map(photo => photo.src)).size).toBe(30);
-  await expect(page.locator('.catalog-thumb strong')).toHaveCount(0);
+  expect(photos.length).toBeLessThanOrEqual(30);
+  expect(photos.every(src =>
+    src && src.includes('hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/')
+  )).toBe(true);
+
+  const externalLinks = await page.locator('#catalogGrid a').evaluateAll(links =>
+    links.filter(link => /^https?:/i.test(link.getAttribute('href') || '')).map(link => link.href)
+  );
+  expect(externalLinks).toEqual([]);
+  await expect(page.locator('#catalogGrid').getByText('Fonte externa')).toHaveCount(0);
+  await expect(page.locator('.catalog-price')).toHaveCount(30);
 });
