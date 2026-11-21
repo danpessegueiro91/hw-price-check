@@ -24,7 +24,7 @@
  }
  if(!$('catalogDetail')){
   const d=document.createElement('div');d.id='catalogDetail';d.className='catalog-dialog-overlay hidden';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-hidden','true');d.setAttribute('aria-labelledby','catalogDetailTitle');
-  d.innerHTML="<article class='catalog-dialog' role='document'><button id='catalogDetailClose' class='auth-close' type='button' aria-label='Fechar ficha' title='Fechar'>×</button><div class='catalog-detail-top'><span id='catalogDetailBadge' class='catalog-badge th'>TREASURE HUNT</span><span id='catalogDetailYear' class='catalog-detail-year'></span></div><div class='catalog-detail-layout'><div id='catalogDetailImage' class='catalog-detail-art'><span>HOT WHEELS</span><strong id='catalogDetailArtType'>TH</strong><small>PRICE CHECK</small></div><div class='catalog-detail-copy'><h2 id='catalogDetailTitle' data-no-translate='true'>Modelo Hot Wheels</h2><p id='catalogDetailMeta' class='muted'></p><div class='catalog-detail-value'><span>Estimativa de mercado</span><strong id='catalogDetailValue'>Sem estimativa fiável</strong><small id='catalogDetailValueNote'>Não inventamos preços quando não existe amostra suficiente.</small></div><p id='catalogDetailEra' class='note'></p><p id='catalogDetailSourceNote' class='note'></p></div></div><div class='catalog-detail-actions'><span id='catalogDetailSource' class='note'>Fotografia do arquivo HW Price Check</span><button id='catalogDetailMarket' class='btn primary' type='button'>Consultar vendas concluídas</button></div><p class='note'>Os valores variam com o estado do blister, condição da miniatura, variante, país e custos de envio. Uma mediana de colecionadores não garante um preço de venda.</p></article>";
+  d.innerHTML="<article class='catalog-dialog' role='document'><button id='catalogDetailClose' class='auth-close' type='button' aria-label='Fechar ficha' title='Fechar'>×</button><div class='catalog-detail-top'><span id='catalogDetailBadge' class='catalog-badge th'>TREASURE HUNT</span><span id='catalogDetailYear' class='catalog-detail-year'></span></div><div class='catalog-detail-layout'><div id='catalogDetailImage' class='catalog-detail-art'><span>HOT WHEELS</span><strong id='catalogDetailArtType'>TH</strong><small>PRICE CHECK</small></div><div class='catalog-detail-copy'><h2 id='catalogDetailTitle' data-no-translate='true'>Modelo Hot Wheels</h2><p id='catalogDetailMeta' class='muted'></p><div class='catalog-detail-value'><span>Mediana de vendas recentes</span><strong id='catalogDetailValue'>Sem estimativa fiável</strong><small id='catalogDetailValueNote'>Não inventamos preços quando não existe amostra suficiente.</small></div><p id='catalogDetailEra' class='note'></p><p id='catalogDetailSourceNote' class='note'></p></div></div><div class='catalog-detail-actions'><span id='catalogDetailSource' class='note'>Fotografia do arquivo HW Price Check</span><button id='catalogDetailMarket' class='btn primary' type='button'>Consultar vendas concluídas</button></div><p class='note'>Os valores variam com o estado do blister, condição da miniatura, variante, país e custos de envio. Uma mediana de colecionadores não garante um preço de venda.</p></article>";
   document.body.append(d);
  }
 
@@ -71,12 +71,26 @@
  // Market values are USD medians from Hunt64 collector valuations, snapshot 2026-11-03.
  // Only exact releases with a published per-casting median are priced; missing medians stay unpriced.
  // USD converted to EUR using ECB reference rate 2026-11-20: EUR 1 = USD 1.0990.
- const MARKET={
-  th:{"'87 Buick Regal GNX":5.26,"'92 Dodge Viper RT/10":5.00,"Electro Silhouette":5.96,"Hot Wheengs":5.78,"2016 Ford GT Race":10.00,"2 Jet Z":6.29,"Total Disposal":6.15,"Amaru GTC":6.79,"Sweet Driver":5.00,"Mad Manga":4.00},
-  sth:{"Ferrari F40 Competizione":182.79,"Ford Mustang GTD":82.47,"Subaru Impreza":88.89,"'87 Ford Sierra Cosworth":77.16,"'64 Impala":73.58,"Custom Otto":61.86,"Porsche 911 Carrera RS 2.7":12.91,"Honda Civic Custom":55.78,"Lotus Sport Elise":44.72,"Drift-Ender":27.35,"'94 Toyota Supra":23.72,"Nissan Maxima Drift Car":72.16}
+ // Market prices are read from the latest verified daily snapshot in Supabase.
+ let marketSnapshots={};
+ const marketKey=item=>item.year+"|"+item.kind+"|"+item.name;
+ const market=item=>marketSnapshots[marketKey(item)]?.median_price??null;
+ const marketInfo=item=>marketSnapshots[marketKey(item)]||null;
+ const loadMarketPrices=async()=>{
+  if(!sb)return;
+  const {data,error}=await sb.from("hw_model_price_history")
+   .select("model_year,model_kind,model_name,captured_at,currency,median_price,sales_count,source,source_currency,fx_rate_to_eur,latest_sold_date,best_offer_accepted_count")
+   .not("model_year","is",null).not("model_kind","is",null)
+   .order("captured_at",{ascending:false}).limit(1000);
+  if(error){console.warn("Não foi possível carregar as avaliações diárias:",error.message);return}
+  const latest={};
+  (data||[]).forEach(row=>{
+   const key=String(row.model_year)+"|"+row.model_kind+"|"+row.model_name;
+   if(!latest[key])latest[key]=row;
+  });
+  marketSnapshots=latest;
  };
- const USD_PER_EUR=1.0990;
- const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]!=null?(MARKET[item.kind]||{})[item.name]/USD_PER_EUR:null:null;
+ const marketDate=value=>value?.captured_at?new Intl.DateTimeFormat("pt-PT",{dateStyle:"medium"}).format(new Date(value.captured_at)):"";
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
  let uploadedImages={},canManageCatalogPhotos=false;
  // Fotografias reais dos modelos 2026, com carro e blister visíveis.
@@ -201,8 +215,8 @@
   if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
-  $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores Hunt64; valor indicativo, não preço garantido de venda.":"Não existe amostra suficiente documentada para este modelo.";
-  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: Hunt64, medianas globais de colecionadores consultadas em 03-11-2026. Conversão USD/EUR pela taxa de referência do BCE de 20-11-2026 (1 EUR = 1,0990 USD).":"Checklist histórica; sem preço individual documentado.";
+  $('catalogDetailValueNote').textContent=p?"Mediana de vendas concluídas · "+(marketInfo(item)?.sales_count||0)+" vendas novas · última venda "+(marketInfo(item)?.latest_sold_date||"data indisponível")+" · actualizado "+marketDate(marketInfo(item)):"Ainda não há amostra suficiente de vendas concluídas para este modelo.";
+  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: "+(marketInfo(item)?.source||"vendas concluídas eBay")+" · moeda original "+(marketInfo(item)?.source_currency||"GBP")+" · convertido para EUR pela taxa diária de referência.":"Sem dados de vendas suficientes para uma avaliação actual.";
   $('catalogDetailSource').removeAttribute('href');
   $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
   $('catalogDetailSource').classList.add('is-local-photo-source');
@@ -230,8 +244,10 @@
   grid.innerHTML=rows.map((item,i)=>{
    const p=market(item),img=photoFor(item),sth=item.kind==="sth";
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
-   const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
+   const info=marketInfo(item);
+   const value=p?"Mediana vendida: €"+p.toFixed(2).replace(".",","):"Sem amostra fiável";
+   const valueMeta=p?"Actualizado "+marketDate(info)+" · "+info.sales_count+" vendas":"Aguardando vendas comparáveis";
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><small class="catalog-price-meta">'+valueMeta+'</small><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   // Catalog detail and zoom actions use one delegated handler so replacing
@@ -291,9 +307,9 @@
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
 
- window.addEventListener('hwpc:auth-updated',()=>{loadCatalogImages().then(()=>renderCatalog())});
+ window.addEventListener('hwpc:auth-updated',()=>{Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
- loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoInteractionStyle=document.createElement("style");
  photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art{position:relative}.catalog-detail-art img{cursor:zoom-in!important}.catalog-detail-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:4;padding:8px 11px;border:1px solid rgba(255,255,255,.6);border-radius:8px;background:rgba(8,15,28,.94);color:#fff;font:600 12px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-detail-zoom-trigger:hover{background:#263d59}";
  document.head.append(photoInteractionStyle);
