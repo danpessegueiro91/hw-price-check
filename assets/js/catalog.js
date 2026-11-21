@@ -215,8 +215,8 @@
   if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
-  $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores Hunt64; valor indicativo, não preço garantido de venda.":"Não existe amostra suficiente documentada para este modelo.";
-  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: Hunt64, medianas globais de colecionadores consultadas em 03-11-2026. Conversão USD/EUR pela taxa de referência do BCE de 20-11-2026 (1 EUR = 1,0990 USD).":"Checklist histórica; sem preço individual documentado.";
+  $('catalogDetailValueNote').textContent=p?"Mediana de vendas concluídas · "+(marketInfo(item)?.sales_count||0)+" anúncios com preço · actualizado "+marketDate(marketInfo(item)):"Ainda não há amostra suficiente de vendas concluídas para este modelo.";
+  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: "+(marketInfo(item)?.source||"vendas concluídas eBay")+" · moeda original "+(marketInfo(item)?.source_currency||"GBP")+" · convertido para EUR pela taxa diária de referência.":"Sem dados de vendas suficientes para uma avaliação actual.";
   $('catalogDetailSource').removeAttribute('href');
   $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
   $('catalogDetailSource').classList.add('is-local-photo-source');
