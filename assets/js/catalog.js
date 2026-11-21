@@ -215,7 +215,7 @@
   if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
-  $('catalogDetailValueNote').textContent=p?"Mediana de vendas concluídas · "+(marketInfo(item)?.sales_count||0)+" anúncios com preço · actualizado "+marketDate(marketInfo(item)):"Ainda não há amostra suficiente de vendas concluídas para este modelo.";
+  $('catalogDetailValueNote').textContent=p?"Mediana de vendas concluídas · "+(marketInfo(item)?.sales_count||0)+" vendas novas · última venda "+(marketInfo(item)?.latest_sold_date||"data indisponível")+" · actualizado "+marketDate(marketInfo(item)):"Ainda não há amostra suficiente de vendas concluídas para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: "+(marketInfo(item)?.source||"vendas concluídas eBay")+" · moeda original "+(marketInfo(item)?.source_currency||"GBP")+" · convertido para EUR pela taxa diária de referência.":"Sem dados de vendas suficientes para uma avaliação actual.";
   $('catalogDetailSource').removeAttribute('href');
   $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
