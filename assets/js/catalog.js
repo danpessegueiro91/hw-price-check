@@ -124,65 +124,30 @@
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
  const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
  const era=item=>{const y=Number(item.year);if(y<2007)return "1995–2006: Treasure Hunt era uma série própria numerada; ainda não existia STH.";if(y<=2011)return "2007–2011: cada casting TH também teve uma versão Super com pintura Spectraflame e pneus Real Riders.";if(y===2012)return "2012: os conjuntos Treasure Hunt e Super Treasure Hunt passaram a apresentar modelos diferentes.";return "Desde 2013, TH e STH integram a mainline como conjuntos separados."};
- let photoViewer=null,photoZoom=1,photoX=0,photoY=0,photoDrag=null;
- function ensurePhotoViewer(){
-  if(photoViewer)return photoViewer;
-  const style=document.createElement("style");
-  style.textContent=`
-   .hwpc-photo-viewer{position:fixed;inset:0;z-index:10050;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;background:rgba(2,7,15,.94);backdrop-filter:blur(8px)}
-   .hwpc-photo-viewer[hidden]{display:none}
-   .hwpc-photo-stage{position:relative;display:flex;align-items:center;justify-content:center;width:min(94vw,1200px);height:min(78vh,850px);overflow:hidden;touch-action:none;border:1px solid #34465d;border-radius:14px;background:#080e18}
-   .hwpc-photo-stage img{display:block;width:auto!important;height:auto!important;max-width:100%!important;max-height:100%!important;object-fit:contain;transform:translate(var(--photo-x,0px),var(--photo-y,0px)) scale(var(--photo-zoom,1))!important;transform-origin:center;user-select:none;-webkit-user-drag:none;cursor:grab;pointer-events:auto}
-   .hwpc-photo-stage img:active{cursor:grabbing}
-   .hwpc-photo-toolbar{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap}
-   .hwpc-photo-toolbar button,.hwpc-photo-close{min-width:42px;min-height:40px;padding:8px 13px;border:1px solid #64748b;border-radius:9px;background:#17263a;color:#fff;font:600 15px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer}
-   .hwpc-photo-toolbar button:hover,.hwpc-photo-close:hover{background:#263d59}
-   .hwpc-photo-close{position:absolute;top:16px;right:16px;font-size:22px;line-height:1}
-   .hwpc-photo-zoom-label{min-width:58px;color:#fff;text-align:center;font:600 13px Inter,"Segoe UI",Arial,sans-serif}
-  `;
-  document.head.append(style);
-  const root=document.createElement("div");root.className="hwpc-photo-viewer";root.hidden=true;root.setAttribute("role","dialog");root.setAttribute("aria-modal","true");root.setAttribute("aria-label","Visualizador de fotografia");
-  root.innerHTML='<button type="button" class="hwpc-photo-close" aria-label="Fechar">×</button><div class="hwpc-photo-stage"><img alt=""></div><div class="hwpc-photo-toolbar"><button type="button" data-photo-zoom="out" aria-label="Diminuir zoom">−</button><span class="hwpc-photo-zoom-label">100%</span><button type="button" data-photo-zoom="in" aria-label="Aumentar zoom">+</button><button type="button" data-photo-zoom="reset">Repor</button></div>';
-  document.body.append(root);photoViewer=root;
-  const image=root.querySelector("img"),stage=root.querySelector(".hwpc-photo-stage"),label=root.querySelector(".hwpc-photo-zoom-label");
-  const paint=()=>{image.style.setProperty("--photo-zoom",photoZoom);image.style.setProperty("--photo-x",photoX+"px");image.style.setProperty("--photo-y",photoY+"px");image.style.setProperty("transform","translate("+photoX+"px,"+photoY+"px) scale("+photoZoom+")","important");label.textContent=Math.round(photoZoom*100)+"%"};
-  const zoomBy=delta=>{photoZoom=Math.max(1,Math.min(5,photoZoom+delta));if(photoZoom===1){photoX=0;photoY=0}paint()};
-  root.querySelector(".hwpc-photo-close").addEventListener("click",()=>{root.hidden=true;image.removeAttribute("src")});
-  root.querySelector('[data-photo-zoom="in"]').addEventListener("click",()=>zoomBy(.25));
-  root.querySelector('[data-photo-zoom="out"]').addEventListener("click",()=>zoomBy(-.25));
-  root.querySelector('[data-photo-zoom="reset"]').addEventListener("click",()=>{photoZoom=1;photoX=0;photoY=0;paint()});
-  stage.addEventListener("wheel",e=>{e.preventDefault();zoomBy(e.deltaY<0?.2:-.2)},{passive:false});
-  image.addEventListener("dblclick",()=>{if(photoZoom===1)photoZoom=2;else{photoZoom=1;photoX=0;photoY=0}paint()});
-  stage.addEventListener("pointerdown",e=>{if(photoZoom<=1)return;photoDrag={x:e.clientX-photoX,y:e.clientY-photoY};stage.setPointerCapture(e.pointerId)});
-  stage.addEventListener("pointermove",e=>{if(!photoDrag)return;photoX=e.clientX-photoDrag.x;photoY=e.clientY-photoDrag.y;paint()});
-  const stopDrag=()=>{photoDrag=null};stage.addEventListener("pointerup",stopDrag);stage.addEventListener("pointercancel",stopDrag);
-  paint();return root;
- }
- function openPhotoViewer(src,alt){
-  if(!src)return;const root=ensurePhotoViewer(),image=root.querySelector("img");
-  photoZoom=1;photoX=0;photoY=0;image.src=src;image.alt=alt||"Fotografia Hot Wheels";
-  image.style.setProperty("--photo-zoom",1);image.style.setProperty("--photo-x","0px");image.style.setProperty("--photo-y","0px");image.style.setProperty("transform","translate(0px,0px) scale(1)","important");
-  root.querySelector(".hwpc-photo-zoom-label").textContent="100%";root.hidden=false;root.querySelector(".hwpc-photo-close").focus();
- }
  let selected=null;
  function closeDetail(){
   $('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null;
-  // Rebuild card actions after closing, so "Ver ficha" remains usable on every opening.
-  if(typeof renderCatalog==="function")renderCatalog();
  }
  function openDetail(item){
   selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth";
   $('catalogDetailBadge').textContent=sth?"SUPER TREASURE HUNT":"TREASURE HUNT";$('catalogDetailBadge').className="catalog-badge "+item.kind;
-  $('catalogDetailYear').textContent="ANO "+item.year;$('catalogDetailArtType').textContent=sth?"STH":"TH";
+  const detailYear=$('catalogDetailYear'),detailArtType=$('catalogDetailArtType');
+  if(detailYear)detailYear.textContent="ANO "+item.year;
+  if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').href=source(item);
-  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
+  $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer"><button class="catalog-detail-zoom-trigger" type="button" data-detail-photo-zoom aria-label="Ampliar fotografia">⌕ Ampliar fotografia</button>':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
-  if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar";detailPhoto.addEventListener("click",()=>openPhotoViewer(detailPhoto.currentSrc||detailPhoto.src,detailPhoto.alt))}
+  if(detailPhoto){
+   detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar";
+   const openDetailPhoto=()=>window.HWPCPhotoViewer?.open(detailPhoto.currentSrc||detailPhoto.src,detailPhoto.alt);
+   detailPhoto.addEventListener("click",openDetailPhoto);
+   $('catalogDetailImage').querySelector("[data-detail-photo-zoom]")?.addEventListener("click",e=>{e.stopPropagation();openDetailPhoto()});
+  }
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -201,6 +166,8 @@
    return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
+  // Catalog detail and zoom actions use one delegated handler so replacing
+  // the grid never leaves stale or duplicate listeners behind.
   grid.querySelectorAll(".catalog-thumb img").forEach(img=>{img.style.cursor="zoom-in";img.title="Abrir fotografia e ampliar"});
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
@@ -217,8 +184,15 @@
    const file=input.files?.[0];if(file)await uploadCatalogPhoto(item,file);input.value="";
   }));
  };
- $('catalogDetailClose')?.addEventListener('click',closeDetail);
- $('catalogDetail')?.addEventListener('click',e=>{if(e.target===$('catalogDetail'))closeDetail()});
+ const detailOverlay=$('catalogDetail');
+ if(detailOverlay&&!detailOverlay.dataset.hwpcModalEvents){
+  detailOverlay.dataset.hwpcModalEvents="1";
+  detailOverlay.addEventListener('click',e=>{
+   const target=e.target instanceof Element?e.target:e.target?.parentElement;
+   if(!target)return;
+   if(target.closest('#catalogDetailClose')||target===detailOverlay)closeDetail();
+  });
+ }
  $('catalogDetailMarket')?.addEventListener('click',()=>{
   if(!selected)return;const item=selected;closeDetail();openWorkspace('analyse');
   $('model').value=item.name;$('year').value=item.year;$('type').value=item.kind;
@@ -253,42 +227,30 @@
  // Load the first-party image library on startup and refresh the visible catalog.
  loadCatalogImages().then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoInteractionStyle=document.createElement("style");
- photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art img{cursor:zoom-in!important}";
+ photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art{position:relative}.catalog-detail-art img{cursor:zoom-in!important}.catalog-detail-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:4;padding:8px 11px;border:1px solid rgba(255,255,255,.6);border-radius:8px;background:rgba(8,15,28,.94);color:#fff;font:600 12px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-detail-zoom-trigger:hover{background:#263d59}";
  document.head.append(photoInteractionStyle);
  const photoStyle=document.createElement("style");
  photoStyle.textContent=".catalog-photo-upload{position:relative;display:inline-flex;align-items:center;cursor:pointer;background:#173a2d;border-color:#327455;color:#a8f0c4}.catalog-photo-upload:hover{border-color:#5fe09b}.catalog-photo-upload input{display:none!important}";
  document.head.append(photoStyle);
 
- // Persistent delegated handlers: survive every catalogGrid.innerHTML refresh.
+ // The catalog grid remains mounted while its cards are rendered again.
  const catalogGrid=$('catalogGrid');
- if(catalogGrid&&!catalogGrid.dataset.hwpcDelegated){
-  catalogGrid.dataset.hwpcDelegated="1";
+ if(catalogGrid&&!catalogGrid.dataset.hwpcCatalogActions){
+  catalogGrid.dataset.hwpcCatalogActions="1";
   catalogGrid.addEventListener("click",e=>{
-   const zoom=e.target.closest("[data-photo-index]");
-   if(zoom){
-    const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
-    if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
-    return;
-   }
-   const detail=e.target.closest("[data-catalog-index]");
+   const target=e.target instanceof Element?e.target:e.target?.parentElement;
+   if(!target)return;
+   const detail=target.closest(".catalog-view-detail");
    if(detail){
     const item={name:detail.dataset.modelName,year:detail.dataset.modelYear,kind:detail.dataset.modelKind};
     if(item.name&&item.year&&item.kind)openDetail(item);
+    return;
    }
-  });
- }
- const detailImage=$('catalogDetailImage');
- if(detailImage&&!detailImage.dataset.hwpcZoomDelegated){
-  detailImage.dataset.hwpcZoomDelegated="1";
-  detailImage.addEventListener("click",e=>{
-   const img=e.target.closest("img");if(img)openPhotoViewer(img.currentSrc||img.src,img.alt);
-  });
- }
- const detailModal=$('catalogDetail');
- if(detailModal&&!detailModal.dataset.hwpcCloseDelegated){
-  detailModal.dataset.hwpcCloseDelegated="1";
-  detailModal.addEventListener("click",e=>{
-   if(e.target===detailModal||e.target.closest("#catalogDetailClose"))closeDetail();
+   const zoom=target.closest("[data-photo-index], .catalog-thumb img");
+   if(zoom){
+    const card=zoom.closest(".catalog-card"),img=card?.querySelector(".catalog-thumb img");
+    if(img)window.HWPCPhotoViewer.open(img.currentSrc||img.src,img.alt);
+   }
   });
  }
  // Account modal can be closed with X, click outside or Escape.
@@ -298,7 +260,7 @@
  $('authGate')?.addEventListener('click',e=>{if(e.target===$('authGate'))showGate(false)});
  document.addEventListener('keydown',e=>{
   if(e.key==="Escape"){
-   if(photoViewer&&!photoViewer.hidden){photoViewer.hidden=true;photoViewer.querySelector("img").removeAttribute("src")}
+   if(window.HWPCPhotoViewer)window.HWPCPhotoViewer.close()
    if($('catalogDetail')&&!$('catalogDetail').classList.contains('hidden'))closeDetail();
    else if($('authGate')&&!$('authGate').classList.contains('hidden'))showGate(false);
   }

@@ -229,3 +229,65 @@ test('photo previews clear their label without interpreting HTML', async () => {
   expect(source).toContain("l.textContent=''");
   expect(source).not.toContain("l.innerHTML=''");
 });
+
+
+test('catalog detail can close and reopen repeatedly, and photo zoom is visible and works', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  const card = page.locator('.catalog-card').first();
+  const open = card.locator('.catalog-view-detail');
+  await open.click();
+  await expect(page.locator('#catalogDetail')).toBeVisible();
+  await expect(page.locator('#catalogDetailImage [data-detail-photo-zoom]')).toBeVisible();
+  await page.locator('#catalogDetailImage [data-detail-photo-zoom]').click();
+  const viewer = page.locator('.hwpc-photo-viewer');
+  await expect(viewer).toBeVisible();
+  await expect(viewer.locator('[data-photo-zoom="in"]')).toBeVisible();
+  await viewer.locator('[data-photo-zoom="in"]').click();
+  await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('125%');
+  await viewer.locator('[data-photo-zoom="reset"]').click();
+  await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('100%');
+  await viewer.locator('.hwpc-photo-close').click();
+  await expect(viewer).toBeHidden();
+  await expect(page.locator('#catalogDetail')).toBeVisible();
+  await page.locator('#catalogDetailClose').click();
+  await expect(page.locator('#catalogDetail')).toBeHidden();
+  await open.click();
+  await expect(page.locator('#catalogDetail')).toBeVisible();
+  await page.locator('#catalogDetailClose').click();
+  await open.click();
+  await expect(page.locator('#catalogDetail')).toBeVisible();
+});
+
+test('catalog detail labels follow all selected languages', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  const languages = [
+    ['en', 'Market estimate', 'View photos and checklist'],
+    ['es', 'Estimación de mercado', 'Ver fotos y lista'],
+    ['fr', 'Estimation du marché', 'Voir les photos et la liste'],
+    ['de', 'Marktschätzung', 'Fotos und Checkliste ansehen'],
+    ['it', 'Stima di mercato', 'Vedi foto e checklist'],
+    ['nl', 'Marktschatting', "Bekijk foto's en checklist"],
+    ['br', 'Estimativa de mercado', 'Ver fotografias e checklist'],
+  ];
+  for (const [code, estimate, source] of languages) {
+    await page.locator('#language').selectOption(code);
+    await page.locator('.catalog-view-detail').first().click();
+    await expect(page.locator('.catalog-detail-value span')).toHaveText(estimate);
+    await expect(page.locator('#catalogDetailSource')).toContainText(source);
+    await page.locator('#catalogDetailClose').click();
+  }
+});
+
+
+test('interface translations do not depend on an external translation service', async ({ page }) => {
+  const externalTranslations = [];
+  page.on('request', request => {
+    if (request.url().includes('api.mymemory.translated.net')) externalTranslations.push(request.url());
+  });
+  await page.goto('/');
+  await page.locator('#language').selectOption('en');
+  await expect(page.locator('#headline')).toContainText('Discover the value');
+  await expect.poll(() => externalTranslations.length).toBe(0);
+});
