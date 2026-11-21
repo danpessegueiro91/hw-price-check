@@ -68,11 +68,15 @@
  ["2007","2008","2009","2010","2011"].forEach(y=>CATALOG[y].sth=CATALOG[y].th.slice());
 
  // Individual 2026 collector medians only; other years intentionally have no made-up prices.
+ // Market values are USD medians from Hunt64 collector valuations, snapshot 2026-11-03.
+ // Only exact releases with a published per-casting median are priced; missing medians stay unpriced.
+ // USD converted to EUR using ECB reference rate 2026-11-20: EUR 1 = USD 1.0990.
  const MARKET={
-  th:{"'87 Buick Regal GNX":4.72,"'92 Dodge Viper RT/10":4.48,"Electro Silhouette":4.99,"Hot Wheengs":4.99,"Cone Shaker":4.99,"2016 Ford GT Race":8.06,"2 Jet Z":5.16,"Total Disposal":4.85,"Amaru GTC":4.99,"Sweet Driver":4.62,"Mad Manga":3.59,"Ford Model A Custom '31":2.77,"Fast Fish":4.48,"Nissan Skyline HT 2000GT-X":7.40,"Gazella GT":2.09},
-  sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
+  th:{"'87 Buick Regal GNX":5.26,"'92 Dodge Viper RT/10":5.00,"Electro Silhouette":5.96,"Hot Wheengs":5.78,"2016 Ford GT Race":10.00,"2 Jet Z":6.29,"Total Disposal":6.15,"Amaru GTC":6.79,"Sweet Driver":5.00,"Mad Manga":4.00},
+  sth:{"Ferrari F40 Competizione":182.79,"Ford Mustang GTD":82.47,"Subaru Impreza":88.89,"'87 Ford Sierra Cosworth":77.16,"'64 Impala":73.58,"Custom Otto":61.86,"Porsche 911 Carrera RS 2.7":12.91,"Honda Civic Custom":55.78,"Lotus Sport Elise":44.72,"Drift-Ender":27.35,"'94 Toyota Supra":23.72,"Nissan Maxima Drift Car":72.16}
  };
- const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
+ const USD_PER_EUR=1.0990;
+ const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]!=null?(MARKET[item.kind]||{})[item.name]/USD_PER_EUR:null:null;
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
  let uploadedImages={},canManageCatalogPhotos=false;
  // Fotografias reais dos modelos 2026, com carro e blister visíveis.
@@ -197,8 +201,8 @@
   if(detailArtType)detailArtType.textContent=sth?"STH":"TH";
   $('catalogDetailTitle').setAttribute('data-no-translate','true');$('catalogDetailTitle').textContent=item.name;$('catalogDetailMeta').textContent=(sth?"Super Treasure Hunt":"Treasure Hunt")+" · "+item.year;
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
-  $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
-  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
+  $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores Hunt64; valor indicativo, não preço garantido de venda.":"Não existe amostra suficiente documentada para este modelo.";
+  $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: Hunt64, medianas globais de colecionadores consultadas em 03-11-2026. Conversão USD/EUR pela taxa de referência do BCE de 20-11-2026 (1 EUR = 1,0990 USD).":"Checklist histórica; sem preço individual documentado.";
   $('catalogDetailSource').removeAttribute('href');
   $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
   $('catalogDetailSource').classList.add('is-local-photo-source');
