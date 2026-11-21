@@ -81,5 +81,5 @@ A aplicação é um site estático em HTML, CSS e JavaScript vanilla. Não exist
 - app-core.js e catalog.js mantêm dados do catálogo em blocos separados: 2024–2026 estão em app-core.js; os anos anteriores estão em catalog.js. A dependência global CATALOG é implícita e deve ser eliminada numa refactorização testada.
 - index.html continua a concentrar a maior parte do CSS e estrutura da página.
 - navigation.js é carregado depois de app-core.js, mas sai imediatamente porque HWPC_MAIN_READY já está definido; é código redundante.
-- O histórico de migrações do Supabase contém 15 entradas, mas o repositório só tem uma migração SQL. É necessário reconciliar e versionar a história de schema antes de novas alterações estruturais.
+- O histórico de migrações do Supabase contém 15 entradas; as 15 foram recuperadas da tabela de histórico e agora estão versionadas em `supabase/migrations/` com os timestamps e nomes aplicados. A migração provisória com timestamp inventado foi removida.
 - Não integrar alterações nem publicar enquanto a validação de assets, os testes Playwright e CodeQL não estiverem concluídos.
