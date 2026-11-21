@@ -228,6 +228,8 @@ const D={
 "Sessão atual":["Current session","Sesión actual","Session actuelle","Aktuelle Sitzung","Sessione attuale","Huidige sessie","Sessão atual"],
 "Conta autenticada":["Authenticated account","Cuenta autenticada","Compte authentifié","Authentifiziertes Konto","Account autenticato","Geauthenticeerd account","Conta autenticada"],
 "Email confirmado":["Email confirmed","Correo confirmado","E-mail confirmé","E-Mail bestätigt","Email confermata","E-mail bevestigd","Email confirmado"],
+"Arquivo HW Price Check":["HW Price Check archive","Archivo HW Price Check","Archives HW Price Check","HW Price Check-Archiv","Archivio HW Price Check","HW Price Check-archief","Arquivo HW Price Check"],
+"Fotografia do arquivo HW Price Check":["Photo from the HW Price Check archive","Fotografía del archivo HW Price Check","Photo des archives HW Price Check","Foto aus dem HW Price Check-Archiv","Foto dall’archivio HW Price Check","Foto uit het HW Price Check-archief","Fotografia do arquivo HW Price Check"],
 "Arquivo Treasure Hunt":["Treasure Hunt archive","Archivo Treasure Hunt","Archives Treasure Hunt","Treasure-Hunt-Archiv","Archivio Treasure Hunt","Treasure Hunt-archief","Arquivo Treasure Hunt"],
 "GUIAS DE COLECIONADOR":["COLLECTOR GUIDES","GUÍAS PARA COLECCIONISTAS","GUIDES DU COLLECTIONNEUR","SAMMLERGUIDES","GUIDE PER COLLEZIONISTI","VERZAMELAARSGIDSEN","GUIAS DE COLECIONADOR"],
 "Estimativa de mercado":["Market estimate","Estimación de mercado","Estimation du marché","Marktschätzung","Stima di mercato","Marktschatting","Estimativa de mercado"],

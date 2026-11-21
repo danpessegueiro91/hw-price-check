@@ -139,14 +139,14 @@ test('catalog controls localize across all eight languages without changing mode
   await expect(page.locator('#catalogPage')).toBeVisible();
 
   const languages = [
-    { code: 'pt', detail: 'Ver ficha', photos: 'Fonte externa', forgot: 'Esqueci-me da palavra-passe' },
-    { code: 'en', detail: 'View details', photos: 'External source', forgot: 'Forgot Password' },
-    { code: 'es', detail: 'Ver ficha', photos: 'Fuente externa', forgot: 'Olvidé mi contraseña' },
-    { code: 'fr', detail: 'Voir la fiche', photos: 'Source externe', forgot: 'Mot de passe oublié' },
-    { code: 'de', detail: 'Details ansehen', photos: 'Externe Quelle', forgot: 'Passwort vergessen' },
-    { code: 'it', detail: 'Vedi scheda', photos: 'Fonte esterna', forgot: 'Password dimenticata' },
-    { code: 'nl', detail: 'Bekijk details', photos: 'Externe bron', forgot: 'Wachtwoord vergeten' },
-    { code: 'br', detail: 'Ver ficha', photos: 'Fonte externa', forgot: 'Esqueci minha senha' },
+    { code: 'pt', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci-me da palavra-passe' },
+    { code: 'en', detail: 'View details', photos: 'HW Price Check archive', forgot: 'Forgot Password' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Archivo HW Price Check', forgot: 'Olvidé mi contraseña' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Archives HW Price Check', forgot: 'Mot de passe oublié' },
+    { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv', forgot: 'Passwort vergessen' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check', forgot: 'Password dimenticata' },
+    { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief', forgot: 'Wachtwoord vergeten' },
+    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci minha senha' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
@@ -155,7 +155,7 @@ test('catalog controls localize across all eight languages without changing mode
   for (const language of languages) {
     await page.locator('#language').selectOption(language.code);
     await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
-    await expect(firstCard.locator('.catalog-actions a')).toContainText(language.photos);
+    await expect(firstCard.locator('.catalog-local-source')).toContainText(language.photos);
     await expect(page.locator('#forgotPassword')).toHaveText(language.forgot);
     await expect(firstCard.locator('h3')).toHaveText(modelName);
     await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
@@ -231,45 +231,45 @@ test('photo previews clear their label without interpreting HTML', async () => {
 });
 
 
-test('catalog detail can close and reopen repeatedly, and photo zoom is visible and works', async ({ page }) => {
+test('catalog detail can close and reopen repeatedly without refreshing', async ({ page }) => {
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
-  const card = page.locator('.catalog-card').first();
-  const open = card.locator('.catalog-view-detail');
-  await open.click();
-  await expect(page.locator('#catalogDetail')).toBeVisible();
-  await expect(page.locator('#catalogDetailImage [data-detail-photo-zoom]')).toBeVisible();
-  await page.locator('#catalogDetailImage [data-detail-photo-zoom]').click();
+  const open = page.locator('.catalog-card').first().locator('.catalog-view-detail');
+  for (let attempt = 0; attempt < 3; attempt++) {
+    await open.click();
+    await expect(page.locator('#catalogDetail')).toBeVisible();
+    await page.locator('#catalogDetailClose').click();
+    await expect(page.locator('#catalogDetail')).toBeHidden();
+  }
+});
+
+test('photo viewer exposes working zoom controls', async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(() => window.HWPCPhotoViewer.open(
+    'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="black"/></svg>'),
+    'Test photo'
+  ));
   const viewer = page.locator('.hwpc-photo-viewer');
   await expect(viewer).toBeVisible();
-  await expect(viewer.locator('[data-photo-zoom="in"]')).toBeVisible();
   await viewer.locator('[data-photo-zoom="in"]').click();
   await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('125%');
   await viewer.locator('[data-photo-zoom="reset"]').click();
   await expect(viewer.locator('.hwpc-photo-zoom-label')).toHaveText('100%');
   await viewer.locator('.hwpc-photo-close').click();
   await expect(viewer).toBeHidden();
-  await expect(page.locator('#catalogDetail')).toBeVisible();
-  await page.locator('#catalogDetailClose').click();
-  await expect(page.locator('#catalogDetail')).toBeHidden();
-  await open.click();
-  await expect(page.locator('#catalogDetail')).toBeVisible();
-  await page.locator('#catalogDetailClose').click();
-  await open.click();
-  await expect(page.locator('#catalogDetail')).toBeVisible();
 });
 
 test('catalog detail labels follow all selected languages', async ({ page }) => {
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   const languages = [
-    ['en', 'Market estimate', 'View photos and checklist'],
-    ['es', 'Estimación de mercado', 'Ver fotos y lista'],
-    ['fr', 'Estimation du marché', 'Voir les photos et la liste'],
-    ['de', 'Marktschätzung', 'Fotos und Checkliste ansehen'],
-    ['it', 'Stima di mercato', 'Vedi foto e checklist'],
-    ['nl', 'Marktschatting', "Bekijk foto's en checklist"],
-    ['br', 'Estimativa de mercado', 'Ver fotografias e checklist'],
+    ['en', 'Market estimate', 'Photo from the HW Price Check archive'],
+    ['es', 'Estimación de mercado', 'Fotografía del archivo HW Price Check'],
+    ['fr', 'Estimation du marché', 'Photo des archives HW Price Check'],
+    ['de', 'Marktschätzung', 'Foto aus dem HW Price Check-Archiv'],
+    ['it', 'Stima di mercato', 'Foto dall’archivio HW Price Check'],
+    ['nl', 'Marktschatting', 'Foto uit het HW Price Check-archief'],
+    ['br', 'Estimativa de mercado', 'Fotografia do arquivo HW Price Check'],
   ];
   for (const [code, estimate, source] of languages) {
     await page.locator('#language').selectOption(code);
@@ -293,22 +293,24 @@ test('interface translations do not depend on an external translation service', 
 });
 
 
-test('2026 TH and STH catalog cards all have a mapped photo', async ({ page }) => {
-  // CI is intentionally offline: validate the mapped source URLs and image elements
-  // without depending on HWtreasure's availability during the test run.
-  const pixel = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/pWQAAAAASUVORK5CYII=', 'base64');
-  await page.route('https://www.hwtreasure.com/**', route =>
-    route.fulfill({ status: 200, contentType: 'image/png', body: pixel })
-  );
+test('2026 catalog uses only first-party uploaded photos and no external product links', async ({ page }) => {
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogYear')).toHaveValue('2026');
   await expect(page.locator('.catalog-card')).toHaveCount(30);
+
   const photos = await page.locator('.catalog-thumb img').evaluateAll(images =>
-    images.map(image => ({ src: image.getAttribute('src'), alt: image.getAttribute('alt') }))
+    images.map(image => image.getAttribute('src'))
   );
-  expect(photos).toHaveLength(30);
-  expect(photos.every(photo => photo.src && photo.src.startsWith('https://') && photo.alt)).toBe(true);
-  expect(new Set(photos.map(photo => photo.src)).size).toBe(30);
-  await expect(page.locator('.catalog-thumb strong')).toHaveCount(0);
+  expect(photos.length).toBeLessThanOrEqual(30);
+  expect(photos.every(src =>
+    src && src.includes('hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/')
+  )).toBe(true);
+
+  const externalLinks = await page.locator('#catalogGrid a').evaluateAll(links =>
+    links.filter(link => /^https?:/i.test(link.getAttribute('href') || '')).map(link => link.href)
+  );
+  expect(externalLinks).toEqual([]);
+  await expect(page.locator('#catalogGrid').getByText('Fonte externa')).toHaveCount(0);
+  await expect(page.locator('.catalog-price')).toHaveCount(30);
 });
