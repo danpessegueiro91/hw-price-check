@@ -125,7 +125,8 @@ Deno.serve(async (req: Request) => {
         q: "Hot Wheels " + model.name + " 2026 " +
           (model.kind === "sth" ? "Super Treasure Hunt STH" : "Treasure Hunt TH"),
         count: 120,
-        sort: "recently_sold"
+        sort: "recently_sold",
+        condition: "new"
       }));
       const idempotencyKey = "hwpc-daily-" + today + "-batch-" + Math.floor(start / 10);
       const createResponse = await fetch(API + "/batches", {
@@ -136,7 +137,7 @@ Deno.serve(async (req: Request) => {
           "Idempotency-Key": idempotencyKey
         },
         body: JSON.stringify({
-          defaults: { endpoint: "ebay/sold", country: "uk", count: 120, sort: "recently_sold" },
+          defaults: { endpoint: "ebay/sold", country: "uk", count: 120, sort: "recently_sold", condition: "new" },
           searches
         }),
         signal: AbortSignal.timeout(25000)
@@ -192,7 +193,9 @@ Deno.serve(async (req: Request) => {
           min_price: eur(summary.low),
           max_price: eur(summary.high),
           sales_count: sampleCount,
-          source: "Soldgraph · eBay UK sold listings",
+          latest_sold_date: summary.latest_sold_date || null,
+          best_offer_accepted_count: Number(summary.best_offer_accepted_count || 0),
+          source: "Soldgraph · eBay UK sold listings · condição nova",
           query_text: query,
           sample_hash: today + ":" + String(item.request_id || item.index)
         };
