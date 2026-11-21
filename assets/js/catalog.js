@@ -72,45 +72,11 @@
   th:{"'87 Buick Regal GNX":4.72,"'92 Dodge Viper RT/10":4.48,"Electro Silhouette":4.99,"Hot Wheengs":4.99,"Cone Shaker":4.99,"2016 Ford GT Race":8.06,"2 Jet Z":5.16,"Total Disposal":4.85,"Amaru GTC":4.99,"Sweet Driver":4.62,"Mad Manga":3.59,"Ford Model A Custom '31":2.77,"Fast Fish":4.48,"Nissan Skyline HT 2000GT-X":7.40,"Gazella GT":2.09},
   sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
  };
- const IMAGES={
-  // Fotografias de referência por modelo, verificadas nas fichas individuais HWtreasure (2026).
-  "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
-  "2026|th|'92 Dodge Viper RT/10":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
-  "2026|th|Electro Silhouette":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
-  "2026|th|Hot Wheengs":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-TH-Hot-Wheengs-1.jpg",
-  "2026|th|Cone Shaker":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/01/2026-TH-Cone-Shaker-1.jpg",
-  "2026|th|2016 Ford GT Race":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/01/2026-TH-2016-Ford-GT-Race-1.jpg",
-  "2026|th|2 Jet Z":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-TH-2-Jet-Z-Int-Card-1.jpg",
-  "2026|th|Total Disposal":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/03/2026-TH-Total-Disposal-1.jpg",
-  "2026|th|Amaru GTC":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-TH-Amaru-GTC-1.jpg",
-  "2026|th|Sweet Driver":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/26-TH-Sweet-Driver-1.jpg",
-  "2026|th|Mad Manga":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/26-TH-Mad-Manga-01.jpg",
-  "2026|th|Ford Model A Custom '31":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-TH-Ford-Model-A-Custom-31-0.jpg",
-  "2026|th|Fast Fish":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-TH-Fast-Fish-1.jpg",
-  "2026|th|Nissan Skyline HT 2000GT-X":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/26-TH-Nissan-Skyline-HT-2000GT-X-1.jpg",
-  "2026|th|Gazella GT":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/26-TH-Gazella-GT-1.jpg",
-  "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
-  "2026|sth|Ford Mustang GTD":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ford-Mustang-GTD-Int-Card.jpg",
-  "2026|sth|Ferrari F40 Competizione":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ferrari-F40-Competizione-Int-Card.jpg",
-  "2026|sth|'64 Impala":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-STH-64-Impala-US-Card.jpg",
-  "2026|sth|'87 Ford Sierra Cosworth":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-87-Ford-Sierra-Cosworth-US-Card.jpg",
-  "2026|sth|Honda Civic Custom":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-Honda-Civic-Custom-US-Card.jpg",
-  "2026|sth|Custom Otto":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Custom-Otto-US-Card.jpg",
-  "2026|sth|Lotus Sport Elise":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Lotus-Sport-Elise-US-Card-1.jpg",
-  "2026|sth|Subaru Impreza":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-Subaru-Impreza-US-Card.jpg",
-  "2026|sth|'94 Toyota Supra (Tooned)":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-94-Toyota-Supra-US-Card.jpg",
-  "2026|sth|Nissan Maxima Drift Car":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-STH-Nissan-Maxima-Drift-Car-US-Card.jpg",
-  "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
-  "2026|sth|'23 Ram 1500":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-23-Ram-1500-Int-Card.jpg",
-  "2026|sth|'70 Plymouth AAR 'Cuda":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/2026-STH-70-Plymouth-AAR-Cuda-US-Card.jpg",
-  "2026|sth|'67 Pontiac Firebird 400":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/09/2026-STH-67-Pontiac-Firebird-400-US-Card.jpg"
- };
- const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
  let uploadedImages={},canManageCatalogPhotos=false;
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||IMAGES[imageKey(item)]||"";
+ const photoFor=item=>uploadedImages[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   const {data:adminFlag}=await sb.rpc("is_catalog_image_admin");
@@ -161,7 +127,9 @@
   $('catalogDetailValue').textContent=p?"€"+p.toFixed(2).replace(".",","):"Sem estimativa individual fiável";
   $('catalogDetailValueNote').textContent=p?"Mediana de avaliações de colecionadores, publicada em novembro de 2026.":"Não existe amostra suficiente documentada para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte Hunt64, valores publicados em 03-11-2026; conversão USD/EUR a 0,8969 em 08-11-2026.":"Checklist histórica; sem preço individual documentado.";
-  $('catalogDetailSource').href=source(item);
+  $('catalogDetailSource').removeAttribute('href');
+  $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
+  $('catalogDetailSource').classList.add('is-local-photo-source');
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer"><button class="catalog-detail-zoom-trigger" type="button" data-detail-photo-zoom aria-label="Ampliar fotografia">⌕ Ampliar fotografia</button>':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
@@ -186,7 +154,7 @@
    const p=market(item),img=photoFor(item),sth=item.kind==="sth";
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
    const value=p?"Estimativa: €"+p.toFixed(2).replace(".",","):"Sem estimativa fiável";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<a class="btn" href="'+source(item)+'" target="_blank" rel="noopener">Fonte externa ↗</a></div></div></article>';
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   // Catalog detail and zoom actions use one delegated handler so replacing
