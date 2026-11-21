@@ -142,9 +142,12 @@
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer"><button class="catalog-detail-zoom-trigger" type="button" data-detail-photo-zoom aria-label="Ampliar fotografia">⌕ Ampliar fotografia</button>':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
   const detailPhoto=$('catalogDetailImage').querySelector("img");
-  if(detailPhoto){detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar"}
-  // The single document-level handler below owns all zoom clicks. Avoid
-  // per-render listeners here: the detail image is replaced on every open.
+  if(detailPhoto){
+   detailPhoto.style.cursor="zoom-in";detailPhoto.title="Abrir fotografia e ampliar";
+   const openDetailPhoto=()=>window.HWPCPhotoViewer?.open(detailPhoto.currentSrc||detailPhoto.src,detailPhoto.alt);
+   detailPhoto.addEventListener("click",openDetailPhoto);
+   $('catalogDetailImage').querySelector("[data-detail-photo-zoom]")?.addEventListener("click",e=>{e.stopPropagation();openDetailPhoto()});
+  }
   $('catalogDetail').classList.remove('hidden');$('catalogDetail').setAttribute('aria-hidden','false');$('catalogDetailClose').focus();
  }
  renderCatalog=function(){
@@ -188,19 +191,6 @@
    const target=e.target instanceof Element?e.target:e.target?.parentElement;
    if(!target)return;
    if(target.closest('#catalogDetailClose')||target===detailOverlay)closeDetail();
-  });
- }
- const detailImageHost=$('catalogDetailImage');
- if(detailImageHost&&!detailImageHost.dataset.hwpcZoomEvents){
-  detailImageHost.dataset.hwpcZoomEvents="1";
-  detailImageHost.addEventListener('click',e=>{
-   const target=e.target instanceof Element?e.target:e.target?.parentElement;
-   if(!target)return;
-   const zoom=target.closest('[data-detail-photo-zoom], img');
-   if(zoom){
-    const img=detailImageHost.querySelector('img');
-    if(img)window.HWPCPhotoViewer.open(img.currentSrc||img.src,img.alt);
-   }
   });
  }
  $('catalogDetailMarket')?.addEventListener('click',()=>{
