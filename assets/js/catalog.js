@@ -128,7 +128,7 @@
   "2026|sth|'67 Pontiac Firebird 400":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/09/2026-STH-67-Pontiac-Firebird-400-US-Card.jpg"
  };
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
+ const photoFor=item=>item.year==="2026"&&item.kind==="sth"&&item.name==="'94 Toyota Supra"?REMOTE_IMAGES[imageKey(item)]||uploadedImages[imageKey(item)]||"":uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   const {data:adminFlag}=await sb.rpc("is_catalog_image_admin");
