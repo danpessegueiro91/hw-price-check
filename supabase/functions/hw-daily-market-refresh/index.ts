@@ -50,6 +50,7 @@ async function waitForBatch(batchId: string, key: string) {
   for (let attempt = 0; attempt < 6; attempt++) {
     const url = new URL(API + "/batches/" + encodeURIComponent(batchId));
     url.searchParams.set("wait", "20");
+    url.searchParams.set("include", "results");
     const response = await fetch(url, {
       headers: { Authorization: "Bearer " + key },
       signal: AbortSignal.timeout(25000)
@@ -146,10 +147,8 @@ Deno.serve(async (req: Request) => {
       if (!createResponse.ok) {
         throw new Error("Soldgraph batch creation failed (" + createResponse.status + "): " + JSON.stringify(batch).slice(0, 300));
       }
-      if (batch.status === "pending") {
-        if (!batch.batch_id) throw new Error("Soldgraph returned a pending batch without batch_id.");
-        batch = await waitForBatch(String(batch.batch_id), soldgraphKey);
-      }
+      if (batch.batch_id) batch = await waitForBatch(String(batch.batch_id), soldgraphKey);
+      else if (batch.status === "pending") throw new Error("Soldgraph returned a pending batch without batch_id.");
       if (batch.status !== "complete" || !Array.isArray(batch.items)) {
         throw new Error("Soldgraph batch did not complete: " + String(batch.status));
       }
@@ -164,21 +163,41 @@ Deno.serve(async (req: Request) => {
           continue;
         }
         const summary = item.summary;
-        const sampleCount = Number(summary.priced_count || 0);
-        const gbpMedian = Number(summary.median_excluding_best_offer ?? summary.median);
-        if (sampleCount < 3 || !Number.isFinite(gbpMedian) || gbpMedian <= 0) {
+        const resultRows = Array.isArray(item.result?.data) ? item.result.data : [];
+        const normalize = (value: string) => value.normalize("NFKD").replace(/\\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        const titleTokens = normalize(model.name).split(" ").filter((token) => token.length > 1);
+        const variantTokens = model.kind === "sth"
+          ? ["super treasure hunt", "sth"]
+          : ["treasure hunt", "th"];
+        const matchingRows = resultRows.filter((sale: any) => {
+          const title = normalize(String(sale.title || ""));
+          const modelMatches = titleTokens.every((token) => title.includes(token));
+          const variantMatches = variantTokens.some((token) => title.includes(token));
+          return modelMatches && variantMatches && sale.best_offer_accepted !== true;
+        });
+        const prices = matchingRows
+          .map((sale: any) => Number(sale.displayed_price?.amount))
+          .filter((price: number) => Number.isFinite(price) && price > 0)
+          .sort((a: number, b: number) => a - b);
+        const sampleCount = prices.length;
+        if (sampleCount < 3) {
           insufficient++;
           continue;
         }
-
-        const eur = (value: unknown) => {
-          const n = Number(value);
-          return Number.isFinite(n) && n > 0 ? Math.round(n * gbpToEur * 100) / 100 : null;
+        const quantile = (q: number) => {
+          const pos = (prices.length - 1) * q;
+          const base = Math.floor(pos);
+          const fraction = pos - base;
+          return prices[base] + ((prices[Math.min(base + 1, prices.length - 1)] - prices[base]) * fraction);
         };
+        const latestSale = matchingRows.map((sale: any) => String(sale.sold_date || ""))
+          .filter((date: string) => /^\\d{4}-\\d{2}-\\d{2}$/.test(date)).sort().at(-1) || null;
+        const eur = (value: number | null) => value !== null && Number.isFinite(value) && value > 0
+          ? Math.round(value * gbpToEur * 100) / 100 : null;
         const query = searches[Number(item.index)].q;
         const row = {
           model_key: model.year + "|" + model.kind + "|" +
-            model.name.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(),
+            normalize(model.name),
           model_name: model.name,
           variant_key: model.kind.toUpperCase(),
           model_year: model.year,
@@ -187,15 +206,15 @@ Deno.serve(async (req: Request) => {
           currency: "EUR",
           source_currency: String(summary.currency || "GBP").toUpperCase(),
           fx_rate_to_eur: gbpToEur,
-          median_price: eur(gbpMedian),
-          p25_price: eur(summary.p25),
-          p75_price: eur(summary.p75),
-          min_price: eur(summary.low),
-          max_price: eur(summary.high),
+          median_price: eur(quantile(0.5)),
+          p25_price: eur(quantile(0.25)),
+          p75_price: eur(quantile(0.75)),
+          min_price: eur(prices[0]),
+          max_price: eur(prices[prices.length - 1]),
           sales_count: sampleCount,
-          latest_sold_date: summary.latest_sold_date || null,
+          latest_sold_date: latestSale,
           best_offer_accepted_count: Number(summary.best_offer_accepted_count || 0),
-          source: "Soldgraph · eBay UK sold listings · condição nova",
+          source: "Soldgraph · eBay UK sold listings · blister novo · títulos confirmados",
           query_text: query,
           sample_hash: today + ":" + String(item.request_id || item.index)
         };
