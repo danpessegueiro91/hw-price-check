@@ -109,6 +109,44 @@
   if(selected&&imageKey(selected)===imageKey(item))openDetail(item);
   alert("Fotografia guardada no arquivo HW Price Check.");
  };
+ const ensureBulkPhotoUploader=()=>{
+  if(!canManageCatalogPhotos)return;
+  const host=document.querySelector('.catalog-page-inner');
+  if(!host||host.querySelector('#catalogBulkPhotos'))return;
+  const panel=document.createElement('section');
+  panel.id='catalogBulkPhotos';panel.className='catalog-bulk-photos';
+  panel.innerHTML='<details><summary>Gestão de fotografias · carregamento em lote</summary><p>Selecciona uma pasta organizada por ano e tipo: <strong>2026/th/</strong> ou <strong>2026/sth/</strong>. O nome do ficheiro deve corresponder ao nome do modelo. Só são aceites imagens até 5 MB.</p><label class="btn catalog-photo-upload">Seleccionar pasta de fotografias<input id="catalogBulkInput" type="file" accept="image/jpeg,image/png,image/webp,image/avif" webkitdirectory directory multiple hidden></label><span id="catalogBulkStatus" role="status" aria-live="polite">Nenhum ficheiro seleccionado.</span></details>';
+  const style=document.createElement('style');
+  style.textContent='.catalog-bulk-photos{margin:18px 0;padding:14px 16px;border:1px solid #315b48;border-radius:12px;background:rgba(19,55,40,.28);color:var(--text,#e8eef7)}.catalog-bulk-photos summary{cursor:pointer;font-weight:750}.catalog-bulk-photos p{margin:10px 0;color:var(--muted,#aebbd0);font-size:13px}.catalog-bulk-photos #catalogBulkStatus{display:block;margin-top:10px;font-size:13px}';
+  document.head.append(style);host.insertBefore(panel,host.querySelector('#guidesSection')||host.firstChild);
+  panel.querySelector('#catalogBulkInput').addEventListener('change',async event=>{
+   const files=Array.from(event.target.files||[]),status=panel.querySelector('#catalogBulkStatus');
+   if(!files.length){status.textContent='Nenhum ficheiro seleccionado.';return}
+   const {data:{session}}=await sb.auth.getSession();
+   if(!session||session.user?.is_anonymous){showGate(true);status.textContent='Inicia sessão com a conta de administrador.';return}
+   const {data:adminFlag,error:adminError}=await sb.rpc('is_catalog_image_admin');
+   if(adminError||adminFlag!==true){status.textContent='A conta não tem permissões de administração.';return}
+   let uploaded=0,skipped=0,failed=0;
+   for(let index=0;index<files.length;index++){
+    const file=files[index],parts=(file.webkitRelativePath||file.name).split('/');
+    const yearIndex=parts.findIndex(part=>/^20\\d{2}$/.test(part));
+    const year=yearIndex>=0?parts[yearIndex]:'',kind=yearIndex>=0?String(parts[yearIndex+1]||'').toLowerCase():'';
+    const base=file.name.replace(/\\.[^.]+$/,'');
+    const models=CATALOG[year]?.[kind];
+    const model=models?.find(name=>slugify(name)===slugify(base));
+    if(!model||!['th','sth'].includes(kind)||!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type)||file.size>5*1024*1024){skipped++;continue}
+    const path=year+'/'+kind+'/'+slugify(model)+'.'+({'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/avif':'avif'}[file.type]);
+    const {error:uploadError}=await sb.storage.from('hw-catalog').upload(path,file,{upsert:true,contentType:file.type,cacheControl:'3600'});
+    if(uploadError){failed++;continue}
+    const {error:saveError}=await sb.from('catalog_images').upsert({model_year:Number(year),model_kind:kind,model_name:model,storage_path:path,alt_text:'Hot Wheels '+model+' '+year},{onConflict:'model_year,model_kind,model_name'});
+    if(saveError){failed++;continue}
+    uploaded++;status.textContent='A carregar '+(index+1)+'/'+files.length+' · '+uploaded+' guardadas';
+   }
+   await loadCatalogImages();renderCatalog();
+   status.textContent='Concluído: '+uploaded+' fotografias guardadas, '+skipped+' ignoradas e '+failed+' com erro.';
+   event.target.value='';
+  });
+ };
  const addPhotoControl=item=>canManageCatalogPhotos?'<label class="btn catalog-photo-upload">Adicionar foto<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" data-catalog-upload="'+safe(item.name)+'" data-catalog-year="'+item.year+'" data-catalog-kind="'+item.kind+'" aria-label="Adicionar fotografia de '+safe(item.name)+'" hidden></label>':'';
  const fallbackArt=item=>{const box=document.createElement("div");box.className="catalog-image-fallback";const span=document.createElement("span");span.textContent="HOT WHEELS";const strong=document.createElement("strong");strong.textContent=item.kind==="sth"?"STH":"TH";const small=document.createElement("small");small.textContent=item.year;box.append(span,strong,small);return box};
  const guardImage=(container,item)=>{const img=container?.querySelector("img");if(img)img.addEventListener("error",()=>img.replaceWith(fallbackArt(item)),{once:true})};
@@ -144,6 +182,7 @@
  renderCatalog=function(){
   const year=$('catalogYear')?.value||"2026",type=$('catalogType')?.value||"all",q=($('catalogSearch')?.value||"").trim().toLocaleLowerCase("pt-PT"),sort=$('catalogSort')?.value||"series";
   const grid=$('catalogGrid'),summary=$('catalogSummary');if(!grid||!summary)return;
+  ensureBulkPhotoUploader();
   const dataset=CATALOG[year]||{th:[],sth:[]};let rows=[];
   ["th","sth"].forEach(kind=>{if(type!=="all"&&type!==kind)return;(dataset[kind]||[]).forEach(name=>rows.push({name,kind,year}))});
   const total=rows.length;if(q)rows=rows.filter(x=>x.name.toLocaleLowerCase("pt-PT").includes(q));
