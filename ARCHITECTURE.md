@@ -54,10 +54,32 @@ A aplicação é um site estático em HTML, CSS e JavaScript vanilla. Não exist
 - Verificar desktop e viewport móvel.
 - Executar validação de assets, Playwright e CodeQL; só depois permitir deploy de produção.
 
-## Estado da execução
+## Auditoria integral — 2026-11-21
 
-- Criada a branch isolada `refactor/catalog-architecture` e a PR #69 em modo draft.
-- O visualizador de fotografias foi extraído de `catalog.js` para `photo-viewer.js`, com API pública `window.HWPCPhotoViewer`.
-- O modal e o contentor persistente da imagem passaram a controlar os seus próprios eventos, evitando listeners em imagens recriadas.
-- A PR #68 continua sem integração; não foi publicada qualquer alteração destas tentativas.
-- Próxima etapa: confirmar os testes da PR #69 e continuar a separação dos dados e do armazenamento do catálogo.
+### Repositório e publicação
+- A aplicação continua a ser HTML/CSS/JavaScript vanilla, sem bundler.
+- Inventário confirmado: 31 ficheiros na main antes da auditoria.
+- O deploy Cloudflare do commit 1391249acd2098569e54b3c101d2a66c36e5cf3b terminou com sucesso, mas isso não garantia que os recursos visuais existissem.
+- A branch audit/full-project-review e a PR #70 contêm as primeiras correcções; não integrar antes dos testes e da revisão final.
+
+### Catálogo e fotografias
+- A tabela public.catalog_images tinha apenas uma linha: 2026 TH — '87 Buick Regal GNX.
+- O bucket hw-catalog tinha apenas um objecto correspondente.
+- O catálogo de 2026 tem 15 TH e 15 STH. Foram recolhidas e verificadas referências de imagem nas fichas individuais HWtreasure e adicionadas ao mapa IMAGES em assets/js/catalog.js.
+- As referências são imagens externas de cartas Hot Wheels; ainda não foram copiadas para o Storage próprio. A biblioteca Supabase continua disponível para substituição/gestão pelo administrador.
+- O Service Worker não incluía photo-viewer.js nos recursos essenciais. A branch actualiza a versão da cache e inclui esse módulo.
+- Foi acrescentado um teste Playwright para exigir 30 imagens distintas no catálogo de 2026. O primeiro ensaio falhou porque o CI não tem acesso às imagens externas; o teste foi ajustado para simular a resposta de imagem e validar as referências sem depender da Internet.
+
+### Supabase e funções Edge
+- O projecto está activo e as cinco Edge Functions estão activas: hw-marketplace-search, hw-sold-comps, hw-identify, hw-billing e hw-stripe-webhook.
+- Antes da auditoria, apenas hw-marketplace-search estava versionada no GitHub. As outras quatro fontes foram copiadas das versões actualmente publicadas para supabase/functions/, sem alterar o código em produção.
+- hw-marketplace-search no GitHub coincide byte a byte com a versão publicada (versão 3).
+- O administrador de fotografias está correctamente associado à conta configurada.
+- O Supabase Advisor assinala: catalog_image_admins com RLS sem políticas explícitas; função is_catalog_image_admin() SECURITY DEFINER executável por anon/authenticated; protecção de palavras-passe comprometidas desactivada; e um índice em falta para a FK de catalog_images.created_by. Estes pontos ficam registados para revisão específica; não foram alteradas permissões de produção durante esta fase.
+
+### Dívida técnica e próximos passos
+- app-core.js e catalog.js mantêm dados do catálogo em blocos separados: 2024–2026 estão em app-core.js; os anos anteriores estão em catalog.js. A dependência global CATALOG é implícita e deve ser eliminada numa refactorização testada.
+- index.html continua a concentrar a maior parte do CSS e estrutura da página.
+- navigation.js é carregado depois de app-core.js, mas sai imediatamente porque HWPC_MAIN_READY já está definido; é código redundante.
+- O histórico de migrações do Supabase contém 15 entradas; as 15 foram recuperadas da tabela de histórico e agora estão versionadas em `supabase/migrations/` com os timestamps e nomes aplicados. A migração provisória com timestamp inventado foi removida.
+- Não integrar alterações nem publicar enquanto a validação de assets, os testes Playwright e CodeQL não estiverem concluídos.

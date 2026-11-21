@@ -10,7 +10,8 @@ Aplicação web móvel para análise e gestão de coleção Hot Wheels.
 - Catálogo histórico Treasure Hunt / Super Treasure Hunt.
 - Biblioteca própria de fotografias do catálogo TH/STH em Supabase Storage; a conta administradora pode carregar/substituir imagens diretamente em cada modelo.
 - Exportação e gestão de dados, interface adaptada a telemóvel e computador e suporte PWA.
-- JavaScript separado por responsabilidade em `assets/js/` (núcleo, navegação, catálogo, melhorias de interface, autenticação e idiomas).
+- JavaScript separado por responsabilidade em `assets/js/` (núcleo, navegação, catálogo, visualizador, autenticação e idiomas).
+- Código-fonte das cinco Supabase Edge Functions versionado em `supabase/functions/`.
 
 ## Critérios de avaliação
 

@@ -73,14 +73,37 @@
   sth:{"Ferrari F40 Competizione":163.90,"Ford Mustang GTD":73.55,"Subaru Impreza":79.82,"'87 Ford Sierra Cosworth":31.39,"'64 Impala":29.60,"Custom Otto":14.35,"Porsche 911 Carrera RS 2.7":11.58}
  };
  const IMAGES={
+  // Fotografias de referência por modelo, verificadas nas fichas individuais HWtreasure (2026).
   "2026|th|'87 Buick Regal GNX":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/2026-TH-87-Buick-Regal-GNX-1.jpg",
   "2026|th|'92 Dodge Viper RT/10":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/10/26-TH-92-Dodge-Viper-RT10-1.jpg",
   "2026|th|Electro Silhouette":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/26-TH-Electro-Silhouette-1.jpg",
+  "2026|th|Hot Wheengs":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-TH-Hot-Wheengs-1.jpg",
+  "2026|th|Cone Shaker":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/01/2026-TH-Cone-Shaker-1.jpg",
+  "2026|th|2016 Ford GT Race":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/01/2026-TH-2016-Ford-GT-Race-1.jpg",
+  "2026|th|2 Jet Z":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-TH-2-Jet-Z-Int-Card-1.jpg",
+  "2026|th|Total Disposal":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/03/2026-TH-Total-Disposal-1.jpg",
+  "2026|th|Amaru GTC":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-TH-Amaru-GTC-1.jpg",
+  "2026|th|Sweet Driver":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/26-TH-Sweet-Driver-1.jpg",
+  "2026|th|Mad Manga":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/26-TH-Mad-Manga-01.jpg",
+  "2026|th|Ford Model A Custom '31":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-TH-Ford-Model-A-Custom-31-0.jpg",
+  "2026|th|Fast Fish":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-TH-Fast-Fish-1.jpg",
+  "2026|th|Nissan Skyline HT 2000GT-X":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/26-TH-Nissan-Skyline-HT-2000GT-X-1.jpg",
+  "2026|th|Gazella GT":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/26-TH-Gazella-GT-1.jpg",
+  "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
+  "2026|sth|Ford Mustang GTD":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ford-Mustang-GTD-Int-Card.jpg",
   "2026|sth|Ferrari F40 Competizione":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Ferrari-F40-Competizione-Int-Card.jpg",
   "2026|sth|'64 Impala":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/12/2026-STH-64-Impala-US-Card.jpg",
   "2026|sth|'87 Ford Sierra Cosworth":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-87-Ford-Sierra-Cosworth-US-Card.jpg",
-  "2026|sth|Drift-Ender":"https://www.hwtreasure.com/wp-content/uploads/cars/2025/11/2026-STH-Drift-Ender-Int-Card.jpg",
-  "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg"
+  "2026|sth|Honda Civic Custom":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/02/2026-STH-Honda-Civic-Custom-US-Card.jpg",
+  "2026|sth|Custom Otto":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Custom-Otto-US-Card.jpg",
+  "2026|sth|Lotus Sport Elise":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Lotus-Sport-Elise-US-Card-1.jpg",
+  "2026|sth|Subaru Impreza":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-Subaru-Impreza-US-Card.jpg",
+  "2026|sth|'94 Toyota Supra (Tooned)":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-94-Toyota-Supra-US-Card.jpg",
+  "2026|sth|Nissan Maxima Drift Car":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-STH-Nissan-Maxima-Drift-Car-US-Card.jpg",
+  "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
+  "2026|sth|'23 Ram 1500":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-23-Ram-1500-Int-Card.jpg",
+  "2026|sth|'70 Plymouth AAR 'Cuda":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/08/2026-STH-70-Plymouth-AAR-Cuda-US-Card.jpg",
+  "2026|sth|'67 Pontiac Firebird 400":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/09/2026-STH-67-Pontiac-Firebird-400-US-Card.jpg"
  };
  const source=item=>item.year==="2026"?(item.kind==="sth"?"https://hunt64.app/blog/2026-hot-wheels-super-treasure-hunt-list":"https://hunt64.app/blog/2026-hot-wheels-treasure-hunt-list"):(item.kind==="sth"?"https://hotwheelstreasure.com/cars":"https://relicara.com/hot-wheels-treasure-hunt-list/");
  const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]??null:null;

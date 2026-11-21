@@ -27,29 +27,6 @@ sth:["'87 Audi quattro","Hirohata Merc","Hi-Roller II","1975 Datsun Sunny Truck 
 th:["'47 Chevy Fleetline","Ain't Fare","Tooligan","Custom '53 Chevy","Batman Forever Batmobile","Ford Mustang Mach-E 1400","Draggin' Wagon","Purple Passion","Honda Super Cub Custom","Bone Shaker","Car-de-Asada","Hot Wheels Ford Transit Connect","DMC DeLorean","'59 Chevy Impala","Porsche 928S Safari"],
 sth:["Ford Escort RS2000","'18 Camaro SS","BMW 507","'89 Mercedes-Benz 560 SEC AMG","'60s Fiat 500D Modificado","'71 El Camino","Audi 90 quattro","Volvo P1800 Gasser","Mitsubishi Pajero Evolution","Mazda 787B","'77 Pontiac Firebird","'96 Nissan 180SX Type X","Celero GT","Lamborghini Huracán LP 620-2 Super Trofeo","'83 Chevy Silverado"]
 }};
-function renderCatalog(){
- const year=$('catalogYear')?.value||'2026',type=$('catalogType')?.value||'all',grid=$('catalogGrid'),summary=$('catalogSummary');
- if(!grid||!summary)return;
- const rows=[];
- if(CATALOG[year]){
-  for(const kind of ['th','sth'])if(type==='all'||type===kind)for(const name of CATALOG[year][kind])rows.push({name,kind});
- }else{
-  const noSth=Number(year)<2007&&type==='sth';
-  summary.textContent=noSth?'A série Super Treasure Hunt começou em 2007.':'O arquivo deste ano está disponível nas checklists de referência externas.';
-  grid.innerHTML='<article class="catalog-card"><div class="catalog-thumb">HW<br>'+year+'</div><div class="catalog-copy"><h3>'+(noSth?'Ainda não existiam STH neste ano':'Arquivo histórico '+year)+'</h3><div class="catalog-meta">Consulta a lista anual completa e as fotografias na referência especializada.</div><div class="catalog-links"><a href="https://www.164custom.com/hot-wheels/treasure-hunt.html" target="_blank" rel="noopener">Abrir arquivo TH 1995–2026 ↗</a> · <a href="https://www.164custom.com/hot-wheels/super-treasure-hunt.html" target="_blank" rel="noopener">Arquivo STH 2007–2026 ↗</a></div></div></article>';
-  return;
- }
- const thValue=year==='2026'?'€3–8':'€2–7',sthValue=year==='2026'?'€35–120+':'€20–100+';
- summary.textContent=rows.length+' modelos listados · '+(type==='all'?'TH e STH':type.toUpperCase())+' · '+year;
- grid.innerHTML=rows.map(x=>{
-  const label=x.kind==='sth'?'SUPER TREASURE HUNT':'TREASURE HUNT';
-  const price=x.kind==='sth'?sthValue:thValue;
-  const url=x.kind==='sth'?'https://www.164custom.com/hot-wheels/super-treasure-hunt.html':'https://www.164custom.com/hot-wheels/treasure-hunt.html';
-  const yearUrl=x.kind==='sth'?'https://www.164custom.com/hot-wheels/super-treasure-hunt/'+year+'.html':'https://www.164custom.com/hot-wheels/treasure-hunt/'+year+'.html';
-  return '<article class="catalog-card"><div class="catalog-thumb" aria-label="Fotografia de referência disponível na checklist externa">HW<br>'+year+'</div><div class="catalog-copy"><span class="catalog-badge '+x.kind+'">'+label+'</span><h3>'+safe(x.name)+'</h3><div class="catalog-meta">Ano '+year+' · Miniatura carded, estado por confirmar</div><div class="catalog-price">Intervalo indicativo: '+price+'</div><div class="catalog-links"><a href="'+yearUrl+'" target="_blank" rel="noopener">Ver fotografia e detalhes ↗</a></div></div></article>';
- }).join('');
-}
-
 async function updateVisitorCounter(){
   const target=$('visitorCounter');
   if(!target)return;
