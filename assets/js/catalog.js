@@ -71,12 +71,26 @@
  // Market values are USD medians from Hunt64 collector valuations, snapshot 2026-11-03.
  // Only exact releases with a published per-casting median are priced; missing medians stay unpriced.
  // USD converted to EUR using ECB reference rate 2026-11-20: EUR 1 = USD 1.0990.
- const MARKET={
-  th:{"'87 Buick Regal GNX":5.26,"'92 Dodge Viper RT/10":5.00,"Electro Silhouette":5.96,"Hot Wheengs":5.78,"2016 Ford GT Race":10.00,"2 Jet Z":6.29,"Total Disposal":6.15,"Amaru GTC":6.79,"Sweet Driver":5.00,"Mad Manga":4.00},
-  sth:{"Ferrari F40 Competizione":182.79,"Ford Mustang GTD":82.47,"Subaru Impreza":88.89,"'87 Ford Sierra Cosworth":77.16,"'64 Impala":73.58,"Custom Otto":61.86,"Porsche 911 Carrera RS 2.7":12.91,"Honda Civic Custom":55.78,"Lotus Sport Elise":44.72,"Drift-Ender":27.35,"'94 Toyota Supra":23.72,"Nissan Maxima Drift Car":72.16}
+ // Market prices are read from the latest verified daily snapshot in Supabase.
+ let marketSnapshots={};
+ const marketKey=item=>item.year+"|"+item.kind+"|"+item.name;
+ const market=item=>marketSnapshots[marketKey(item)]?.median_price??null;
+ const marketInfo=item=>marketSnapshots[marketKey(item)]||null;
+ const loadMarketPrices=async()=>{
+  if(!sb)return;
+  const {data,error}=await sb.from("hw_model_price_history")
+   .select("model_year,model_kind,model_name,captured_at,currency,median_price,sales_count,source,source_currency,fx_rate_to_eur")
+   .not("model_year","is",null).not("model_kind","is",null)
+   .order("captured_at",{ascending:false}).limit(1000);
+  if(error){console.warn("Não foi possível carregar as avaliações diárias:",error.message);return}
+  const latest={};
+  (data||[]).forEach(row=>{
+   const key=String(row.model_year)+"|"+row.model_kind+"|"+row.model_name;
+   if(!latest[key])latest[key]=row;
+  });
+  marketSnapshots=latest;
  };
- const USD_PER_EUR=1.0990;
- const market=item=>item.year==="2026"?(MARKET[item.kind]||{})[item.name]!=null?(MARKET[item.kind]||{})[item.name]/USD_PER_EUR:null:null;
+ const marketDate=value=>value?.captured_at?new Intl.DateTimeFormat("pt-PT",{dateStyle:"medium"}).format(new Date(value.captured_at)):"";
  // Catalog photos live in our own Supabase Storage bucket, not on third-party image hosts.
  let uploadedImages={},canManageCatalogPhotos=false;
  // Fotografias reais dos modelos 2026, com carro e blister visíveis.
