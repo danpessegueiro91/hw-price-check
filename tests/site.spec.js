@@ -335,8 +335,8 @@ test('AI identification can be saved to the collection without storing the submi
     contentType: 'application/javascript',
     body: `
       window.__savedPayloads = [];
-      const user = { id: 'collector-test', is_anonymous: true, user_metadata: {}, created_at: '2026-01-01T00:00:00.000Z' };
-      const session = { user, access_token: 'test-access-token' };
+      const mockUser = { id: 'collector-test', is_anonymous: true, user_metadata: {}, created_at: '2026-01-01T00:00:00.000Z' };
+      const session = { user: mockUser, access_token: 'test-access-token' };
       window.supabase = {
         createClient: () => ({
           auth: {
