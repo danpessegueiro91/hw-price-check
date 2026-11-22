@@ -128,7 +128,7 @@
   "2026|sth|'67 Pontiac Firebird 400":"/assets/catalog/2026/sth/67-pontiac-firebird-400.jpg"
  };
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
+ const photoFor=item=>REMOTE_IMAGES[imageKey(item)]||uploadedImages[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   // A leitura pública das fotografias é independente das permissões de administração.

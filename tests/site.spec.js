@@ -300,11 +300,17 @@ test('2026 catalog uses only first-party uploaded photos and no external product
   await expect(page.locator('.catalog-card')).toHaveCount(30);
 
   const photos = await page.locator('.catalog-thumb img').evaluateAll(images =>
-    images.map(image => image.getAttribute('src'))
+    images.map(image => ({
+      src: image.getAttribute('src'),
+      loaded: image.complete && image.naturalWidth > 0
+    }))
   );
-  expect(photos.length).toBeLessThanOrEqual(30);
-  expect(photos.every(src =>
-    src && src.includes('hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/')
+  expect(photos).toHaveLength(30);
+  expect(photos.every(photo =>
+    photo.src && photo.src.startsWith('/assets/catalog/2026/') && photo.loaded
+  )).toBe(true);
+  expect(photos.some(photo =>
+    photo.src === '/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg'
   )).toBe(true);
 
   const externalLinks = await page.locator('#catalogGrid a').evaluateAll(links =>
