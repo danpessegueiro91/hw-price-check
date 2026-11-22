@@ -1,0 +1,115 @@
+name: Migrate catalog photos into site assets
+
+on:
+  push:
+    branches: [migration/catalog-photos]
+    paths: [".github/workflows/migrate-catalog-photos.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-photo-migration
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: migration/catalog-photos
+          fetch-depth: 0
+      - name: Download and verify original catalog photos
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog"
+          mkdir -p assets/catalog/2026/sth assets/catalog/2026/th
+          while IFS='|' read -r path expected; do
+            target="assets/catalog/$path"
+            mkdir -p "$(dirname "$target")"
+            curl --fail --silent --show-error --location "$base/$path" --output "$target"
+            actual="$(wc -c < "$target" | tr -d ' ')"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::Size mismatch for $path (expected $expected, got $actual)"
+              exit 1
+            fi
+            file "$target" | grep -qi 'jpeg\|jpg' || { echo "::error::Unexpected file type: $path"; exit 1; }
+            echo "Verified $path ($actual bytes)"
+          done <<'FILES'
+          2026/sth/23-ram-1500.jpg|61532
+          2026/sth/64-impala.jpg|56831
+          2026/sth/67-pontiac-firebird-400.jpg|52495
+          2026/sth/70-plymouth-aar-cuda.jpg|58155
+          2026/sth/87-ford-sierra-cosworth.jpg|51342
+          2026/sth/94-toyota-supra-tooned.jpg|64373
+          2026/sth/custom-otto.jpg|51758
+          2026/sth/drift-ender.jpg|55734
+          2026/sth/ferrari-f40-competizione.jpg|45446
+          2026/sth/ford-mustang-gtd.jpg|3872537
+          2026/sth/honda-civic-custom.jpg|31168
+          2026/sth/lotus-sport-elise.jpg|61961
+          2026/sth/nissan-maxima-drift-car.jpg|57499
+          2026/sth/porsche-911-carrera-rs-2-7.jpg|57730
+          2026/sth/subaru-impreza.jpg|55247
+          2026/th/2-jet-z.jpg|46382
+          2026/th/2016-ford-gt-race.jpg|50762
+          2026/th/87-buick-regal-gnx.jpg|255677
+          2026/th/92-dodge-viper-rt-10.jpg|48781
+          2026/th/amaru-gtc.jpg|45551
+          2026/th/cone-shaker.jpg|50299
+          2026/th/electro-silhouette.jpg|45174
+          2026/th/fast-fish.jpg|64742
+          2026/th/ford-model-a-custom-31.jpg|50031
+          2026/th/gazella-gt.jpg|64140
+          2026/th/hot-wheengs.jpg|49458
+          2026/th/mad-manga.jpg|60066
+          2026/th/nissan-skyline-ht-2000gt-x.jpg|71328
+          2026/th/sweet-driver.jpg|84704
+          2026/th/total-disposal.jpg|68665
+          FILES
+      - name: Point catalog fallback photos to local site assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path("assets/js/catalog.js")
+          s = p.read_text()
+          mapping = {
+            "'87 Buick Regal GNX":"th/87-buick-regal-gnx.jpg","'92 Dodge Viper RT/10":"th/92-dodge-viper-rt-10.jpg",
+            "Electro Silhouette":"th/electro-silhouette.jpg","Hot Wheengs":"th/hot-wheengs.jpg","Cone Shaker":"th/cone-shaker.jpg",
+            "2016 Ford GT Race":"th/2016-ford-gt-race.jpg","2 Jet Z":"th/2-jet-z.jpg","Total Disposal":"th/total-disposal.jpg",
+            "Amaru GTC":"th/amaru-gtc.jpg","Sweet Driver":"th/sweet-driver.jpg","Mad Manga":"th/mad-manga.jpg",
+            "Ford Model A Custom '31":"th/ford-model-a-custom-31.jpg","Fast Fish":"th/fast-fish.jpg",
+            "Nissan Skyline HT 2000GT-X":"th/nissan-skyline-ht-2000gt-x.jpg","Gazella GT":"th/gazella-gt.jpg",
+            "Drift-Ender":"sth/drift-ender.jpg","Ford Mustang GTD":"sth/ford-mustang-gtd.jpg",
+            "Ferrari F40 Competizione":"sth/ferrari-f40-competizione.jpg","'64 Impala":"sth/64-impala.jpg",
+            "'87 Ford Sierra Cosworth":"sth/87-ford-sierra-cosworth.jpg","Honda Civic Custom":"sth/honda-civic-custom.jpg",
+            "Custom Otto":"sth/custom-otto.jpg","Lotus Sport Elise":"sth/lotus-sport-elise.jpg",
+            "Subaru Impreza":"sth/subaru-impreza.jpg","'94 Toyota Supra":"sth/94-toyota-supra-tooned.jpg",
+            "Nissan Maxima Drift Car":"sth/nissan-maxima-drift-car.jpg","Porsche 911 Carrera RS 2.7":"sth/porsche-911-carrera-rs-2-7.jpg",
+            "'23 Ram 1500":"sth/23-ram-1500.jpg","'70 Plymouth AAR 'Cuda":"sth/70-plymouth-aar-cuda.jpg",
+            "'67 Pontiac Firebird 400":"sth/67-pontiac-firebird-400.jpg",
+          }
+          for model, path in mapping.items():
+              pattern = r'("2026\|(?:th|sth)\|' + re.escape(model) + r'":\s*)"[^"]+"'
+              s, n = re.subn(pattern, lambda m: m.group(1) + '"/assets/catalog/2026/' + path + '"', s)
+              if n != 1: raise SystemExit(f"Expected one entry for {model!r}, found {n}")
+          p.write_text(s)
+          PY
+      - name: Commit migration to main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/catalog/2026 assets/js/catalog.js
+          git commit -m "Migrate 2026 catalog photos into site assets"
+          git push origin HEAD:main
+      - name: Deploy updated site to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: "290ebea135897d3733df7a3a9afede94"
+          command: pages deploy . --project-name=hwpricecheck --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
