@@ -153,3 +153,10 @@ CREATE TABLE IF NOT EXISTS app_settings (
 
 -- Never store API keys, Stripe secrets, or refresh tokens in D1.
 -- Keep them as encrypted Cloudflare Worker secrets.
+
+CREATE TABLE IF NOT EXISTS auth_rate_limits (
+  bucket TEXT PRIMARY KEY,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  window_started_at INTEGER NOT NULL,
+  blocked_until INTEGER
+);
