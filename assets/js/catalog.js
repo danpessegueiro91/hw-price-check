@@ -121,6 +121,7 @@
   "2026|sth|Lotus Sport Elise":"/assets/catalog/2026/sth/lotus-sport-elise.jpg",
   "2026|sth|Subaru Impreza":"/assets/catalog/2026/sth/subaru-impreza.jpg",
   "2026|sth|'94 Toyota Supra":"/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg",
+  "2026|sth|'94 Toyota Supra (Tooned)":"/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg",
   "2026|sth|Nissan Maxima Drift Car":"/assets/catalog/2026/sth/nissan-maxima-drift-car.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"/assets/catalog/2026/sth/porsche-911-carrera-rs-2-7.jpg",
   "2026|sth|'23 Ram 1500":"/assets/catalog/2026/sth/23-ram-1500.jpg",
@@ -137,10 +138,18 @@
    if(error)throw error;
    const nextImages={};
    (data||[]).forEach(row=>{
-    const {data:publicData}=sb.storage.from("hw-catalog").getPublicUrl(row.storage_path);
-    if(publicData?.publicUrl){
-     const key=String(row.model_year).trim()+"|"+String(row.model_kind).trim().toLowerCase()+"|"+String(row.model_name).trim();
-     nextImages[key]=publicData.publicUrl;
+    const key=String(row.model_year).trim()+"|"+String(row.model_kind).trim().toLowerCase()+"|"+String(row.model_name).trim();
+    const localPhoto=REMOTE_IMAGES[key];
+    const localStoragePath=localPhoto?.replace(/^\/assets\/catalog\//,"");
+    const storagePath=String(row.storage_path||"").replace(/^\/+/, "");
+    // The checked-in catalogue asset is the source of truth when the legacy
+    // Storage path points to the same file. A deliberate admin replacement
+    // with a different path remains supported until the backend is migrated.
+    if(localPhoto&&storagePath===localStoragePath){
+     nextImages[key]=localPhoto;
+    }else{
+     const {data:publicData}=sb.storage.from("hw-catalog").getPublicUrl(row.storage_path);
+     if(publicData?.publicUrl)nextImages[key]=publicData.publicUrl;
     }
    });
    uploadedImages=nextImages;
