@@ -56,6 +56,20 @@ jobs:
       - name: Run browser functional tests
         run: npm test
 
+
+  cloudflare-worker-diagnostics:
+    if: github.event_name == 'pull_request'
+    name: Cloudflare Worker build diagnostics (read only)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Read latest Cloudflare Worker build logs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: "290ebea135897d3733df7a3a9afede94"
+        run: bash scripts/diagnose-cloudflare-workers-build.sh
+
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [validate, browser-test]
