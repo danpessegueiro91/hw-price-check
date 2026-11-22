@@ -120,7 +120,7 @@
   "2026|sth|Custom Otto":"/assets/catalog/2026/sth/custom-otto.jpg",
   "2026|sth|Lotus Sport Elise":"/assets/catalog/2026/sth/lotus-sport-elise.jpg",
   "2026|sth|Subaru Impreza":"/assets/catalog/2026/sth/subaru-impreza.jpg",
-  "2026|sth|'94 Toyota Supra":"/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg",
+  "2026|sth|\'94 Toyota Supra (Tooned)":"/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg",
   "2026|sth|Nissan Maxima Drift Car":"/assets/catalog/2026/sth/nissan-maxima-drift-car.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"/assets/catalog/2026/sth/porsche-911-carrera-rs-2-7.jpg",
   "2026|sth|'23 Ram 1500":"/assets/catalog/2026/sth/23-ram-1500.jpg",
@@ -128,7 +128,7 @@
   "2026|sth|'67 Pontiac Firebird 400":"/assets/catalog/2026/sth/67-pontiac-firebird-400.jpg"
  };
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
+ const photoFor=item=>REMOTE_IMAGES[imageKey(item)]||uploadedImages[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   // A leitura pública das fotografias é independente das permissões de administração.
