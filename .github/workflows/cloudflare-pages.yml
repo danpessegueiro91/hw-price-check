@@ -104,7 +104,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          base="https://hwpricecheck.pages.dev/assets/catalog/2026"
+          base="https://hwpricecheck.pages.dev/assets/catalog"
           while IFS='|' read -r path expected; do
             headers="$(mktemp)"
             code="$(curl --silent --show-error --location --output /dev/null --dump-header "$headers" --write-out '%{http_code}' "$base/$path")"
