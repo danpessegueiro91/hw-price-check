@@ -13,7 +13,6 @@ if [[ -z "$ACCOUNT_ID" || -z "$CF_TOKEN" || -z "$GITHUB_TOKEN_VALUE" || -z "$GIT
   exit 0
 fi
 
-echo "Reading the Cloudflare build ID attached to this pull request commit..."
 checks_response="$(curl --silent --show-error --location \
   --header "Authorization: Bearer $GITHUB_TOKEN_VALUE" \
   --header "Accept: application/vnd.github+json" \
@@ -25,44 +24,62 @@ checks_response="$(curl --silent --show-error --location \
 build_uuid="$(jq -r '.check_runs[]? | select(.name == "Workers Builds: hw-price-check") | .external_id // empty' <<<"$checks_response" | head -n 1)"
 if [[ -z "$build_uuid" || "$build_uuid" == "null" ]]; then
   echo "No Cloudflare Workers Build ID is attached to this exact commit yet."
-  exit 0
-fi
+else
+  echo "Cloudflare Build ID: $build_uuid"
+  response="$(curl --silent --show-error --location \
+    --header "Authorization: Bearer $CF_TOKEN" \
+    --header "Content-Type: application/json" \
+    --write-out $'\n%{http_code}' \
+    "$API/accounts/$ACCOUNT_ID/builds/builds/$build_uuid/logs")" || response=$'\n000'
+  status="${response##*$'\n'}"
+  body="${response%$'\n'*}"
 
-echo "Cloudflare Build ID: $build_uuid"
-response="$(curl --silent --show-error --location \
-  --header "Authorization: Bearer $CF_TOKEN" \
-  --header "Content-Type: application/json" \
-  --write-out $'\n%{http_code}' \
-  "$API/accounts/$ACCOUNT_ID/builds/builds/$build_uuid/logs")" || {
-    echo "Cloudflare log request failed at transport level."
-    exit 0
-  }
-
-status="${response##*$'\n'}"
-body="${response%$'\n'*}"
-
-if [[ "$status" != "200" ]]; then
-  echo "Cloudflare Builds API returned HTTP $status while reading this build's logs."
-  if [[ "$status" == "401" || "$status" == "403" ]]; then
-    echo "The existing CLOUDFLARE_API_TOKEN does not have permission to read Workers Build logs."
+  if [[ "$status" != "200" ]]; then
+    echo "Cloudflare Builds API returned HTTP $status while reading this build's logs."
+    if [[ "$status" == "401" || "$status" == "403" ]]; then
+      echo "The existing CLOUDFLARE_API_TOKEN is not valid for the Workers Builds logs API."
+    fi
+    jq -c '{success,errors}' <<<"$body" 2>/dev/null || true
+  elif jq -e '.success == true' >/dev/null 2>&1 <<<"$body"; then
+    echo "Cloudflare build log (sensitive values redacted):"
+    jq -r '.. | strings' <<<"$body" \
+      | tail -n 200 \
+      | sed -E \
+          -e 's/(Bearer )[A-Za-z0-9._-]+/\1[REDACTED]/g' \
+          -e 's/(sk_(live|test)_)[A-Za-z0-9]+/\1[REDACTED]/g' \
+          -e 's/(sb_publishable_)[A-Za-z0-9_-]+/\1[REDACTED]/g' \
+          -e 's/(api[_ -]?key[=: ]+)[^ ]+/\1[REDACTED]/Ig' \
+          -e 's/[A-Za-z0-9_-]{40,}/[REDACTED_LONG_TOKEN]/g' \
+      | tail -n 120
+  else
+    echo "Cloudflare returned an unsuccessful log response:"
+    jq -c '{success,errors}' <<<"$body" 2>/dev/null || true
   fi
-  jq -c '{success,errors}' <<<"$body" 2>/dev/null || true
-  exit 0
 fi
 
-if ! jq -e '.success == true' >/dev/null 2>&1 <<<"$body"; then
-  echo "Cloudflare returned an unsuccessful log response:"
-  jq -c '{success,errors}' <<<"$body" 2>/dev/null || true
-  exit 0
-fi
+read_resource_list() {
+  local label="$1"
+  local path="$2"
+  local response status body
+  response="$(curl --silent --show-error --location \
+    --header "Authorization: Bearer $CF_TOKEN" \
+    --header "Content-Type: application/json" \
+    --write-out $'\n%{http_code}' \
+    "$API/accounts/$ACCOUNT_ID/$path")" || response=$'\n000'
+  status="${response##*$'\n'}"
+  body="${response%$'\n'*}"
 
-echo "Cloudflare build log (sensitive values redacted):"
-jq -r '.. | strings' <<<"$body" \
-  | tail -n 200 \
-  | sed -E \
-      -e 's/(Bearer )[A-Za-z0-9._-]+/\1[REDACTED]/g' \
-      -e 's/(sk_(live|test)_)[A-Za-z0-9]+/\1[REDACTED]/g' \
-      -e 's/(sb_publishable_)[A-Za-z0-9_-]+/\1[REDACTED]/g' \
-      -e 's/(api[_ -]?key[=: ]+)[^ ]+/\1[REDACTED]/Ig' \
-      -e 's/[A-Za-z0-9_-]{40,}/[REDACTED_LONG_TOKEN]/g' \
-  | tail -n 120
+  if [[ "$status" == "200" ]] && jq -e '.success == true' >/dev/null 2>&1 <<<"$body"; then
+    echo "$label inventory: accessible"
+    jq -c '{count:(.result|length),resources:[.result[]? | {name,id}]}' <<<"$body" 2>/dev/null || jq -c '.result' <<<"$body" | head -c 1500
+  else
+    echo "$label inventory: not readable with current token (HTTP $status)"
+    jq -c '{success,errors}' <<<"$body" 2>/dev/null || true
+  fi
+}
+
+echo "Checking existing Cloudflare D1 databases (read only)..."
+read_resource_list "D1" "d1/database"
+
+echo "Checking existing Cloudflare R2 buckets (read only)..."
+read_resource_list "R2" "r2/buckets"
