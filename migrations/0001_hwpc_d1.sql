@@ -1,10 +1,13 @@
 PRAGMA foreign_keys = ON;
 
--- HW Price Check: Cloudflare D1 replacement schema.
--- Keep legacy Supabase UUIDs as TEXT IDs during migration so ownership links survive.
+-- HW Price Check: complete first-party Cloudflare D1 schema.
+-- Preserve legacy Supabase UUIDs as TEXT IDs during import.
+-- Anonymous visitors are first-class guest users so their quota and local data
+-- can be claimed by a registered account without losing ownership.
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
-  email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+  auth_type TEXT NOT NULL DEFAULT 'email' CHECK (auth_type IN ('guest','email')),
+  email TEXT COLLATE NOCASE UNIQUE,
   password_hash TEXT,
   password_salt TEXT,
   password_iterations INTEGER NOT NULL DEFAULT 310000,
@@ -14,7 +17,9 @@ CREATE TABLE IF NOT EXISTS users (
   appearance TEXT NOT NULL DEFAULT 'dark' CHECK (appearance IN ('dark','light')),
   is_admin INTEGER NOT NULL DEFAULT 0 CHECK (is_admin IN (0,1)),
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
-  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  CHECK ((auth_type = 'guest' AND email IS NULL AND password_hash IS NULL) OR
+         (auth_type = 'email' AND email IS NOT NULL))
 );
 CREATE TABLE IF NOT EXISTS auth_sessions (
   id TEXT PRIMARY KEY,
@@ -26,6 +31,15 @@ CREATE TABLE IF NOT EXISTS auth_sessions (
 );
 CREATE INDEX IF NOT EXISTS idx_auth_sessions_user ON auth_sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_auth_sessions_expiry ON auth_sessions(expires_at);
+CREATE TABLE IF NOT EXISTS auth_email_tokens (
+  token_hash TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  purpose TEXT NOT NULL CHECK (purpose IN ('verify_email','reset_password','claim_account')),
+  expires_at TEXT NOT NULL,
+  consumed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX IF NOT EXISTS idx_auth_email_tokens_user ON auth_email_tokens(user_id, purpose);
 
 CREATE TABLE IF NOT EXISTS user_data (
   user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -150,13 +164,12 @@ CREATE TABLE IF NOT EXISTS app_settings (
   value TEXT NOT NULL,
   updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
-
--- Never store API keys, Stripe secrets, or refresh tokens in D1.
--- Keep them as encrypted Cloudflare Worker secrets.
-
 CREATE TABLE IF NOT EXISTS auth_rate_limits (
   bucket TEXT PRIMARY KEY,
   attempts INTEGER NOT NULL DEFAULT 0,
   window_started_at INTEGER NOT NULL,
   blocked_until INTEGER
 );
+
+-- Never store API keys, Stripe secrets, or refresh tokens in D1.
+-- Store them as Cloudflare Worker/Pages secrets.
