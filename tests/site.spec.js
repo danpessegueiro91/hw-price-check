@@ -329,3 +329,82 @@ test('2026 catalog uses local first-party photos, loads every image and preserve
   await expect(page.locator('#catalogGrid').getByText('Fonte externa')).toHaveCount(0);
   await expect(page.locator('.catalog-price')).toHaveCount(30);
 });
+
+test('AI identification can be saved to the collection without storing the submitted photo', async ({ page }) => {
+  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.fulfill({
+    contentType: 'application/javascript',
+    body: `
+      window.__savedPayloads = [];
+      const user = { id: 'collector-test', is_anonymous: true, user_metadata: {}, created_at: '2026-01-01T00:00:00.000Z' };
+      const session = { user, access_token: 'test-access-token' };
+      window.supabase = {
+        createClient: () => ({
+          auth: {
+            getSession: async () => ({ data: { session }, error: null }),
+            onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+          },
+          from: table => ({
+            select: () => ({ eq: () => ({ maybeSingle: async () => ({
+              data: table === 'user_data' ? { payload: { items: [], watch: [] } } : null,
+              error: null
+            }) }) }),
+            upsert: async row => {
+              window.__savedPayloads.push(JSON.parse(JSON.stringify(row.payload)));
+              return { error: null };
+            }
+          }),
+          rpc: async () => ({ data: 1, error: null }),
+          functions: {
+            invoke: async (name, { body }) => {
+              if (name === 'hw-identify') return { error: null, data: { analysis: {
+                model: 'Porsche 911 GT3 RS', year: '2026', classification: 'sth',
+                th_sth_status: 'confirmed', confidence: 94, notes: 'Detalhes visuais consistentes.',
+                visible_evidence: ['Rodas Real Riders', 'Pintura Spectraflame'], missing_photos: []
+              } } };
+              if (name === 'hw-sold-comps') return { error: null, data: {
+                provider: 'SoldComps · eBay completed sales',
+                stats: { median: 12, p25: 9, p75: 15, currency: 'GBP', excluded: 1 },
+                count: 12, items: [], quota: { remaining: 2, used: 1, limit: 3, tier: 'guest' }
+              } };
+              if (name === 'hw-marketplace-search' && body.action === 'history') return { error: null, data: { history: [] } };
+              if (name === 'hw-marketplace-search') return { error: null, data: { status: 'complete', active: [], sold: [], credits: { charged: 0 } } };
+              throw new Error('Unexpected function: ' + name);
+            }
+          }
+        })
+      };
+    `
+  }));
+  await page.route('**/assets/js/catalog.js', route => route.abort());
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await page.locator('input[data-photo="0"]').setInputFiles({
+    name: 'hot-wheels-front.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/z9sAAAAASUVORK5CYII=', 'base64')
+  });
+  await page.locator('#purchasePrice').fill('1.49');
+  await page.locator('#purchaseShipping').fill('0.50');
+  await page.locator('#identify').click();
+  await expect(page.locator('#saveAnalysisToCollection')).toBeVisible();
+  await page.locator('#saveAnalysisToCollection').click();
+  await expect(page.locator('#saveAnalysisToCollection')).toHaveText('Guardado na coleção.');
+  const saved = await page.evaluate(() => window.__savedPayloads.at(-1));
+  expect(saved.items).toHaveLength(1);
+  expect(saved.items[0]).toMatchObject({
+    model: 'Porsche 911 GT3 RS',
+    ask: 1.49,
+    shipping: 0.5,
+    classification: 'sth',
+    condition: 'mint',
+    th_sth_status: 'confirmed',
+    confidence: 94,
+    min: 0,
+    marketEvidence: { currency: 'GBP', median: 12, salesCount: 12 }
+  });
+  expect(JSON.stringify(saved)).not.toContain('data:image');
+  expect(JSON.stringify(saved)).not.toContain('hot-wheels-front.png');
+  await page.locator('#tabCollection').click();
+  await expect(page.locator('#items')).toContainText('Porsche 911 GT3 RS');
+  await expect(page.locator('#items')).toContainText('£12.00');
+});
