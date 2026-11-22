@@ -120,7 +120,7 @@
   "2026|sth|Custom Otto":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Custom-Otto-US-Card.jpg",
   "2026|sth|Lotus Sport Elise":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Lotus-Sport-Elise-US-Card-1.jpg",
   "2026|sth|Subaru Impreza":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-Subaru-Impreza-US-Card.jpg",
-  "2026|sth|'94 Toyota Supra":"https://hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/2026/sth/94-toyota-supra-tooned.jpg",
+  "2026|sth|'94 Toyota Supra":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-94-Toyota-Supra-US-Card.jpg",
   "2026|sth|Nissan Maxima Drift Car":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-STH-Nissan-Maxima-Drift-Car-US-Card.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
   "2026|sth|'23 Ram 1500":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-23-Ram-1500-Int-Card.jpg",
@@ -130,34 +130,18 @@
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
  const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
  const loadCatalogImages=async()=>{
-   if(!sb)return;
-   // A leitura pública das fotografias não pode depender da verificação de permissões de administrador.
-   try{
-    const {data,error}=await sb.from("catalog_images").select("model_year,model_kind,model_name,storage_path");
-    if(error)throw error;
-    const nextImages={};
-    (data||[]).forEach(row=>{
-     const {data:publicData}=sb.storage.from("hw-catalog").getPublicUrl(row.storage_path);
-     if(publicData?.publicUrl){
-      const key=String(row.model_year).trim()+"|"+String(row.model_kind).trim().toLowerCase()+"|"+String(row.model_name).trim();
-      nextImages[key]=publicData.publicUrl;
-     }
-    });
-    uploadedImages=nextImages;
-   }catch(error){
-    console.warn("Não foi possível carregar as fotografias do catálogo:",error?.message||error);
-   }
-   // A falha desta RPC só pode desactivar os controlos de gestão; nunca as fotografias públicas.
-   try{
-    const {data:adminFlag,error}=await sb.rpc("is_catalog_image_admin");
-    if(error)throw error;
-    canManageCatalogPhotos=adminFlag===true;
-   }catch(error){
-    canManageCatalogPhotos=false;
-    console.warn("Não foi possível verificar as permissões de fotografias:",error?.message||error);
-   }
-  };
-  const slugify=value=>value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  if(!sb)return;
+  const {data:adminFlag}=await sb.rpc("is_catalog_image_admin");
+  canManageCatalogPhotos=adminFlag===true;
+  const {data,error}=await sb.from("catalog_images").select("model_year,model_kind,model_name,storage_path");
+  if(error){console.warn("Não foi possível carregar as fotografias do catálogo:",error.message);return}
+  uploadedImages={};
+  (data||[]).forEach(row=>{
+   const {data:publicData}=sb.storage.from("hw-catalog").getPublicUrl(row.storage_path);
+   if(publicData?.publicUrl)uploadedImages[row.model_year+"|"+row.model_kind+"|"+row.model_name]=publicData.publicUrl;
+  });
+ };
+ const slugify=value=>value.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
  const uploadCatalogPhoto=async(item,file)=>{
   if(!sb){alert("O serviço de fotografias não está disponível.");return}
   if(!file||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Escolhe uma imagem JPG, PNG, WebP ou AVIF.");return}
@@ -323,9 +307,9 @@
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
 
- window.addEventListener('hwpc:auth-updated',()=>{Promise.allSettled([loadCatalogImages(),loadMarketPrices()]).then(()=>renderCatalog())});
+ window.addEventListener('hwpc:auth-updated',()=>{Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
- Promise.allSettled([loadCatalogImages(),loadMarketPrices()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ Promise.all([loadCatalogImages(),loadMarketPrices()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoInteractionStyle=document.createElement("style");
  photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art{position:relative}.catalog-detail-art img{cursor:zoom-in!important}.catalog-detail-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:4;padding:8px 11px;border:1px solid rgba(255,255,255,.6);border-radius:8px;background:rgba(8,15,28,.94);color:#fff;font:600 12px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-detail-zoom-trigger:hover{background:#263d59}";
  document.head.append(photoInteractionStyle);
