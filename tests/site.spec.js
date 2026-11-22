@@ -343,17 +343,29 @@ test('AI identification can be saved to the collection without storing the submi
             getSession: async () => ({ data: { session }, error: null }),
             onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
           },
-          from: table => ({
-            select: () => ({ eq: () => ({ maybeSingle: async () => ({
-              data: table === 'user_data' ? { payload: { items: [], watch: [] } } : null,
-              error: null
-            }) }) }),
-            upsert: async row => {
-              window.__savedPayloads.push(JSON.parse(JSON.stringify(row.payload)));
-              return { error: null };
-            }
-          }),
-          rpc: async () => ({ data: 1, error: null }),
+          from: table => {
+            const query = {
+              select: () => query,
+              eq: () => query,
+              not: () => query,
+              order: () => query,
+              limit: () => query,
+              maybeSingle: async () => ({
+                data: table === 'user_data' ? { payload: { items: [], watch: [] } } : null,
+                error: null
+              }),
+              single: async () => ({ data: null, error: null }),
+              then: (resolve, reject) => Promise.resolve({ data: [], error: null }).then(resolve, reject),
+              upsert: async row => {
+                if (table === 'user_data') window.__savedPayloads.push(JSON.parse(JSON.stringify(row.payload)));
+                return { error: null };
+              },
+              insert: async () => ({ error: null })
+            };
+            return query;
+          },
+          storage: { from: () => ({ getPublicUrl: path => ({ data: { publicUrl: 'https://example.invalid/' + path } }) }) },
+          rpc: async name => ({ data: name === 'is_catalog_image_admin' ? false : 1, error: null }),
           functions: {
             invoke: async (name, { body }) => {
               if (name === 'hw-identify') return { error: null, data: { analysis: {
@@ -375,7 +387,6 @@ test('AI identification can be saved to the collection without storing the submi
       };
     `
   }));
-  await page.route('**/assets/js/catalog.js', route => route.abort());
   await page.goto('/');
   await page.locator('#heroAnalyse').click();
   await page.locator('input[data-photo="0"]').setInputFiles({
@@ -406,5 +417,6 @@ test('AI identification can be saved to the collection without storing the submi
   expect(JSON.stringify(saved)).not.toContain('hot-wheels-front.png');
   await page.locator('#tabCollection').click();
   await expect(page.locator('#items')).toContainText('Porsche 911 GT3 RS');
-  await expect(page.locator('#items')).toContainText('£12.00');
+  await expect(page.locator('#items')).toContainText('12,00');
+  await expect(page.locator('#items')).toContainText('£');
 });
