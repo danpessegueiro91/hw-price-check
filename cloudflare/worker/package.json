@@ -1,0 +1,11 @@
+{
+  "name": "hw-price-check-worker",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "wrangler deploy --dry-run"
+  },
+  "devDependencies": {
+    "wrangler": "4.166.0"
+  }
+}
