@@ -293,19 +293,34 @@ test('interface translations do not depend on an external translation service', 
 });
 
 
-test('2026 catalog uses only first-party uploaded photos and no external product links', async ({ page }) => {
+test('2026 catalog uses local first-party photos, loads every image and preserves the Supra photo', async ({ page }) => {
   await page.goto('/');
   await page.locator('[data-page="guides"]').click();
   await expect(page.locator('#catalogYear')).toHaveValue('2026');
   await expect(page.locator('.catalog-card')).toHaveCount(30);
+  await expect(page.locator('.catalog-thumb img')).toHaveCount(30);
 
   const photos = await page.locator('.catalog-thumb img').evaluateAll(images =>
     images.map(image => image.getAttribute('src'))
   );
-  expect(photos.length).toBeLessThanOrEqual(30);
+  expect(photos).toHaveLength(30);
   expect(photos.every(src =>
-    src && src.includes('hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/')
+    src && /^\/assets\/catalog\/2026\/(?:th|sth)\/[^/]+\.jpg$/i.test(src)
   )).toBe(true);
+
+  await page.locator('.catalog-thumb img').evaluateAll(images =>
+    images.forEach(image => { image.loading = 'eager'; })
+  );
+  await expect.poll(async () =>
+    page.locator('.catalog-thumb img').evaluateAll(images =>
+      images.filter(image => !image.complete || image.naturalWidth === 0).length
+    )
+  ).toBe(0);
+
+  await expect(page.locator('.catalog-card').filter({ hasText: "'94 Toyota Supra" })
+    .locator('.catalog-thumb img')).toHaveAttribute('src',
+      '/assets/catalog/2026/sth/94-toyota-supra-tooned.jpg'
+    );
 
   const externalLinks = await page.locator('#catalogGrid a').evaluateAll(links =>
     links.filter(link => /^https?:/i.test(link.getAttribute('href') || '')).map(link => link.href)
