@@ -47,10 +47,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
-      - name: Install browser test dependencies
+      - name: Install browser and Worker build dependencies
         run: |
           npm install --no-audit --no-fund
           npx playwright install chromium
+      - name: Compile Worker without deploying
+        run: npm run build:worker
       - name: Run browser functional tests
         run: npm test
 
