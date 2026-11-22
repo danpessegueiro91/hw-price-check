@@ -99,3 +99,51 @@ jobs:
           accountId: "290ebea135897d3733df7a3a9afede94"
           command: pages deploy . --project-name=hwpricecheck --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Smoke-test all published catalog photos
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://hwpricecheck.pages.dev/assets/catalog/2026"
+          while IFS='|' read -r path expected; do
+            headers="$(mktemp)"
+            code="$(curl --silent --show-error --location --output /dev/null --dump-header "$headers" --write-out '%{http_code}' "$base/$path")"
+            type="$(grep -i '^content-type:' "$headers" | tail -1 | tr -d '\r' | awk '{print $2}')"
+            rm -f "$headers"
+            if [ "$code" != "200" ] || [[ "$type" != image/jpeg* ]]; then
+              echo "::error::Live photo failed: $path (HTTP $code, $type)"
+              exit 1
+            fi
+            echo "LIVE OK $path"
+          done <<'PHOTOS'
+          2026/sth/23-ram-1500.jpg|61532
+          2026/sth/64-impala.jpg|56831
+          2026/sth/67-pontiac-firebird-400.jpg|52495
+          2026/sth/70-plymouth-aar-cuda.jpg|58155
+          2026/sth/87-ford-sierra-cosworth.jpg|51342
+          2026/sth/94-toyota-supra-tooned.jpg|64373
+          2026/sth/custom-otto.jpg|51758
+          2026/sth/drift-ender.jpg|55734
+          2026/sth/ferrari-f40-competizione.jpg|45446
+          2026/sth/ford-mustang-gtd.jpg|3872537
+          2026/sth/honda-civic-custom.jpg|31168
+          2026/sth/lotus-sport-elise.jpg|61961
+          2026/sth/nissan-maxima-drift-car.jpg|57499
+          2026/sth/porsche-911-carrera-rs-2-7.jpg|57730
+          2026/sth/subaru-impreza.jpg|55247
+          2026/th/2-jet-z.jpg|46382
+          2026/th/2016-ford-gt-race.jpg|50762
+          2026/th/87-buick-regal-gnx.jpg|255677
+          2026/th/92-dodge-viper-rt-10.jpg|48781
+          2026/th/amaru-gtc.jpg|45551
+          2026/th/cone-shaker.jpg|50299
+          2026/th/electro-silhouette.jpg|45174
+          2026/th/fast-fish.jpg|64742
+          2026/th/ford-model-a-custom-31.jpg|50031
+          2026/th/gazella-gt.jpg|64140
+          2026/th/hot-wheengs.jpg|49458
+          2026/th/mad-manga.jpg|60066
+          2026/th/nissan-skyline-ht-2000gt-x.jpg|71328
+          2026/th/sweet-driver.jpg|84704
+          2026/th/total-disposal.jpg|68665
+          PHOTOS
