@@ -1,0 +1,8 @@
+name = "hw-price-check"
+main = "cloudflare/worker/index.mjs"
+compatibility_date = "2026-11-22"
+workers_dev = true
+
+# Deliberately no D1, R2 or secrets bindings yet.
+# These are provisioned only after the Cloudflare account resources and
+# storage/billing constraints have been verified.
