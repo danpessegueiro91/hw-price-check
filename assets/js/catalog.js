@@ -120,7 +120,7 @@
   "2026|sth|Custom Otto":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Custom-Otto-US-Card.jpg",
   "2026|sth|Lotus Sport Elise":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/04/2026-STH-Lotus-Sport-Elise-US-Card-1.jpg",
   "2026|sth|Subaru Impreza":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-Subaru-Impreza-US-Card.jpg",
-  "2026|sth|'94 Toyota Supra":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-94-Toyota-Supra-US-Card.jpg",
+  "2026|sth|'94 Toyota Supra":"https://hvxszwbszrigeznmmkeb.supabase.co/storage/v1/object/public/hw-catalog/2026/sth/94-toyota-supra-tooned.jpg",
   "2026|sth|Nissan Maxima Drift Car":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/06/2026-STH-Nissan-Maxima-Drift-Car-US-Card.jpg",
   "2026|sth|Porsche 911 Carrera RS 2.7":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/07/2026-STH-Porsche-911-Carrera-RS-27-US-Card.jpg",
   "2026|sth|'23 Ram 1500":"https://www.hwtreasure.com/wp-content/uploads/cars/2026/05/2026-STH-23-Ram-1500-Int-Card.jpg",
