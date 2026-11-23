@@ -420,3 +420,26 @@ test('AI identification can be saved to the collection without storing the submi
   await expect(page.locator('#items')).toContainText('12,00');
   await expect(page.locator('#items')).toContainText('£');
 });
+
+test('TH/STH archive updates when the selected year and category change', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  await expect(page.locator('#catalogPage')).toBeVisible();
+
+  await page.locator('#catalogYear').selectOption('2025');
+  await expect(page.locator('#catalogSummary')).toContainText('2025');
+  await expect(page.locator('.catalog-card h3').first()).toHaveText('Ford Performance Supervan 4');
+
+  await page.locator('#catalogType').selectOption('sth');
+  await expect(page.locator('#catalogSummary')).toContainText('STH');
+  await expect(page.locator('.catalog-card h3').first()).toHaveText("'87 Audi quattro");
+
+  await page.locator('#catalogYear').selectOption('2010');
+  await expect(page.locator('#catalogSummary')).toContainText('2010');
+  await expect(page.locator('.catalog-card')).toHaveCount(24);
+  await expect(page.locator('.catalog-card h3').first()).toHaveText('Custom \'53 Cadillac');
+
+  await page.locator('#catalogYear').selectOption('2006');
+  await expect(page.locator('#catalogSummary')).toContainText('2006');
+  await expect(page.locator('#catalogGrid')).toContainText('Ainda não existiam Super Treasure Hunts antes de 2007.');
+});
