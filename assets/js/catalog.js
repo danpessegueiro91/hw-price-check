@@ -293,6 +293,21 @@
    const file=input.files?.[0];if(file)await uploadCatalogPhoto(item,file);input.value="";
   }));
  };
+ // Keep every archive control reactive. The renderer is reassigned above,
+ // so bind only after its final implementation is in place.
+ const catalogControls=['catalogYear','catalogType','catalogSort'];
+ catalogControls.forEach(id=>{
+  const control=$(id);
+  if(control&&!control.dataset.hwpcCatalogControl){
+   control.dataset.hwpcCatalogControl='1';
+   control.addEventListener('change',()=>renderCatalog());
+  }
+ });
+ const catalogSearch=$('catalogSearch');
+ if(catalogSearch&&!catalogSearch.dataset.hwpcCatalogControl){
+  catalogSearch.dataset.hwpcCatalogControl='1';
+  catalogSearch.addEventListener('input',()=>renderCatalog());
+ }
  const detailOverlay=$('catalogDetail');
  if(detailOverlay&&!detailOverlay.dataset.hwpcModalEvents){
   detailOverlay.dataset.hwpcModalEvents="1";
