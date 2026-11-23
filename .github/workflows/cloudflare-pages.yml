@@ -54,9 +54,26 @@ jobs:
       - name: Run browser functional tests
         run: npm test
 
+  security-audit:
+    name: Audit deployment dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Install and audit pinned Wrangler
+        run: |
+          mkdir -p /tmp/wrangler-audit
+          cd /tmp/wrangler-audit
+          npm init -y
+          npm install --save-exact wrangler@4.166.0
+          npm audit --audit-level=moderate
+          npx wrangler --version
+
   deploy:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [validate, browser-test]
+    needs: [validate, browser-test, security-audit]
     name: Publish to Cloudflare Pages
     runs-on: ubuntu-latest
     steps:
