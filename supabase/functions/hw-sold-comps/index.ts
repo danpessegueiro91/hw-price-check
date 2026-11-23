@@ -80,6 +80,7 @@ Deno.serve(async (req: Request) => {
     if (!upstream.ok) { console.error("SoldComps provider unavailable", { status: upstream.status, details: data }); return json({ error: "sold_data_provider_error", status: upstream.status, message: "A fonte de vendas concluídas está temporariamente indisponível. Tenta novamente mais tarde.", results: [], quota }); }
 
     return json({
+      ...data,
       provider: "SoldComps",
       source: "eBay " + ({ EBAY_US: "US", EBAY_GB: "UK", EBAY_DE: "DE" } as Record<string,string>)[site],
       site,
@@ -87,7 +88,6 @@ Deno.serve(async (req: Request) => {
       window_days: 90,
       captured_at: new Date().toISOString(),
       status: "complete",
-      ...data,
       quota
     });
   } catch (e) {
