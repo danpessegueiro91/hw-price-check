@@ -36,10 +36,9 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const stripeSecret = Deno.env.get("STRIPE_SECRET_KEY");
-    const priceId = Deno.env.get("STRIPE_PRICE_ID");
 
     if (!supabaseUrl || !serviceRoleKey) throw new Error("supabase_server_env_missing");
-    if (!stripeSecret || !priceId) {
+    if (!stripeSecret) {
       return json({
         error: "billing_not_configured",
         message: "A compra Premium ainda não está configurada. O administrador tem de concluir a ligação ao Stripe."
@@ -56,6 +55,12 @@ Deno.serve(async (req: Request) => {
 
     const body = await req.json().catch(() => ({}));
     const action = String(body.action || "checkout");
+    if (action === "checkout") {
+      return json({
+        error: "sales_disabled",
+        message: "As novas compras e subscrições Premium estão desativadas. O Premium é atribuído separadamente e os apoios são voluntários."
+      }, 410);
+    }
     const stripe = new Stripe(stripeSecret);
 
     const { data: billing } = await admin
