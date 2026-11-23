@@ -436,7 +436,7 @@ test('TH/STH archive updates when the selected year and category change', async 
 
   await page.locator('#catalogYear').selectOption('2010');
   await expect(page.locator('#catalogSummary')).toContainText('2010');
-  await expect(page.locator('.catalog-card')).toHaveCount(24);
+  await expect(page.locator('.catalog-card')).toHaveCount(12);
   await expect(page.locator('.catalog-card h3').first()).toHaveText('Custom \'53 Cadillac');
 
   await page.locator('#catalogYear').selectOption('2006');
