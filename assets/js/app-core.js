@@ -509,14 +509,14 @@ function render(){
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 const ACCOUNT_I18N={
-  pt:{myAccount:'A Minha Conta',premiumActive:'Premium ativo · 4,99 €/mês',renewalCancelled:d=>'A renovação foi cancelada. Manténs pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerir subscrição'},
-  en:{myAccount:'My Account',premiumActive:'Premium active · €4.99/month',renewalCancelled:d=>'Renewal cancelled. You keep unlimited searches until '+d+'.',manage:'⚙ Manage subscription'},
-  es:{myAccount:'Mi cuenta',premiumActive:'Premium activo · 4,99 €/mes',renewalCancelled:d=>'La renovación se ha cancelado. Mantienes búsquedas ilimitadas hasta el '+d+'.',manage:'⚙ Gestionar suscripción'},
-  fr:{myAccount:'Mon compte',premiumActive:'Premium actif · 4,99 €/mois',renewalCancelled:d=>'Le renouvellement a été annulé. Tu conserves les recherches illimitées jusqu’au '+d+'.',manage:'⚙ Gérer l’abonnement'},
-  de:{myAccount:'Mein Konto',premiumActive:'Premium aktiv · 4,99 €/Monat',renewalCancelled:d=>'Die Verlängerung wurde gekündigt. Du behältst unbegrenzte Suchen bis zum '+d+'.',manage:'⚙ Abonnement verwalten'},
-  it:{myAccount:'Il mio account',premiumActive:'Premium attivo · 4,99 €/mese',renewalCancelled:d=>'Il rinnovo è stato annullato. Mantieni le ricerche illimitate fino al '+d+'.',manage:'⚙ Gestisci abbonamento'},
-  nl:{myAccount:'Mijn account',premiumActive:'Premium actief · € 4,99/maand',renewalCancelled:d=>'De verlenging is geannuleerd. Je behoudt onbeperkt zoeken tot '+d+'.',manage:'⚙ Abonnement beheren'},
-  br:{myAccount:'Minha conta',premiumActive:'Premium ativo · R$ 4,99/mês',renewalCancelled:d=>'A renovação foi cancelada. Você mantém pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerenciar assinatura'}
+  pt:{myAccount:'A Minha Conta',premiumActive:'Subscrição Premium anterior',renewalCancelled:d=>'A renovação foi cancelada. Manténs o acesso até '+d+'.',manage:'⚙ Gerir subscrição anterior'},
+  en:{myAccount:'My Account',premiumActive:'Previous Premium subscription',renewalCancelled:d=>'Renewal cancelled. You keep access until '+d+'.',manage:'⚙ Manage previous subscription'},
+  es:{myAccount:'Mi cuenta',premiumActive:'Suscripción Premium anterior',renewalCancelled:d=>'La renovación se ha cancelado. Mantienes el acceso hasta el '+d+'.',manage:'⚙ Gestionar suscripción anterior'},
+  fr:{myAccount:'Mon compte',premiumActive:'Ancien abonnement Premium',renewalCancelled:d=>'Le renouvellement est annulé. Tu conserves l’accès jusqu’au '+d+'.',manage:'⚙ Gérer l’ancien abonnement'},
+  de:{myAccount:'Mein Konto',premiumActive:'Früheres Premium-Abonnement',renewalCancelled:d=>'Die Verlängerung wurde gekündigt. Du behältst den Zugang bis '+d+'.',manage:'⚙ Früheres Abonnement verwalten'},
+  it:{myAccount:'Il mio account',premiumActive:'Abbonamento Premium precedente',renewalCancelled:d=>'Il rinnovo è stato annullato. Mantieni l’accesso fino al '+d+'.',manage:'⚙ Gestisci abbonamento precedente'},
+  nl:{myAccount:'Mijn account',premiumActive:'Eerder Premium-abonnement',renewalCancelled:d=>'De verlenging is geannuleerd. Je behoudt toegang tot '+d+'.',manage:'⚙ Eerder abonnement beheren'},
+  br:{myAccount:'Minha conta',premiumActive:'Assinatura Premium anterior',renewalCancelled:d=>'A renovação foi cancelada. Você mantém o acesso até '+d+'.',manage:'⚙ Gerenciar assinatura anterior'}
 };
 function updateAccountButton(){
   const btn=$('account');
@@ -612,15 +612,15 @@ function renderAccount(){
     donationLink?.classList.remove('hidden');
     manageButton?.classList.add('hidden');
   }else if(isMonthlyPremium){
-    billingTitle.textContent='Subscrição Premium anterior';
+    billingTitle.textContent=words.premiumActive;
     const endDate=accountDate(quota.expires_at,false);
     billingDescription.textContent=billingDetails?.cancel_at_period_end
-      ? 'A renovação foi cancelada. Manténs o acesso até '+endDate+'.'
+      ? words.renewalCancelled(endDate)
       : 'Esta é uma subscrição anterior. Não são aceites novas subscrições; podes gerir ou cancelar a renovação através do portal existente.';
     requestLink?.classList.add('hidden');
     donationLink?.classList.remove('hidden');
     manageButton?.classList.remove('hidden');
-    manageButton.textContent='Gerir subscrição anterior';
+    manageButton.textContent=words.manage;
   }else{
     billingTitle.textContent='Premium por atribuição';
     billingDescription.textContent='O acesso Premium é atribuído gratuitamente, por convite ou decisão da equipa. Um eventual donativo é sempre voluntário e não dá direito a funcionalidades.';
