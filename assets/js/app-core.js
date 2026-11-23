@@ -458,7 +458,7 @@ function renderMarketplaceSearch(out,target='aiResult'){
  const captured=out.captured_at?new Date(out.captured_at).toLocaleString('pt-PT'):'data não disponibilizada';
  const activeSources=(out.sources?.active||[]).join(', ')||'nenhuma fonte activa concluída';
  const soldSources=(out.sources?.sold||[]).join(', ')||'nenhuma fonte de vendas concluída';
- const makeRows=rows=>rows.slice(0,30).map(row=>{
+ const makeRows=(rows,limit=30)=>rows.slice(0,limit).map(row=>{
   const title=safe(row.title||'Anúncio Hot Wheels'),source=safe(row.source||row.provider||'Marketplace');
   const raw=String(row.link||row.url||''),url=raw.startsWith('https://')?raw:'';
   const image=String(row.image||row.image_url||''),safeImage=image.startsWith('https://')?image:'';
@@ -474,7 +474,7 @@ function renderMarketplaceSearch(out,target='aiResult'){
   '<div class="sold-chart-title">Anúncios activos · '+active.length+'</div><p class="note">Fontes que responderam: '+safe(activeSources)+'. Valores pedidos, não valores pagos.</p>'+
   (active.length?'<div class="marketplace-results">'+makeRows(active)+'</div>':'<p class="note">Sem anúncios activos devolvidos nesta pesquisa.</p>')+
   '<div class="sold-chart-title">Vendas concluídas · '+sold.length+'</div><p class="note">Fontes que responderam: '+safe(soldSources)+'.</p>'+
-  (sold.length?'<div class="marketplace-results">'+makeRows(sold)+'</div>':'<p class="note">Sem vendas concluídas devolvidas nesta pesquisa.</p>')+
+  (sold.length?'<details class="sold-list"><summary>Ver '+sold.length+' vendas usadas e respectivas ligações</summary><div class="marketplace-results">'+makeRows(sold,200)+'</div></details>':'<p class="note">Sem vendas concluídas devolvidas nesta pesquisa.</p>')+
   '<p class="note">'+(out.status==='partial'?'⚠ Dados parciais: uma ou mais fontes falharam ou não terminaram. ':'Estado: todas as fontes responderam. ')+'Créditos Soldgraph: '+safe(out.credits?.charged??0)+'</p>'+
   (out.errors?.length?'<p class="note">Fontes indisponíveis: '+safe(out.errors.join(' · '))+'</p>':'');
  host.append(card);
