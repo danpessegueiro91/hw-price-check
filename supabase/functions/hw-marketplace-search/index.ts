@@ -145,6 +145,15 @@ Deno.serve(async (req: Request) => {
       return json({ history: data || [], model_key: key });
     }
     if (!query) return json({ error: "missing_query", message: "Indica o modelo Hot Wheels a pesquisar." }, 400);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceKey) throw new Error("supabase_server_env_missing");
+    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const cacheKey = modelKey(query + (variant ? " " + variant : ""));
+    const { data: cached } = await admin.from("hw_market_search_cache").select("payload,expires_at")
+      .eq("cache_key", cacheKey).maybeSingle();
+    if (cached?.payload && Date.parse(cached.expires_at) > Date.now()) {
+      return json({ ...cached.payload, cached: true, cache_expires_at: cached.expires_at });
+    }
     const quota = await consumeQuota(req);
     if (!quota?.allowed) return json({
       error: "quota_exceeded", quota,
@@ -185,29 +194,33 @@ Deno.serve(async (req: Request) => {
     let historySaved = false;
     if (sold.length) {
       try {
-        const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-        if (!url || !serviceKey) throw new Error("supabase_server_env_missing");
-        const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
         historySaved = Boolean(await savePriceSnapshot(admin, query, variant, sold));
       } catch (historyError) { errors.push("Histórico: " + String(historyError).slice(0,180)); }
     }
     const activeSources = [...new Set(active.map((row: any) => String(row.source || "")).filter(Boolean))];
     const soldSources = [...new Set(sold.map((row: any) => String(row.source || "")).filter(Boolean))];
     const partial = pending || errors.length > 0;
-    return json({
+    const payload = {
       provider: "Soldgraph",
       query,
       status: partial ? "partial" : "complete",
       captured_at: new Date().toISOString(),
-      active,
+      active: unique(active),
       sold: unique(sold),
       history_saved: historySaved,
       sources: { active: activeSources, sold: soldSources },
       requested_sources: { active: ["Vinted PT", "eBay UK", "Depop UK"], sold: ["eBay UK"] },
       credits: { charged: credits },
-      errors,
-      quota
-    });
+      errors
+    };
+    if (!partial) {
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const { error: cacheError } = await admin.from("hw_market_search_cache").upsert({
+        cache_key: cacheKey, payload, captured_at: payload.captured_at, expires_at: expiresAt
+      }, { onConflict: "cache_key" });
+      if (cacheError) console.warn("Market search cache write failed:", cacheError.message);
+    }
+    return json({ ...payload, quota });
   } catch (error) {
     const message = String(error);
     if (message.includes("authentication_required")) return json({ error: "authentication_required" }, 401);
