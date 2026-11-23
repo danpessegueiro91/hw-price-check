@@ -403,7 +403,7 @@ function renderSoldHistory(out,target='aiResult'){
  lastSoldOut=out;
  const stats=out.stats||{},rows=Array.isArray(out.items)?out.items:[],currency=stats.currency||'EUR';
  const points=rows.map((x,i)=>({x,s:Number(x.sold_price?.value),d:Date.parse(x.sold_at),i})).filter(p=>Number.isFinite(p.s)&&p.s>0&&Number.isFinite(p.d)).sort((a,b)=>a.d-b.d);
- const values=points.map(p=>p.s),count=Number(out.count??stats.count??values.length)||values.length;
+ const values=rows.map(x=>Number(x.sold_price?.value)).filter(v=>Number.isFinite(v)&&v>0),count=Number(out.count??stats.count??values.length)||values.length;
  const min=values.length?Math.min(...values):Number(stats.min??stats.low),max=values.length?Math.max(...values):Number(stats.max??stats.high);
  const siteLabel=({EBAY_US:'eBay US',EBAY_GB:'eBay UK',EBAY_DE:'eBay DE'}[out.site]||out.source||'eBay');
  const captured=out.captured_at?new Date(out.captured_at).toLocaleString('pt-PT'):'data não disponibilizada';
