@@ -53,30 +53,13 @@ async function soldgraph(path: string, params: Record<string, string>) {
 }
 
 async function soldgraphSoldHistory(query: string) {
-  const rows: Record<string, unknown>[] = [];
-  let page = 1;
-  let credits = 0;
-  let status = "complete";
-  // eBay exposes paginated sold results. Fetch up to five pages (1,000 sales)
-  // so quieter searches can reach further back than the first page.
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const value = await soldgraph("/ebay/sold", {
-      q: query, country: "uk", page: String(page), count: "200", sort: "recently_sold"
-    });
-    credits += value.credits;
-    if (value.status !== "complete" || !value.result) {
-      status = value.status || "pending";
-      break;
-    }
-    const pageRows = Array.isArray(value.result.data) ? value.result.data : [];
-    rows.push(...pageRows);
-    const nextPage = Number(value.result.next_page);
-    if (!Number.isFinite(nextPage) || nextPage <= page || pageRows.length === 0) break;
-    page = nextPage;
-  }
-  return { status, result: { data: rows }, error: null, credits };
+  // One page of up to 200 recent completed sales keeps request cost predictable.
+  const value = await soldgraph("/ebay/sold", {
+    q: query, country: "uk", page: "1", count: "200", sort: "recently_sold"
+  });
+  const rows = value.status === "complete" && Array.isArray(value.result?.data) ? value.result.data : [];
+  return { status: value.status || "pending", result: { data: rows }, error: null, credits: value.credits };
 }
-
 
 function modelKey(value: string) {
   return value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase()
@@ -145,6 +128,15 @@ Deno.serve(async (req: Request) => {
       return json({ history: data || [], model_key: key });
     }
     if (!query) return json({ error: "missing_query", message: "Indica o modelo Hot Wheels a pesquisar." }, 400);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceKey) throw new Error("supabase_server_env_missing");
+    const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const cacheKey = modelKey(query + (variant ? " " + variant : ""));
+    const { data: cached } = await admin.from("hw_market_search_cache").select("payload,expires_at")
+      .eq("cache_key", cacheKey).maybeSingle();
+    if (cached?.payload && Date.parse(cached.expires_at) > Date.now()) {
+      return json({ ...cached.payload, cached: true, cache_expires_at: cached.expires_at });
+    }
     const quota = await consumeQuota(req);
     if (!quota?.allowed) return json({
       error: "quota_exceeded", quota,
@@ -185,24 +177,33 @@ Deno.serve(async (req: Request) => {
     let historySaved = false;
     if (sold.length) {
       try {
-        const url = Deno.env.get("SUPABASE_URL"), serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-        if (!url || !serviceKey) throw new Error("supabase_server_env_missing");
-        const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
         historySaved = Boolean(await savePriceSnapshot(admin, query, variant, sold));
       } catch (historyError) { errors.push("Histórico: " + String(historyError).slice(0,180)); }
     }
-    return json({
+    const activeSources = [...new Set(active.map((row: any) => String(row.source || "")).filter(Boolean))];
+    const soldSources = [...new Set(sold.map((row: any) => String(row.source || "")).filter(Boolean))];
+    const partial = pending || errors.length > 0;
+    const payload = {
       provider: "Soldgraph",
       query,
-      status: pending ? "partial" : "complete",
+      status: partial ? "partial" : "complete",
+      captured_at: new Date().toISOString(),
       active: unique(active),
       sold: unique(sold),
       history_saved: historySaved,
-      sources: { active: ["Vinted PT", "eBay UK", "Depop UK"], sold: ["eBay UK"] },
+      sources: { active: activeSources, sold: soldSources },
+      requested_sources: { active: ["Vinted PT", "eBay UK", "Depop UK"], sold: ["eBay UK"] },
       credits: { charged: credits },
-      errors,
-      quota
-    });
+      errors
+    };
+    if (!partial) {
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      const { error: cacheError } = await admin.from("hw_market_search_cache").upsert({
+        cache_key: cacheKey, payload, captured_at: payload.captured_at, expires_at: expiresAt
+      }, { onConflict: "cache_key" });
+      if (cacheError) console.warn("Market search cache write failed:", cacheError.message);
+    }
+    return json({ ...payload, quota });
   } catch (error) {
     const message = String(error);
     if (message.includes("authentication_required")) return json({ error: "authentication_required" }, 401);
