@@ -58,7 +58,7 @@ Deno.serve(async (req: Request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL"), serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     if (!supabaseUrl || !serviceRoleKey) throw new Error("supabase_server_env_missing");
     const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
-    const cacheKey = "soldcomps|" + site + "|" + q.toLowerCase().replace(/\\s+/g, " ").trim() + "|" + limit;
+    const cacheKey = "soldcomps|" + site + "|" + q.toLowerCase().replace(/\s+/g, " ").trim() + "|" + limit;
     const { data: cached } = await admin.from("hw_market_search_cache").select("payload,expires_at")
       .eq("cache_key", cacheKey).maybeSingle();
     if (cached?.payload && Date.parse(cached.expires_at) > Date.now()) {
