@@ -175,7 +175,7 @@ $('forgotPassword')?.addEventListener('click',async()=>{
     if(error)throw error;
     status('Se existir uma conta associada a este email, receberás uma mensagem com uma ligação para criar uma nova palavra-passe. Verifica também o Spam.');
   }catch(error){status('Não foi possível pedir a recuperação: '+(error.message||error))}
-  finally{button.disabled=false;button.textContent='Forgot Password'}
+  finally{button.disabled=false;button.textContent=({pt:'Esqueci-me da palavra-passe',en:'Forgot Password',es:'Olvidé mi contraseña',fr:'Mot de passe oublié',de:'Passwort vergessen',it:'Password dimenticata',nl:'Wachtwoord vergeten',br:'Esqueci minha senha'}[lang]||'Esqueci-me da palavra-passe')}
 });
 function showPasswordRecovery(){
   let panel=document.getElementById('passwordRecoveryPanel');
