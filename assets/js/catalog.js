@@ -129,7 +129,17 @@
   "2026|sth|'67 Pontiac Firebird 400":"/assets/catalog/2026/sth/67-pontiac-firebird-400.jpg"
  };
  const imageKey=item=>item.year+"|"+item.kind+"|"+item.name;
- const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||"";
+ let archiveImages={};
+ const loadArchiveImages=async()=>{
+  try{
+   const response=await fetch("./assets/catalog-image-manifest.json",{cache:"force-cache"});
+   if(!response.ok)throw new Error("HTTP "+response.status);
+   const manifest=await response.json();
+   archiveImages=manifest?.images&&typeof manifest.images==="object"?manifest.images:{};
+  }catch(error){console.warn("Não foi possível carregar as imagens do arquivo TH/STH:",error?.message||error)}
+ };
+ const photoFor=item=>uploadedImages[imageKey(item)]||REMOTE_IMAGES[imageKey(item)]||archiveImages[imageKey(item)]||"";
+ const photoSourceFor=item=>REMOTE_IMAGES[imageKey(item)]||uploadedImages[imageKey(item)]?"HW Price Check":archiveImages[imageKey(item)]?"FindMyHW":"";
  const loadCatalogImages=async()=>{
   if(!sb)return;
   // A leitura pública das fotografias é independente das permissões de administração.
@@ -233,7 +243,7 @@
   $('catalogDetail').classList.add('hidden');$('catalogDetail').setAttribute('aria-hidden','true');selected=null;
  }
  function openDetail(item){
-  selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth";
+  selected=item;const p=market(item),img=photoFor(item),sth=item.kind==="sth",photoSource=photoSourceFor(item);
   $('catalogDetailBadge').textContent=sth?"SUPER TREASURE HUNT":"TREASURE HUNT";$('catalogDetailBadge').className="catalog-badge "+item.kind;
   const detailYear=$('catalogDetailYear'),detailArtType=$('catalogDetailArtType');
   if(detailYear)detailYear.textContent="ANO "+item.year;
@@ -243,7 +253,7 @@
   $('catalogDetailValueNote').textContent=p?"Mediana de vendas concluídas · "+(marketInfo(item)?.sales_count||0)+" vendas novas · última venda "+(marketInfo(item)?.latest_sold_date||"data indisponível")+" · actualizado "+marketDate(marketInfo(item)):"Ainda não há amostra suficiente de vendas concluídas para este modelo.";
   $('catalogDetailEra').textContent=era(item);$('catalogDetailSourceNote').textContent=p?"Fonte: "+(marketInfo(item)?.source||"vendas concluídas eBay")+" · moeda original "+(marketInfo(item)?.source_currency||"GBP")+" · convertido para EUR pela taxa diária de referência.":"Sem dados de vendas suficientes para uma avaliação actual.";
   $('catalogDetailSource').removeAttribute('href');
-  $('catalogDetailSource').textContent='Fotografia do arquivo HW Price Check';
+  $('catalogDetailSource').innerHTML=photoSource==="FindMyHW"?'<a href="https://findmyhw.com/" target="_blank" rel="noopener noreferrer">Fotografia: FindMyHW</a>':photoSource==="HW Price Check"?'Fotografia: arquivo HW Price Check':'Sem fotografia disponível';
   $('catalogDetailSource').classList.add('is-local-photo-source');
   $('catalogDetailImage').innerHTML=img?'<img src="'+img+'" alt="'+safe(item.name)+' Hot Wheels" loading="lazy" referrerpolicy="no-referrer"><button class="catalog-detail-zoom-trigger" type="button" data-detail-photo-zoom aria-label="Ampliar fotografia">⌕ Ampliar fotografia</button>':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+item.year+'</small>';
   guardImage($('catalogDetailImage'),item);
@@ -267,12 +277,12 @@
   summary.textContent=rows.length+" de "+total+" modelos · "+(type==="all"?"TH + STH":type.toUpperCase())+" · "+year+(q?" · pesquisa: “"+q+"”":"");
   if(!rows.length){grid.innerHTML='<div class="empty catalog-empty">'+(type==="sth"&&Number(year)<2007?"Ainda não existiam Super Treasure Hunts antes de 2007.":"Não foram encontrados modelos com estes filtros.")+'</div>';return}
   grid.innerHTML=rows.map((item,i)=>{
-   const p=market(item),img=photoFor(item),sth=item.kind==="sth";
+   const p=market(item),img=photoFor(item),sth=item.kind==="sth",photoSource=photoSourceFor(item);
    const thumb=img?'<img src="'+img+'" alt="'+safe(item.name)+'" loading="lazy" referrerpolicy="no-referrer">':'<span>HOT WHEELS</span><strong>'+(sth?"STH":"TH")+'</strong><small>'+year+'</small>';
    const info=marketInfo(item);
    const value=p?"Mediana vendida: €"+p.toFixed(2).replace(".",","):"Sem amostra fiável";
    const valueMeta=p?"Actualizado "+marketDate(info)+" · "+info.sales_count+" vendas":"Aguardando vendas comparáveis";
-   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><small class="catalog-price-meta">'+valueMeta+'</small><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >Arquivo HW Price Check</span></div></div></article>';
+   return '<article class="catalog-card"><div class="catalog-thumb '+item.kind+'">'+thumb+(img?'<button class="catalog-photo-zoom-trigger" type="button" data-photo-index="'+i+'" aria-label="Ampliar fotografia de '+safe(item.name)+'" title="Ampliar fotografia">⌕ Ampliar</button>':'')+'</div><div class="catalog-copy"><span class="catalog-badge '+item.kind+'">'+(sth?"SUPER TREASURE HUNT":"TREASURE HUNT")+'</span><h3 data-no-translate="true">'+safe(item.name)+'</h3><div class="catalog-meta">Ano '+year+' · '+(Number(year)<2007?"Série clássica":Number(year)<=2011?"TH / versão Super":"Mainline")+'</div><div class="catalog-price">'+value+'</div><small class="catalog-price-meta">'+valueMeta+'</small><div class="catalog-actions"><button class="btn catalog-view-detail" type="button" data-catalog-index="'+i+'" data-model-name="'+safe(item.name)+'" data-model-year="'+year+'" data-model-kind="'+item.kind+'">Ver ficha</button>'+addPhotoControl(item)+'<span class="catalog-local-source" >${photoSource==="FindMyHW"?'<a href="https://findmyhw.com/" target="_blank" rel="noopener noreferrer">Foto: FindMyHW</a>':photoSource==="HW Price Check"?'Foto: HW Price Check':'Sem fotografia'}</span></div></div></article>';
   }).join("");
   grid.querySelectorAll(".catalog-card").forEach((card,i)=>guardImage(card,rows[i]));
   // Catalog detail and zoom actions use one delegated handler so replacing
@@ -347,9 +357,9 @@
  document.querySelectorAll('a[href="#guidesSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showCatalog()}));
  document.querySelectorAll('a[href="#aboutSection"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showAbout()}));
 
- window.addEventListener('hwpc:auth-updated',()=>{Promise.allSettled([loadCatalogImages(),loadMarketPrices()]).then(()=>renderCatalog())});
+ window.addEventListener('hwpc:auth-updated',()=>{Promise.allSettled([loadCatalogImages(),loadMarketPrices(),loadArchiveImages()]).then(()=>renderCatalog())});
  // Load the first-party image library on startup and refresh the visible catalog.
- Promise.allSettled([loadCatalogImages(),loadMarketPrices()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
+ Promise.allSettled([loadCatalogImages(),loadMarketPrices(),loadArchiveImages()]).then(()=>{if(typeof renderCatalog==="function")renderCatalog()});
  const photoInteractionStyle=document.createElement("style");
  photoInteractionStyle.textContent=".catalog-thumb{position:relative}.catalog-photo-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:3;padding:7px 11px;border:1px solid rgba(255,255,255,.55);border-radius:8px;background:rgba(8,15,28,.92);color:#fff;font:600 13px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-photo-zoom-trigger:hover{background:#263d59}.catalog-detail-art{position:relative}.catalog-detail-art img{cursor:zoom-in!important}.catalog-detail-zoom-trigger{position:absolute;right:8px;bottom:8px;z-index:4;padding:8px 11px;border:1px solid rgba(255,255,255,.6);border-radius:8px;background:rgba(8,15,28,.94);color:#fff;font:600 12px Inter,'Segoe UI',Arial,sans-serif;cursor:pointer}.catalog-detail-zoom-trigger:hover{background:#263d59}";
  document.head.append(photoInteractionStyle);
