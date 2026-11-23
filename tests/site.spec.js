@@ -456,6 +456,7 @@ test('TH/STH archive loads historical model photos with source attribution', asy
     'src', /^https:\/\/findmyhw\.com\/media\/images\//
   );
   await expect(goldPassion.locator('.catalog-local-source')).toContainText('FindMyHW');
+  await expect.poll(() => goldPassion.locator('.catalog-thumb img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
 
   await page.locator('#catalogYear').selectOption('2025');
   await page.locator('#catalogType').selectOption('sth');
@@ -464,4 +465,5 @@ test('TH/STH archive loads historical model photos with source attribution', asy
     'src', /^https:\/\/findmyhw\.com\/media\/images\//
   );
   await expect(audi.locator('.catalog-local-source')).toContainText('FindMyHW');
+  await expect.poll(() => audi.locator('.catalog-thumb img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
 });
