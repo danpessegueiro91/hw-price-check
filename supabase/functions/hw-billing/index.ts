@@ -41,7 +41,7 @@ Deno.serve(async (req: Request) => {
     if (!stripeSecret) {
       return json({
         error: "billing_not_configured",
-        message: "A compra Premium ainda não está configurada. O administrador tem de concluir a ligação ao Stripe."
+        message: "A gestão de subscrições anteriores está temporariamente indisponível."
       }, 503);
     }
 
@@ -68,49 +68,6 @@ Deno.serve(async (req: Request) => {
       .select("stripe_customer_id,stripe_subscription_id,status,current_period_end,cancel_at_period_end")
       .eq("user_id", userId)
       .maybeSingle();
-
-    if (action === "checkout") {
-      const { data: entitlement } = await admin
-        .from("hw_user_entitlements")
-        .select("tier,daily_limit,expires_at,starts_at")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      if (entitlement?.tier === "premium" && entitlement.expires_at === null) {
-        return json({ error: "premium_permanent", message: "Esta conta já tem Premium permanente." }, 409);
-      }
-
-      const periodEnd = billing?.current_period_end ? new Date(billing.current_period_end).getTime() : 0;
-      const blockingStatuses = ["active", "trialing", "past_due", "unpaid", "paused"];
-      if (billing?.stripe_subscription_id && blockingStatuses.includes(billing.status) && periodEnd > Date.now()) {
-        return json({
-          error: "subscription_exists",
-          message: billing.cancel_at_period_end
-            ? "Já tens uma subscrição ativa que termina no fim do período pago."
-            : "Já tens uma subscrição Premium ativa."
-        }, 409);
-      }
-
-      const session = await stripe.checkout.sessions.create({
-        // HW Price Check is not opting into Stripe Managed Payments for this checkout.
-        // This avoids the mandatory Managed Payments product tax-code requirement.
-        managed_payments: { enabled: false },
-        mode: "subscription",
-        line_items: [{ price: priceId, quantity: 1 }],
-        customer: billing?.stripe_customer_id || undefined,
-        customer_email: billing?.stripe_customer_id ? undefined : authResult.user.email,
-        client_reference_id: userId,
-        metadata: { supabase_user_id: userId },
-        subscription_data: {
-          metadata: { supabase_user_id: userId }
-        },
-        success_url: "https://hwpricecheck.pages.dev/?subscription=success",
-        cancel_url: "https://hwpricecheck.pages.dev/?subscription=cancelled"
-      });
-
-      if (!session.url) return json({ error: "checkout_url_missing" }, 502);
-      return json({ url: session.url });
-    }
 
     if (action === "portal") {
       if (!billing?.stripe_customer_id || !billing?.stripe_subscription_id) {
@@ -162,7 +119,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     const message = String(error);
     if (message.includes("registered_account_required") || message.includes("authentication_required")) {
-      return json({ error: "registered_account_required", message: "Inicia sessão com uma conta registada para comprar Premium." }, 401);
+      return json({ error: "registered_account_required", message: "Inicia sessão com uma conta registada para gerir a subscrição anterior." }, 401);
     }
     console.error("hw-billing error:", message);
     return json({ error: "billing_request_failed", message: "Não foi possível processar o pedido de faturação." }, 500);
