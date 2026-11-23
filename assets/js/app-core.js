@@ -509,14 +509,14 @@ function render(){
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 const ACCOUNT_I18N={
-  pt:{myAccount:'A Minha Conta',premiumActive:'Premium ativo · 4,99 €/mês',renewalCancelled:d=>'A renovação foi cancelada. Manténs pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerir subscrição'},
-  en:{myAccount:'My Account',premiumActive:'Premium active · €4.99/month',renewalCancelled:d=>'Renewal cancelled. You keep unlimited searches until '+d+'.',manage:'⚙ Manage subscription'},
-  es:{myAccount:'Mi cuenta',premiumActive:'Premium activo · 4,99 €/mes',renewalCancelled:d=>'La renovación se ha cancelado. Mantienes búsquedas ilimitadas hasta el '+d+'.',manage:'⚙ Gestionar suscripción'},
-  fr:{myAccount:'Mon compte',premiumActive:'Premium actif · 4,99 €/mois',renewalCancelled:d=>'Le renouvellement a été annulé. Tu conserves les recherches illimitées jusqu’au '+d+'.',manage:'⚙ Gérer l’abonnement'},
-  de:{myAccount:'Mein Konto',premiumActive:'Premium aktiv · 4,99 €/Monat',renewalCancelled:d=>'Die Verlängerung wurde gekündigt. Du behältst unbegrenzte Suchen bis zum '+d+'.',manage:'⚙ Abonnement verwalten'},
-  it:{myAccount:'Il mio account',premiumActive:'Premium attivo · 4,99 €/mese',renewalCancelled:d=>'Il rinnovo è stato annullato. Mantieni le ricerche illimitate fino al '+d+'.',manage:'⚙ Gestisci abbonamento'},
-  nl:{myAccount:'Mijn account',premiumActive:'Premium actief · € 4,99/maand',renewalCancelled:d=>'De verlenging is geannuleerd. Je behoudt onbeperkt zoeken tot '+d+'.',manage:'⚙ Abonnement beheren'},
-  br:{myAccount:'Minha conta',premiumActive:'Premium ativo · R$ 4,99/mês',renewalCancelled:d=>'A renovação foi cancelada. Você mantém pesquisas ilimitadas até '+d+'.',manage:'⚙ Gerenciar assinatura'}
+  pt:{myAccount:'A Minha Conta',premiumActive:'Subscrição Premium anterior',renewalCancelled:d=>'A renovação foi cancelada. Manténs o acesso até '+d+'.',manage:'⚙ Gerir subscrição anterior'},
+  en:{myAccount:'My Account',premiumActive:'Previous Premium subscription',renewalCancelled:d=>'Renewal cancelled. You keep access until '+d+'.',manage:'⚙ Manage previous subscription'},
+  es:{myAccount:'Mi cuenta',premiumActive:'Suscripción Premium anterior',renewalCancelled:d=>'La renovación se ha cancelado. Mantienes el acceso hasta el '+d+'.',manage:'⚙ Gestionar suscripción anterior'},
+  fr:{myAccount:'Mon compte',premiumActive:'Ancien abonnement Premium',renewalCancelled:d=>'Le renouvellement est annulé. Tu conserves l’accès jusqu’au '+d+'.',manage:'⚙ Gérer l’ancien abonnement'},
+  de:{myAccount:'Mein Konto',premiumActive:'Früheres Premium-Abonnement',renewalCancelled:d=>'Die Verlängerung wurde gekündigt. Du behältst den Zugang bis '+d+'.',manage:'⚙ Früheres Abonnement verwalten'},
+  it:{myAccount:'Il mio account',premiumActive:'Abbonamento Premium precedente',renewalCancelled:d=>'Il rinnovo è stato annullato. Mantieni l’accesso fino al '+d+'.',manage:'⚙ Gestisci abbonamento precedente'},
+  nl:{myAccount:'Mijn account',premiumActive:'Eerder Premium-abonnement',renewalCancelled:d=>'De verlenging is geannuleerd. Je behoudt toegang tot '+d+'.',manage:'⚙ Eerder abonnement beheren'},
+  br:{myAccount:'Minha conta',premiumActive:'Assinatura Premium anterior',renewalCancelled:d=>'A renovação foi cancelada. Você mantém o acesso até '+d+'.',manage:'⚙ Gerenciar assinatura anterior'}
 };
 function updateAccountButton(){
   const btn=$('account');
@@ -601,29 +601,32 @@ function renderAccount(){
 
   const billingTitle=$('premiumBillingTitle');
   const billingDescription=$('premiumBillingDescription');
-  const subscribeButton=$('premiumSubscribeBtn');
+  const requestLink=$('premiumRequestLink');
+  const donationLink=$('supportDonationLink');
   const manageButton=$('premiumManageBtn');
-  const isPermanentPremium=isPremium&&!quota.expires_at;
   const isMonthlyPremium=isPremium&&!!quota.expires_at;
-  if(isPermanentPremium){
+  if(isPremium&&!quota.expires_at){
     billingTitle.textContent='Premium permanente';
-    billingDescription.textContent='Esta conta tem acesso Premium vitalício, sem mensalidade nem renovação. As pesquisas são ilimitadas.';
-    subscribeButton.classList.add('hidden');
-    manageButton.classList.add('hidden');
+    billingDescription.textContent='Esta conta recebeu acesso Premium permanente por atribuição da equipa. Não existe pagamento nem renovação.';
+    requestLink?.classList.add('hidden');
+    donationLink?.classList.remove('hidden');
+    manageButton?.classList.add('hidden');
   }else if(isMonthlyPremium){
     billingTitle.textContent=words.premiumActive;
     const endDate=accountDate(quota.expires_at,false);
     billingDescription.textContent=billingDetails?.cancel_at_period_end
       ? words.renewalCancelled(endDate)
-      : 'Tens pesquisas ilimitadas. A subscrição renova automaticamente; período atual até '+endDate+'.';
-    subscribeButton.classList.add('hidden');
-    manageButton.classList.remove('hidden');
+      : 'Esta é uma subscrição anterior. Não são aceites novas subscrições; podes gerir ou cancelar a renovação através do portal existente.';
+    requestLink?.classList.add('hidden');
+    donationLink?.classList.remove('hidden');
+    manageButton?.classList.remove('hidden');
     manageButton.textContent=words.manage;
   }else{
-    billingTitle.textContent='Desbloqueia o Premium';
-    billingDescription.textContent='4,99 €/mês · Pesquisas ilimitadas na análise de modelos e nas vendas concluídas. Renovação automática, cancelável a qualquer momento.';
-    subscribeButton.classList.remove('hidden');
-    manageButton.classList.add('hidden');
+    billingTitle.textContent='Premium por atribuição';
+    billingDescription.textContent='O acesso Premium é atribuído gratuitamente, por convite ou decisão da equipa. Um eventual donativo é sempre voluntário e não dá direito a funcionalidades.';
+    requestLink?.classList.remove('hidden');
+    donationLink?.classList.remove('hidden');
+    manageButton?.classList.add('hidden');
   }
 
   if(document.activeElement!==$('accountProfileName'))$('accountProfileName').value=meta.display_name||meta.full_name||'';
@@ -710,11 +713,12 @@ async function accountSignOut(){
   if(button)button.disabled=false;
 }
 async function runBillingAction(action){
-  if(!sb||!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta registada para usar o Premium.','error');
-  const button=action==='checkout'?$('premiumSubscribeBtn'):$('premiumManageBtn');
+  if(action!=='portal')return accountNotice('Não são aceites novos pagamentos. O Premium é atribuído separadamente.','error');
+  if(!sb||!user||user.is_anonymous)return accountNotice('Inicia sessão com uma conta registada para gerir a subscrição anterior.','error');
+  const button=$('premiumManageBtn');
   const originalText=button.textContent;
   button.disabled=true;
-  button.textContent=action==='checkout'?'A abrir pagamento…':action==='portal'?'A abrir gestão da subscrição…':action==='cancel'?'A cancelar renovação…':'A reativar renovação…';
+  button.textContent='A abrir gestão da subscrição…';
   try{
     const {data,error}=await sb.functions.invoke('hw-billing',{body:{action}});
     if(error){
@@ -723,8 +727,8 @@ async function runBillingAction(action){
       throw new Error(message);
     }
     if(data?.error)throw new Error(data.message||'Não foi possível processar o pedido.');
-    if(action==='checkout'||action==='portal'){
-      if(!data?.url)throw new Error(action==='portal'?'A Stripe não devolveu o endereço de gestão da subscrição.':'O Stripe não devolveu o endereço de pagamento.');
+    if(action==='portal'){
+      if(!data?.url)throw new Error('Não foi possível abrir a gestão da subscrição anterior.');
       window.location.assign(data.url);
       return;
     }
@@ -741,7 +745,6 @@ async function runBillingAction(action){
     renderAccount();
   }
 }
-$('premiumSubscribeBtn')?.addEventListener('click',()=>runBillingAction('checkout'));
 $('premiumManageBtn')?.addEventListener('click',()=>runBillingAction('portal'));
 
 function handleSubscriptionReturn(){
@@ -753,8 +756,8 @@ function handleSubscriptionReturn(){
   window.history.replaceState({},'',cleanUrl);
   openWorkspace('accountPage');
   if(result==='success'){
-    accountNotice('Pagamento concluído. O Premium será ativado assim que o Stripe confirmar a subscrição.','success');
-    window.setTimeout(()=>refreshAccountPlan(),2500);
+    accountNotice('As novas compras Premium estão desativadas. Se tens uma subscrição anterior, gere-a na tua conta.','error');
+    window.setTimeout(()=>refreshAccountPlan(),1200);
   }else if(result==='cancelled'){
     accountNotice('O pagamento foi cancelado. Não foi criada nenhuma subscrição.','error');
   }
@@ -779,4 +782,4 @@ $('newsletterForm')?.addEventListener('submit',async e=>{
  finally{button.disabled=false;button.textContent='Subscrever'}
 });
 
-window.HWPC_MAIN_READY=true;translate();const bindInfoLink=(id,message)=>{const link=$(id);if(link)link.onclick=e=>{e.preventDefault();alert(message)}};bindInfoLink('contactLink','O contacto de suporte será publicado aqui assim que estiver definido.');bindInfoLink('termsLink','Os resultados e estimativas são informativos, dependem dos dados disponíveis e não constituem aconselhamento financeiro nem garantia de valorização. Confirma sempre a identificação, estado e comparáveis antes de comprar.');bindInfoLink('privacyLink','Os dados da coleção são associados à tua conta Supabase. As fotografias são enviadas para a análise que pedes. A política completa será publicada antes do lançamento comercial.');bindInfoLink('cookiesLink','A aplicação utiliza armazenamento local e tecnologias necessárias à sessão, preferências e funcionamento. A política detalhada será publicada antes do lançamento comercial.');if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+window.HWPC_MAIN_READY=true;translate();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});

@@ -19,7 +19,7 @@ A aplicação deve recomendar **COMPRAR** apenas quando existem pelo menos duas 
 
 ## Serviços externos
 
-A autenticação, sincronização, identificação por IA, pesquisa de vendas, quotas e faturação dependem da configuração do projeto Supabase e das respetivas Edge Functions. A newsletter só fica ativa quando o serviço de subscrição estiver configurado.
+A autenticação, sincronização, identificação por IA, pesquisa de vendas e quotas dependem do Supabase e das respetivas Edge Functions. As novas compras e subscrições Premium estão desativadas; subscrições antigas continuam a poder ser geridas/canceladas no portal legado. A newsletter só fica ativa quando o serviço de subscrição estiver configurado.
 
 ## Publicação
 
