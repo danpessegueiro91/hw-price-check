@@ -401,20 +401,28 @@ function marketplaceSearchLinks(query){
 }
 function renderSoldHistory(out,target='aiResult'){
  lastSoldOut=out;
- const stats=out.stats||{},rows=out.items||[],currency=stats.currency||'EUR';
+ const stats=out.stats||{},rows=Array.isArray(out.items)?out.items:[],currency=stats.currency||'EUR';
  const points=rows.map((x,i)=>({x,s:Number(x.sold_price?.value),d:Date.parse(x.sold_at),i})).filter(p=>Number.isFinite(p.s)&&p.s>0&&Number.isFinite(p.d)).sort((a,b)=>a.d-b.d);
+ const values=points.map(p=>p.s),count=Number(out.count??stats.count??values.length)||values.length;
+ const min=values.length?Math.min(...values):Number(stats.min??stats.low),max=values.length?Math.max(...values):Number(stats.max??stats.high);
+ const siteLabel=({EBAY_US:'eBay US',EBAY_GB:'eBay UK',EBAY_DE:'eBay DE'}[out.site]||out.source||'eBay');
+ const captured=out.captured_at?new Date(out.captured_at).toLocaleString('pt-PT'):'data não disponibilizada';
  let chart='';
  if(points.length>=2){
-  const w=720,h=190,pad=28,vals=points.map(p=>p.s),min=Math.min(...vals),max=Math.max(...vals),span=max-min||1;
+  const w=720,h=190,pad=28,span=max-min||1;
   const coords=points.map((p,i)=>({x:pad+i*(w-2*pad)/(points.length-1),y:h-pad-(p.s-min)/span*(h-2*pad),p}));
   const path=coords.map((p,i)=>(i?'L':'M')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
-  const circles=coords.map(p=>'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="#ffd629" stroke="#091321" stroke-width="2"><title>'+safe(p.p.x.sold_at)+' · '+soldMoney(p.p.s,currency)+'</title></circle>').join('');
-  const first=new Date(points[0].d).toLocaleDateString(lang==='pt'||lang==='br'?'pt-PT':lang,{day:'2-digit',month:'short'});
-  const last=new Date(points[points.length-1].d).toLocaleDateString(lang==='pt'||lang==='br'?'pt-PT':lang,{day:'2-digit',month:'short'});
-  chart='<div class="sold-chart-wrap"><div class="sold-chart-meta"><span>'+soldTr('low')+': <b>'+soldMoney(min,currency)+'</b></span><span>'+soldTr('high')+': <b>'+soldMoney(max,currency)+'</b></span></div><svg class="sold-chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+safe(soldTr('trend'))+'"><path d="M'+pad+' '+(h-pad)+' H'+(w-pad)+'" stroke="#49617d" stroke-width="1" fill="none"/><path d="'+path+'" fill="none" stroke="#ff6a24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>'+circles+'</svg><div class="sold-chart-dates"><span>'+safe(first)+'</span><span>'+safe(last)+'</span></div></div>';
- }else chart='<p class="note sold-empty">'+soldTr('empty')+'</p>';
- const items=rows.slice(0,15).map(x=>'<div class="item"><div class="grow"><b>'+safe(x.title)+'</b><br><small>'+safe(x.sold_at)+' · '+safe(x.condition||'')+' · '+safe((x.flags||[]).join(', '))+'</small></div><b>'+soldMoney(x.sold_price?.value,currency)+'</b><a href="'+safe(x.url)+'" target="_blank" rel="noopener">↗</a></div>').join('');
- const host=$(target);host.querySelector('.sold-history-card')?.remove();host.insertAdjacentHTML('beforeend','<div class="card sold-history-card"><div class="eyebrow">'+soldTr('title')+'</div>'+marketplaceSearchLinks(out.query||$('model').value||'Hot Wheels')+'<div class="stats sold-summary"><div class="stat"><small>'+soldTr('median')+'</small><strong>'+soldMoney(stats.median,currency)+'</strong></div><div class="stat"><small>'+soldTr('central')+'</small><strong>'+soldMoney(stats.p25,currency)+'–'+soldMoney(stats.p75,currency)+'</strong></div><div class="stat"><small>'+soldTr('found')+'</small><strong>'+safe(out.count??rows.length)+'</strong></div></div><div class="sold-chart-title">'+soldTr('trend')+'</div>'+chart+'<p class="note sold-footnote">'+soldTr('currency')+': '+safe(currency)+' · '+soldTr('excluded')+': '+safe(stats.excluded??'—')+' · '+soldTr('credits')+': '+safe(out.credits?.charged??'—')+'</p><details class="sold-list"><summary>'+soldTr('sales')+'</summary>'+items+'</details></div>');
+  const circles=coords.map(p=>'<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="#ffd629"><title>'+safe(p.p.x.sold_at)+' · '+soldMoney(p.p.s,currency)+'</title></circle>').join('');
+  chart='<div class="sold-chart-wrap"><svg class="sold-chart" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="Histórico de vendas concluídas"><path d="M'+pad+' '+(h-pad)+' H'+(w-pad)+'" stroke="#49617d" fill="none"/><path d="'+path+'" fill="none" stroke="#ff6a24" stroke-width="3"/>'+circles+'</svg></div>';
+ }else chart='<p class="note sold-empty">Não existem vendas datadas suficientes para desenhar o histórico.</p>';
+ const items=rows.slice(0,30).map(x=>{const raw=String(x.url||x.link||''),url=raw.startsWith('https://')?raw:'';return '<div class="item"><div class="grow"><b>'+safe(x.title)+'</b><br><small>'+safe(x.sold_at||'Data não indicada')+' · '+safe(x.condition||'')+' · '+safe((x.flags||[]).join(', '))+'</small></div><b>'+soldMoney(x.sold_price?.value,currency)+'</b>'+(url?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">Ver venda ↗</a>':'<span class="note">Link indisponível</span>')+'</div>'}).join('');
+ const host=$(target);if(!host)return;host.querySelector('.sold-history-card')?.remove();
+ const range=values.length?soldMoney(min,currency)+' – '+soldMoney(max,currency):'Sem amostra válida';
+ const summary='<div class="stats sold-summary"><div class="stat"><small>Mediana vendida</small><strong>'+soldMoney(stats.median,currency)+'</strong></div><div class="stat"><small>Mínimo – máximo</small><strong>'+range+'</strong></div><div class="stat"><small>Vendas usadas</small><strong>'+count+'</strong></div></div>';
+ const provenance='<p class="note">Baseado em '+count+' vendas concluídas no '+safe(siteLabel)+', últimos '+safe(out.window_days||90)+' dias. Consulta: '+safe(captured)+'.</p>';
+ const warning=count<5?'<p class="note" role="status">⚠ Amostra reduzida: menos de 5 vendas. Esta estimativa é frágil; confirma os comparáveis individualmente.</p>':'';
+ const foot='<p class="note">Moeda: '+safe(currency)+' · Registos excluídos: '+safe(stats.excluded??'—')+' · Fonte: SoldComps. Os anúncios activos não entram neste cálculo.</p>';
+ host.insertAdjacentHTML('beforeend','<div class="card sold-history-card"><div class="eyebrow">'+soldTr('title')+'</div>'+provenance+summary+warning+'<div class="sold-chart-title">Vendas concluídas ao longo do período</div>'+chart+foot+'<details class="sold-list"><summary>Ver vendas individuais e confirmar a amostra</summary>'+items+'</details></div>');
 }
 function marketplacePrice(row){
  const price=row.displayed_price;
@@ -443,23 +451,31 @@ function renderMarketplaceSearch(out,target='aiResult'){
  host.querySelector('.marketplace-live-card')?.remove();
  const card=document.createElement('div');card.className='card marketplace-live-card';
  const active=Array.isArray(out.active)?out.active:[],sold=Array.isArray(out.sold)?out.sold:[];
- const makeRows=(rows)=>rows.slice(0,30).map(row=>{
-  const title=safe(row.title||'Anúncio Hot Wheels');
-  const source=safe(row.source||row.provider||'Marketplace');
-  const url=String(row.link||row.url||'');
-  const safeUrl=/^https:\/\//i.test(url)?url:'#';
-  const image=String(row.image||row.image_url||'');
-  const safeImage=/^https:\/\//i.test(image)?image:'';
-  const date=safe(row.sold_date||row.sold_date_text||'');
-  return '<article class="marketplace-result">'+(safeImage?'<img loading="lazy" src="'+safe(safeImage)+'" alt="">':'')+'<div class="marketplace-result-copy"><strong>'+title+'</strong><small>'+source+(date?' · '+date:'')+'</small></div><b>'+marketplacePrice(row)+'</b>'+(safeUrl!=='#'?'<a href="'+safe(safeUrl)+'" target="_blank" rel="noopener noreferrer">Abrir ↗</a>':'')+'</article>';
+ const amount=row=>{const v=row.sold_price?.value??row.displayed_price?.amount??row.price?.amount??row.price_value??row.displayed_price_text??row.price_text??row.price;const n=typeof v==='number'?v:Number(String(v??'').replace(/[^0-9.,-]/g,'').replace(',','.'));return Number.isFinite(n)&&n>0?n:null};
+ const prices=sold.map(amount).filter(v=>v!==null).sort((a,b)=>a-b);
+ const median=prices.length?(prices.length%2?prices[(prices.length-1)/2]:(prices[prices.length/2-1]+prices[prices.length/2])/2):null;
+ const currency=String(sold.find(x=>x.sold_price?.currency||x.displayed_price?.currency||x.currency)?.sold_price?.currency||sold.find(x=>x.displayed_price?.currency||x.currency)?.displayed_price?.currency||sold.find(x=>x.currency)?.currency||'GBP').toUpperCase();
+ const captured=out.captured_at?new Date(out.captured_at).toLocaleString('pt-PT'):'data não disponibilizada';
+ const activeSources=(out.sources?.active||[]).join(', ')||'nenhuma fonte activa concluída';
+ const soldSources=(out.sources?.sold||[]).join(', ')||'nenhuma fonte de vendas concluída';
+ const makeRows=rows=>rows.slice(0,30).map(row=>{
+  const title=safe(row.title||'Anúncio Hot Wheels'),source=safe(row.source||row.provider||'Marketplace');
+  const raw=String(row.link||row.url||''),url=raw.startsWith('https://')?raw:'';
+  const image=String(row.image||row.image_url||''),safeImage=image.startsWith('https://')?image:'';
+  const date=safe(row.sold_date||row.sold_date_text||row.date||'');
+  return '<article class="marketplace-result">'+(safeImage?'<img loading="lazy" src="'+safe(safeImage)+'" alt="">':'')+'<div class="marketplace-result-copy"><strong>'+title+'</strong><small>'+source+(date?' · '+date:'')+'</small></div><b>'+marketplacePrice(row)+'</b>'+(url?'<a href="'+safe(url)+'" target="_blank" rel="noopener noreferrer">Abrir ↗</a>':'<span class="note">Link indisponível</span>')+'</article>';
  }).join('');
+ const weak=prices.length<5;
+ const stats=prices.length?'<div class="stats sold-summary"><div class="stat"><small>Mediana vendida</small><strong>'+soldMoney(median,currency)+'</strong></div><div class="stat"><small>Mínimo – máximo</small><strong>'+soldMoney(prices[0],currency)+' – '+soldMoney(prices.at(-1),currency)+'</strong></div><div class="stat"><small>Vendas com preço</small><strong>'+prices.length+'</strong></div></div>':'<p class="note">Não há vendas concluídas com preço válido para calcular uma estimativa.</p>';
  card.innerHTML='<div class="eyebrow">PESQUISA MULTIMARKETPLACE · SOLDGRAPH</div>'+
-  '<p class="note">Anúncios activos são preços pedidos. Vendas concluídas são transacções observadas; não misturamos as duas categorias.</p>'+
-  '<div class="sold-chart-title">Anúncios activos · '+active.length+'</div>'+
+  '<p class="note">Recolha: '+safe(captured)+'. Anúncios activos são preços pedidos; vendas concluídas são transacções observadas. Nunca juntamos estas categorias no mesmo cálculo.</p>'+
+  '<div class="sold-chart-title">Resumo das vendas concluídas</div>'+stats+
+  (weak&&prices.length?'<p class="note" role="status">⚠ Amostra reduzida: menos de 5 vendas com preço. Estimativa frágil; confirma cada comparável.</p>':'')+
+  '<div class="sold-chart-title">Anúncios activos · '+active.length+'</div><p class="note">Fontes que responderam: '+safe(activeSources)+'. Valores pedidos, não valores pagos.</p>'+
   (active.length?'<div class="marketplace-results">'+makeRows(active)+'</div>':'<p class="note">Sem anúncios activos devolvidos nesta pesquisa.</p>')+
-  '<div class="sold-chart-title">Vendas concluídas · '+sold.length+'</div>'+
+  '<div class="sold-chart-title">Vendas concluídas · '+sold.length+'</div><p class="note">Fontes que responderam: '+safe(soldSources)+'.</p>'+
   (sold.length?'<div class="marketplace-results">'+makeRows(sold)+'</div>':'<p class="note">Sem vendas concluídas devolvidas nesta pesquisa.</p>')+
-  '<p class="note">Fontes: Vinted Portugal, eBay UK e Depop UK para anúncios; eBay UK para vendas. '+(out.status==='partial'?'Algumas fontes ainda não terminaram. ':'')+'Créditos Soldgraph: '+safe(out.credits?.charged??0)+'</p>'+
+  '<p class="note">'+(out.status==='partial'?'⚠ Dados parciais: uma ou mais fontes falharam ou não terminaram. ':'Estado: todas as fontes responderam. ')+'Créditos Soldgraph: '+safe(out.credits?.charged??0)+'</p>'+
   (out.errors?.length?'<p class="note">Fontes indisponíveis: '+safe(out.errors.join(' · '))+'</p>':'');
  host.append(card);
 }
