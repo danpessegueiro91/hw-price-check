@@ -79,7 +79,17 @@ Deno.serve(async (req: Request) => {
     const data = await upstream.json();
     if (!upstream.ok) { console.error("SoldComps provider unavailable", { status: upstream.status, details: data }); return json({ error: "sold_data_provider_error", status: upstream.status, message: "A fonte de vendas concluídas está temporariamente indisponível. Tenta novamente mais tarde.", results: [], quota }); }
 
-    return json({ provider: "SoldComps · eBay completed sales", ...data, quota });
+    return json({
+      provider: "SoldComps",
+      source: "eBay " + ({ EBAY_US: "US", EBAY_GB: "UK", EBAY_DE: "DE" } as Record<string,string>)[site],
+      site,
+      sale_type: "completed",
+      window_days: 90,
+      captured_at: new Date().toISOString(),
+      status: "complete",
+      ...data,
+      quota
+    });
   } catch (e) {
     const message = String(e);
     if (message.includes("authentication_required")) return json({ error: "authentication_required", message: "Não foi possível iniciar a sessão gratuita. Ativa os acessos anónimos no Supabase Auth." }, 401);
