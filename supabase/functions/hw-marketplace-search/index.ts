@@ -191,14 +191,19 @@ Deno.serve(async (req: Request) => {
         historySaved = Boolean(await savePriceSnapshot(admin, query, variant, sold));
       } catch (historyError) { errors.push("Histórico: " + String(historyError).slice(0,180)); }
     }
+    const activeSources = [...new Set(active.map((row: any) => String(row.source || "")).filter(Boolean))];
+    const soldSources = [...new Set(sold.map((row: any) => String(row.source || "")).filter(Boolean))];
+    const partial = pending || errors.length > 0;
     return json({
       provider: "Soldgraph",
       query,
-      status: pending ? "partial" : "complete",
-      active: unique(active),
+      status: partial ? "partial" : "complete",
+      captured_at: new Date().toISOString(),
+      active,
       sold: unique(sold),
       history_saved: historySaved,
-      sources: { active: ["Vinted PT", "eBay UK", "Depop UK"], sold: ["eBay UK"] },
+      sources: { active: activeSources, sold: soldSources },
+      requested_sources: { active: ["Vinted PT", "eBay UK", "Depop UK"], sold: ["eBay UK"] },
       credits: { charged: credits },
       errors,
       quota
