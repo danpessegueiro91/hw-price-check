@@ -53,30 +53,13 @@ async function soldgraph(path: string, params: Record<string, string>) {
 }
 
 async function soldgraphSoldHistory(query: string) {
-  const rows: Record<string, unknown>[] = [];
-  let page = 1;
-  let credits = 0;
-  let status = "complete";
-  // eBay exposes paginated sold results. Fetch up to five pages (1,000 sales)
-  // so quieter searches can reach further back than the first page.
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const value = await soldgraph("/ebay/sold", {
-      q: query, country: "uk", page: String(page), count: "200", sort: "recently_sold"
-    });
-    credits += value.credits;
-    if (value.status !== "complete" || !value.result) {
-      status = value.status || "pending";
-      break;
-    }
-    const pageRows = Array.isArray(value.result.data) ? value.result.data : [];
-    rows.push(...pageRows);
-    const nextPage = Number(value.result.next_page);
-    if (!Number.isFinite(nextPage) || nextPage <= page || pageRows.length === 0) break;
-    page = nextPage;
-  }
-  return { status, result: { data: rows }, error: null, credits };
+  // One page of up to 200 recent completed sales keeps request cost predictable.
+  const value = await soldgraph("/ebay/sold", {
+    q: query, country: "uk", page: "1", count: "200", sort: "recently_sold"
+  });
+  const rows = value.status === "complete" && Array.isArray(value.result?.data) ? value.result.data : [];
+  return { status: value.status || "pending", result: { data: rows }, error: null, credits: value.credits };
 }
-
 
 function modelKey(value: string) {
   return value.normalize("NFKD").replace(/\p{M}/gu, "").toLowerCase()
