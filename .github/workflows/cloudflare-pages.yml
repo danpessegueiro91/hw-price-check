@@ -147,3 +147,26 @@ jobs:
           2026/th/sweet-driver.jpg|84704
           2026/th/total-disposal.jpg|68665
           PHOTOS
+
+  verify-production:
+    needs: deploy
+    name: Verify production homepage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify the public homepage serves the deployed release
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://hwpricecheck.pages.dev/?release=$GITHUB_SHA"
+          html="$(curl --fail --silent --show-error --location --retry 5 --retry-delay 3 --header 'Cache-Control: no-cache' "$url")"
+          for expected in 'v1.1.0' './terms.html' './privacy.html' './cookies.html' './metodologia-precos.html' 'mailto:hwpricecheck@gmail.com'; do
+            if ! grep -Fq "$expected" <<<"$html"; then
+              echo "::error::Production homepage is missing expected release marker: $expected"
+              exit 1
+            fi
+          done
+          if grep -Fq 'Comprar Premium' <<<"$html" || grep -Fq 'v1.0.0' <<<"$html"; then
+            echo "::error::Production homepage is serving stale or obsolete content"
+            exit 1
+          fi
+          echo "PRODUCTION HOMEPAGE OK: $GITHUB_SHA"
