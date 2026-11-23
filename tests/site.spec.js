@@ -420,3 +420,50 @@ test('AI identification can be saved to the collection without storing the submi
   await expect(page.locator('#items')).toContainText('12,00');
   await expect(page.locator('#items')).toContainText('£');
 });
+
+test('TH/STH archive updates when the selected year and category change', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  await expect(page.locator('#catalogPage')).toBeVisible();
+
+  await page.locator('#catalogYear').selectOption('2025');
+  await expect(page.locator('#catalogSummary')).toContainText('2025');
+  await expect(page.locator('.catalog-card h3').first()).toHaveText('Ford Performance Supervan 4');
+
+  await page.locator('#catalogType').selectOption('sth');
+  await expect(page.locator('#catalogSummary')).toContainText('STH');
+  await expect(page.locator('.catalog-card h3').first()).toHaveText("'87 Audi quattro");
+
+  await page.locator('#catalogYear').selectOption('2010');
+  await expect(page.locator('#catalogSummary')).toContainText('2010');
+  await expect(page.locator('.catalog-card')).toHaveCount(12);
+  await expect(page.locator('.catalog-card h3').first()).toHaveText('Custom \'53 Cadillac');
+
+  await page.locator('#catalogYear').selectOption('2006');
+  await expect(page.locator('#catalogSummary')).toContainText('2006');
+  await expect(page.locator('#catalogGrid')).toContainText('Ainda não existiam Super Treasure Hunts antes de 2007.');
+});
+
+
+test('TH/STH archive loads historical model photos with source attribution', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-page="guides"]').click();
+  await page.locator('#catalogYear').selectOption('1995');
+  await page.locator('#catalogType').selectOption('th');
+
+  const goldPassion = page.locator('.catalog-card').filter({ hasText: 'Gold Passion' });
+  await expect(goldPassion.locator('.catalog-thumb img')).toHaveAttribute(
+    'src', /^https:\/\/findmyhw\.com\/media\/images\//
+  );
+  await expect(goldPassion.locator('.catalog-local-source')).toContainText('FindMyHW');
+  await expect.poll(() => goldPassion.locator('.catalog-thumb img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+
+  await page.locator('#catalogYear').selectOption('2025');
+  await page.locator('#catalogType').selectOption('sth');
+  const audi = page.locator('.catalog-card').filter({ hasText: "'87 Audi quattro" });
+  await expect(audi.locator('.catalog-thumb img')).toHaveAttribute(
+    'src', /^https:\/\/findmyhw\.com\/media\/images\//
+  );
+  await expect(audi.locator('.catalog-local-source')).toContainText('FindMyHW');
+  await expect.poll(() => audi.locator('.catalog-thumb img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
+});
