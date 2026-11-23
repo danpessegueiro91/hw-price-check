@@ -55,6 +55,16 @@ Deno.serve(async (req: Request) => {
     const site = ["EBAY_US", "EBAY_GB", "EBAY_DE"].includes(body.site) ? body.site : "EBAY_GB";
     const limit = Math.min(50, Math.max(5, Number(body.limit) || 30));
 
+    const supabaseUrl = Deno.env.get("SUPABASE_URL"), serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceRoleKey) throw new Error("supabase_server_env_missing");
+    const admin = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const cacheKey = "soldcomps|" + site + "|" + q.toLowerCase().replace(/\\s+/g, " ").trim() + "|" + limit;
+    const { data: cached } = await admin.from("hw_market_search_cache").select("payload,expires_at")
+      .eq("cache_key", cacheKey).maybeSingle();
+    if (cached?.payload && Date.parse(cached.expires_at) > Date.now()) {
+      return json({ ...cached.payload, cached: true, cache_expires_at: cached.expires_at });
+    }
+
     const quota = await consumeQuota(req);
     if (!quota.allowed) {
       return json({
@@ -79,7 +89,7 @@ Deno.serve(async (req: Request) => {
     const data = await upstream.json();
     if (!upstream.ok) { console.error("SoldComps provider unavailable", { status: upstream.status, details: data }); return json({ error: "sold_data_provider_error", status: upstream.status, message: "A fonte de vendas concluídas está temporariamente indisponível. Tenta novamente mais tarde.", results: [], quota }); }
 
-    return json({
+    const payload = {
       ...data,
       provider: "SoldComps",
       source: "eBay " + ({ EBAY_US: "US", EBAY_GB: "UK", EBAY_DE: "DE" } as Record<string,string>)[site],
@@ -87,9 +97,14 @@ Deno.serve(async (req: Request) => {
       sale_type: "completed",
       window_days: 90,
       captured_at: new Date().toISOString(),
-      status: "complete",
-      quota
-    });
+      status: "complete"
+    };
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+    const { error: cacheError } = await admin.from("hw_market_search_cache").upsert({
+      cache_key: cacheKey, payload, captured_at: payload.captured_at, expires_at: expiresAt
+    }, { onConflict: "cache_key" });
+    if (cacheError) console.warn("SoldComps cache write failed:", cacheError.message);
+    return json({ ...payload, quota });
   } catch (e) {
     const message = String(e);
     if (message.includes("authentication_required")) return json({ error: "authentication_required", message: "Não foi possível iniciar a sessão gratuita. Ativa os acessos anónimos no Supabase Auth." }, 401);
