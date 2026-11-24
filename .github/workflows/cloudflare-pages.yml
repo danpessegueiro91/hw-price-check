@@ -193,6 +193,6 @@ jobs:
           done <<'ROUTES'
           privacidade|Política de Privacidade
           termos|Termos de Utilização
-          cookies|Política de Cookies
+          cookies|Cookies e Armazenamento Local
           como-funciona|Como Funciona
           ROUTES
