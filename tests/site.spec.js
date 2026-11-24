@@ -499,6 +499,10 @@ test('price sources page has working language switching and refreshed collector 
     await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
     await expect(page.locator('main h1')).toHaveText(title);
     await expect(page.locator('main h2').filter({ hasText: section })).toHaveText(section);
+    if (code === 'en') {
+      await expect(page.locator('main .lead')).toContainText('A price is only useful');
+      await expect(page.locator('footer')).toContainText('Independent project');
+    }
   }
 });
 
@@ -522,5 +526,9 @@ test('model archive page translates navigation and inner content in all language
     await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
     await expect(page.locator('nav a').last()).toHaveText(navLabel);
     await expect(page.locator('main h2')).toHaveText(section);
+    if (code === 'en') {
+      await expect(page.locator('main .lead')).toContainText('Browse the annual Treasure Hunt');
+      await expect(page.locator('footer')).toContainText('Independent project');
+    }
   }
 });
