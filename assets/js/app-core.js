@@ -112,10 +112,10 @@ function mergeGuestBackup(){
   }catch(e){status('Não foi possível recuperar alguns dados da sessão de visitante.');}
 }
 async function ensureAnonymousSession(){
-  if(!sb){user=null;$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';return false;}
+  if(!sb){user=null;$('appNotice').textContent='O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.';return false;}
   const {data:{session}}=await sb.auth.getSession();
   if(session){user=session.user;return true;}
-  if(!sb){user=null;$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';return false;}const {data,error}=await sb.auth.signInAnonymously();
+  if(!sb){user=null;$('appNotice').textContent='O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.';return false;}const {data,error}=await sb.auth.signInAnonymously();
   if(error){
     user=null;
     updateAccountButton();
@@ -135,7 +135,7 @@ async function load(){
     const backupText=localStorage.getItem(GUEST_BACKUP_KEY);
     if(backupText)backup=JSON.parse(backupText);
   }catch(error){console.warn('Não foi possível ler a coleção local:',error)}
-  if(!local&&!backup&&sb&&user&&!user.is_anonymous){
+  if(!local&&sb&&user&&!user.is_anonymous){
     try{
       const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();
       if(error)console.warn('Migração da coleção antiga indisponível:',error.message);
@@ -203,7 +203,7 @@ async function requireSafePassword(password){
   if(occurrences>0)throw new Error('Esta palavra-passe foi encontrada em fugas de dados conhecidas ('+occurrences.toLocaleString('pt-PT')+' ocorrências). Escolhe outra que nunca tenhas utilizado.');
 }
 $('forgotPassword')?.addEventListener('click',async()=>{
-  if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');
+  if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');
   const email=$('email').value.trim();
   if(!email)return status('Introduz primeiro o endereço de email da tua conta.');
   const button=$('forgotPassword');button.disabled=true;button.textContent='A enviar…';
@@ -245,11 +245,11 @@ function showPasswordRecovery(){
   panel.style.display='grid';
   document.getElementById('recoveryPassword')?.focus();
 }
-$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);window.dispatchEvent(new Event('hwpc:auth-updated'));await load();mergeGuestBackup();renderAccount()});
+$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);window.dispatchEvent(new Event('hwpc:auth-updated'));await load();mergeGuestBackup();renderAccount()});
 $('signup')?.addEventListener('click',async()=>{
   const button=$('signup');
   if(button.disabled)return;
-  if(!sb)return status('O serviço de conta não carregou. Atualiza a página e tenta novamente.');
+  if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');
   const email=$('email').value.trim(),password=$('password').value;
   if(!email||!password)return status('Preenche o email e a palavra-passe.');
   if(password.length<8)return status('A palavra-passe deve ter pelo menos 8 caracteres.');
@@ -337,7 +337,7 @@ async function callFunction(name,body){
   if(!sb)throw new Error('O serviço de análise não carregou. Atualiza a página e tenta novamente.');let {data:{session}}=await sb.auth.getSession();
   if(!session){
     const ok=await ensureAnonymousSession();
-    if(!ok)throw new Error('Ativa Anonymous Sign-Ins em Supabase → Authentication → Providers para poderes usar as pesquisas gratuitas sem conta.');
+    if(!ok)throw new Error('Não foi possível iniciar a sessão técnica anónima. As pesquisas ficam temporariamente indisponíveis.');
     ({data:{session}}=await sb.auth.getSession());
   }
   const {data,error}=await sb.functions.invoke(name,{body});
@@ -411,7 +411,7 @@ function appendSaveAnalysisButton(analysis,soldOut){
    button.disabled=false;button.textContent=tr('saveAnalysis');
    return;
   }
-  guestBackup();render();button.textContent=tr('analysisSaved');
+  render();button.textContent=tr('analysisSaved');
   note.textContent='Guardado. Só ficaram na coleção os dados do modelo e da avaliação; nenhuma fotografia foi armazenada.';
  });
  wrap.append(button);host.append(note,wrap);
