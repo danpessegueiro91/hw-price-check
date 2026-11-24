@@ -1,7 +1,7 @@
 
 const SUPABASE_URL='https://hvxszwbszrigeznmmkeb.supabase.co',KEY='sb_publishable_onFuWjOv4XdLMoA0enaCgA_OcX1deTF',sb=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,KEY):null;
 const T={
-pt:{headline:'Descobre o valor das tuas Hot Wheels',subhead:'Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.',analyse:'Analisar',collection:'Coleção',watch:'À procura',photo:'Fotografias',photoHelp:'Uma única fotografia nítida é suficiente para começar. As fotografias do verso e dos detalhes são opcionais e ajudam apenas a aumentar a confiança.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço pedido (€)',shipping:'Portes e taxas (€)',purchasePrice:'Preço de compra (€)',purchaseShipping:'Portes pagos (€)',saveAnalysis:'Guardar na coleção',analysisSaved:'Guardado na coleção.',min:'Valor de revenda mínimo (€)',max:'Valor de revenda máximo (€)',sold:'Vendas concluídas comparáveis',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas concluídas',notes:'Notas e justificação',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Os preços pedidos e as vendas concluídas são apresentados separadamente. Confirma sempre a variante e a condição: as estimativas dependem da amostra disponível e não são promessas de venda.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'A minha coleção',search:'Pesquisar modelo…',empty:'Ainda não tens modelos guardados.',export:'Exportar cópia CSV',watchTitle:'Lista de procura',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Cria uma conta ou inicia sessão para manter a tua coleção sincronizada.',pw:'Palavra-passe',saved:'Guardado e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados introduzidos.',askLogin:'Inicia sessão primeiro.'},
+pt:{headline:'Descobre o valor das tuas Hot Wheels',subhead:'Pesquisa modelos, analisa o valor de mercado, consulta vendas reais e gere a tua coleção num só lugar.',analyse:'Analisar',collection:'Coleção',watch:'À procura',photo:'Fotografias',photoHelp:'Uma única fotografia nítida é suficiente para começar. As fotografias do verso e dos detalhes são opcionais e ajudam apenas a aumentar a confiança.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço pedido (€)',shipping:'Portes e taxas (€)',purchasePrice:'Preço de compra (€)',purchaseShipping:'Portes pagos (€)',saveAnalysis:'Guardar nesta coleção',analysisSaved:'Guardado na coleção.',min:'Valor de revenda mínimo (€)',max:'Valor de revenda máximo (€)',sold:'Vendas concluídas comparáveis',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas concluídas',notes:'Notas e justificação',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Os preços pedidos e as vendas concluídas são apresentados separadamente. Confirma sempre a variante e a condição: as estimativas dependem da amostra disponível e não são promessas de venda.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'A minha coleção',search:'Pesquisar modelo…',empty:'Ainda não tens modelos guardados.',export:'Exportar cópia CSV',watchTitle:'Lista de procura',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Cria uma conta ou inicia sessão para manter a tua coleção sincronizada.',pw:'Palavra-passe',saved:'Guardado neste dispositivo.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados introduzidos.',askLogin:'Não é necessário iniciar sessão.'},
 en:{headline:'Discover the value of your Hot Wheels',subhead:'Review models, track your collection and monitor your investment — asking prices are not completed sales.',analyse:'Analyse',collection:'Collection',watch:'Watchlist',photo:'Photos',photoHelp:'One clear photo is enough to start. Back and detail photos are optional and only help improve confidence.',details:'Model details',model:'Model / name *',year:'Year / series / reference',type:'Classification',condition:'Condition',assessment:'Purchase assessment',ask:'Asking price (€)',shipping:'Shipping and fees (€)',purchasePrice:'Purchase price (€)',purchaseShipping:'Shipping paid (€)',saveAnalysis:'Save to collection',analysisSaved:'Saved to collection.',min:'Minimum resale value (€)',max:'Maximum resale value (€)',sold:'Comparable completed sales',certainty:'TH/STH confirmation',evidence:'Evidence / completed-sale links',notes:'Notes and reasoning',evaluate:'Assess opportunity',clear:'Clear',limits:'No automatic eBay/Vinted search or TH/STH confirmation without evidence. Projections are scenarios, not promises.',items:'Items',invested:'Invested',value:'Estimated value',collectionTitle:'My collection',search:'Search model…',empty:'No saved models yet.',export:'Export CSV backup',watchTitle:'Watchlist',wanted:'Wanted model',limit:'Maximum price (€)',add:'Add',watchEmpty:'Empty list.',login:'Log in',signup:'Create account',authIntro:'Create an account or log in to sync your collection.',pw:'Password',saved:'Saved and synced.',buy:'BUY',pass:'PASS',check:'CHECK',total:'Total cost',range:'Estimated resale',margin:'Estimated margin',reason:'Decision based on entered data.',askLogin:'Log in first.'},
 es:{headline:'Descubre el valor de tus Hot Wheels',subhead:'Analiza modelos y sigue tu colección. Los precios anunciados no son ventas cerradas.',analyse:'Analizar',collection:'Colección',watch:'Buscando',photo:'Fotos',photoHelp:'Una sola foto nítida es suficiente para empezar. Las fotos del reverso y los detalles son opcionales y solo mejoran la confianza.',details:'Datos del modelo',model:'Modelo / nombre *',year:'Año / serie / referencia',type:'Clasificación',condition:'Estado',assessment:'Evaluación de compra',ask:'Precio pedido (€)',shipping:'Envío y tasas (€)',purchasePrice:'Precio de compra (€)',purchaseShipping:'Envío pagado (€)',saveAnalysis:'Guardar en la colección',analysisSaved:'Guardado en la colección.',min:'Valor mínimo de reventa (€)',max:'Valor máximo de reventa (€)',sold:'Ventas comparables cerradas',certainty:'Confirmación TH/STH',evidence:'Pruebas / enlaces de ventas',notes:'Notas y justificación',evaluate:'Evaluar oportunidad',clear:'Limpiar',limits:'Sin búsqueda automática en eBay/Vinted ni confirmación TH/STH sin pruebas.',items:'Artículos',invested:'Invertido',value:'Valor estimado',collectionTitle:'Mi colección',search:'Buscar modelo…',empty:'Aún no hay modelos.',export:'Exportar CSV',watchTitle:'Lista de búsqueda',wanted:'Modelo buscado',limit:'Precio máximo (€)',add:'Añadir',watchEmpty:'Lista vacía.',login:'Entrar',signup:'Crear cuenta',authIntro:'Crea una cuenta o inicia sesión para sincronizar tu colección.',pw:'Contraseña',saved:'Guardado y sincronizado.',buy:'COMPRAR',pass:'PASAR',check:'CONFIRMAR',total:'Coste total',range:'Reventa estimada',margin:'Margen estimado',reason:'Decisión basada en los datos introducidos.',askLogin:'Inicia sesión primero.'},
 fr:{headline:'Découvre la valeur de tes Hot Wheels',subhead:'Analyse ta collection. Les prix affichés ne sont pas des ventes conclues.',analyse:'Analyser',collection:'Collection',watch:'À rechercher',photo:'Photos',photoHelp:'Une seule photo nette suffit pour commencer. Les photos du verso et des détails sont facultatives et améliorent seulement la confiance.',details:'Détails du modèle',model:'Modèle / nom *',year:'Année / série / référence',type:'Classification',condition:'État',assessment:'Évaluation d’achat',ask:'Prix demandé (€)',shipping:'Livraison et frais (€)',purchasePrice:'Prix d’achat (€)',purchaseShipping:'Livraison payée (€)',saveAnalysis:'Enregistrer dans la collection',analysisSaved:'Ajouté à la collection.',min:'Valeur minimale (€)',max:'Valeur maximale (€)',sold:'Ventes comparables conclues',certainty:'Confirmation TH/STH',evidence:'Preuves / liens de ventes',notes:'Notes et justification',evaluate:'Évaluer',clear:'Effacer',limits:'Pas de recherche eBay/Vinted ni de confirmation TH/STH sans preuve.',items:'Articles',invested:'Investi',value:'Valeur estimée',collectionTitle:'Ma collection',search:'Rechercher…',empty:'Aucun modèle enregistré.',export:'Exporter CSV',watchTitle:'Liste de recherche',wanted:'Modèle recherché',limit:'Prix maximum (€)',add:'Ajouter',watchEmpty:'Liste vide.',login:'Connexion',signup:'Créer un compte',authIntro:'Crée un compte ou connecte-toi pour synchroniser ta collection.',pw:'Mot de passe',saved:'Enregistré et synchronisé.',buy:'ACHETER',pass:'PASSER',check:'VÉRIFIER',total:'Coût total',range:'Revente estimée',margin:'Marge estimée',reason:'Décision basée sur les données saisies.',askLogin:'Connecte-toi d’abord.'},
@@ -11,6 +11,7 @@ nl:{headline:'Ontdek de waarde van je Hot Wheels',subhead:'Controleer modellen e
 br:{headline:'Descubra o valor dos seus Hot Wheels',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Uma única foto nítida é suficiente para começar. Fotos do verso e dos detalhes são opcionais e apenas aumentam a confiança.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',purchasePrice:'Preço de compra (€)',purchaseShipping:'Frete pago (€)',saveAnalysis:'Salvar na coleção',analysisSaved:'Salvo na coleção.',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
 let lang='pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],photoPreviewUrls=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
+const LOCAL_DATA_KEY='hwpc_local_collection_v1';
 // Remove legacy browser identifiers and guest preferences; preferences now live in memory or account metadata.
 try{['hwpc_visitor_id','hwpc_lang','hwpc-language','hwpc_theme'].forEach(key=>localStorage.removeItem(key))}catch(_){}
 
@@ -54,7 +55,7 @@ const fields={soldSiteLabel:'market',headline:'headline',subhead:'subhead',tabAn
 function translate(){for(const [id,k] of Object.entries(fields)){const el=$(id);if(!el)continue;if(id==='headline'){const value=tr(k),parts=value.split(/(Hot Wheels)/i);el.replaceChildren();for(const part of parts){if(!part)continue;if(/^Hot Wheels$/i.test(part)){const emphasis=document.createElement('em');emphasis.textContent=part;el.append(emphasis)}else el.append(document.createTextNode(part))}}else el.textContent=id==='soldSiteLabel'?soldTr('market'):tr(k)}const language=$('language');if(language)language.value=lang;const authTitle=$('authTitle');if(authTitle)authTitle.textContent=tr('login');const search=$('search');if(search)search.placeholder=tr('search');const authHeading=$('authGate')?.querySelector('h2');if(authHeading)authHeading.textContent=tr('login');const tabAccount=$('tabAccount');if(tabAccount)tabAccount.textContent=({pt:'🏁 A Minha Conta',en:'🏁 My Account',es:'🏁 Mi cuenta',fr:'🏁 Mon compte',de:'🏁 Mein Konto',it:'🏁 Il mio account',nl:'🏁 Mijn account',br:'🏁 Minha conta'}[lang]||'🏁 A Minha Conta');updateAccountButton();if(lastSoldOut)renderSoldHistory(lastSoldOut,'aiResult')}
 $('language')?.addEventListener('change',e=>{lang=e.target.value;translate()});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
-function status(s){$('authStatus').textContent=s}
+function status(s){const target=$('authStatus')||$('aiStatus')||$('appNotice');if(target)target.textContent=s}
 function showGate(v){const gate=$('authGate');if(!gate)return;gate.classList.toggle('hidden',!v);gate.setAttribute('aria-hidden',String(!v))}
 async function refreshBillingDetails(){
   if(!sb||!user||user.is_anonymous){billingDetails=null;return}
@@ -82,11 +83,7 @@ async function refreshAccountPlan(){
 function updateQuota(q){
   if(!q)return;
   latestQuota=q;
-  const label=q.unlimited
-    ? 'HW Price Check Premium: pesquisas ilimitadas.'
-    : q.tier==='guest'
-      ? 'Pesquisas gratuitas sem conta: '+q.remaining+' de 3 restantes.'
-      : 'Pesquisas de hoje: '+q.used+' de '+q.limit+'.';
+  const label='Pedidos gratuitos hoje: '+q.remaining+' de '+(q.limit||10)+' restantes.';
   $('quotaNotice').textContent=label+' Cada identificação ou pesquisa de vendas conta como 1 utilização.';
   renderAccount();
 }
@@ -129,8 +126,48 @@ async function ensureAnonymousSession(){
   updateAccountButton();
   return true;
 }
-async function load(){if(!sb||!user)return;const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();if(error){status('Erro ao carregar: '+error.message);return}db=data?.payload||{items:[],watch:[]};render();renderAccount();if(!data)await save();await refreshAccountPlan();handleSubscriptionReturn()}
-async function save(){if(!sb||!user){status('Inicia sessão para guardar a coleção.');return false}try{const {error}=await sb.from('user_data').upsert({user_id:user.id,payload:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error){status('Erro de sincronização: '+error.message);return false}status(tr('saved'));renderAccount();return true}catch(error){status('Erro de sincronização: '+(error?.message||'Não foi possível guardar.'));return false}}
+async function load(){
+  const empty={items:[],watch:[]};
+  let local=null,backup=null,legacy=null;
+  try{
+    const localText=localStorage.getItem(LOCAL_DATA_KEY);
+    if(localText)local=JSON.parse(localText);
+    const backupText=localStorage.getItem(GUEST_BACKUP_KEY);
+    if(backupText)backup=JSON.parse(backupText);
+  }catch(error){console.warn('Não foi possível ler a coleção local:',error)}
+  if(!local&&!backup&&sb&&user&&!user.is_anonymous){
+    try{
+      const {data,error}=await sb.from('user_data').select('payload').eq('user_id',user.id).maybeSingle();
+      if(error)console.warn('Migração da coleção antiga indisponível:',error.message);
+      else if(data?.payload)legacy=data.payload;
+    }catch(error){console.warn('Migração da coleção antiga falhou:',error)}
+  }
+  const sources=[local,legacy,backup].filter(Boolean);
+  const merge=(key)=>{
+    const rows=sources.flatMap(value=>Array.isArray(value?.[key])?value[key]:[]);
+    return [...new Map(rows.filter(x=>x&&typeof x==='object').map(x=>[String(x.id||crypto.randomUUID()),x])).values()];
+  };
+  db={items:merge('items'),watch:merge('watch')};
+  try{
+    localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify(db));
+    if(backup)localStorage.removeItem(GUEST_BACKUP_KEY);
+  }catch(error){console.warn('Não foi possível guardar a migração local:',error)}
+  render();
+}
+async function save(){
+  try{
+    localStorage.setItem(LOCAL_DATA_KEY,JSON.stringify({
+      items:Array.isArray(db.items)?db.items:[],
+      watch:Array.isArray(db.watch)?db.watch:[]
+    }));
+    status('Coleção guardada neste dispositivo. Não é sincronizada com outros dispositivos.');
+    return true;
+  }catch(error){
+    status('Não foi possível guardar a coleção neste navegador. Exporta uma cópia CSV antes de limpar os dados do site.');
+    console.error('Local collection save failed:',error);
+    return false;
+  }
+}
 // Verifica palavras-passe expostas usando HIBP k-anonymity.
 // A palavra-passe e o hash completo nunca saem do browser.
 async function checkPwnedPassword(password){
@@ -271,9 +308,30 @@ $('signup')?.addEventListener('click',async()=>{
   }
 });
 function openAuth(mode='login'){const creating=mode==='signup';const authTitle=$('authTitle'),authIntro=$('authIntro'),login=$('login'),signup=$('signup'),password=$('password');if(authTitle)authTitle.textContent=creating?'Criar conta gratuita':'Entrar na tua conta';if(authIntro)authIntro.textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';login?.classList.toggle('hidden',creating);signup?.classList.toggle('hidden',!creating);if(password)password.autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();if(view==='accountPage')renderAccount();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('menuToggle')?.addEventListener('click',()=>{const header=$('top');const open=header.classList.toggle('nav-open');$('menuToggle').setAttribute('aria-expanded',String(open));$('menuToggle').setAttribute('aria-label',open?'Fechar menu':'Abrir menu')});document.querySelectorAll('#primaryNav [data-page]').forEach(b=>b.addEventListener('click',()=>{$('top')?.classList.remove('nav-open');$('menuToggle')?.setAttribute('aria-expanded','false')}));$('headerSearchForm')?.addEventListener('submit',e=>{e.preventDefault();const q=$('headerSearchInput').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.'}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.'}$('model').focus()});$('signupTop')?.addEventListener('click',()=>openAuth('signup'));$('signupHero')?.addEventListener('click',()=>openAuth('signup'));$('account')?.addEventListener('click',()=>{if(!user||user.is_anonymous){openAuth('login');return}openWorkspace('accountPage')});$('heroAnalyse')?.addEventListener('click',()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'});$('heroCamera')?.addEventListener('click',()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'});$('heroSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection')?.addEventListener('click',()=>openWorkspace('collection'));$('footerHome')?.addEventListener('click',e=>{e.preventDefault();showHome()});document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');$('themeToggle').textContent=light?'☀':'☾'});
-if(sb){sb.auth.getSession().then(async({data})=>{user=data.session?.user||null;if(!user){await ensureAnonymousSession()}if(user){showGate(false);applyAccountPreferences();updateAccountButton();await load();mergeGuestBackup()}else showGate(false);await updateVisitorCounter()});sb.auth.onAuthStateChange((event,s)=>{if(event==='PASSWORD_RECOVERY'){showGate(true);showPasswordRecovery()}else if(event==='SIGNED_OUT'){user=null;updateAccountButton();showGate(false)}else if(event==='USER_UPDATED'){user=s?.user||user;updateAccountButton();renderAccount()}});}else{showGate(false);$('appNotice').textContent='O serviço de conta não carregou. Atualiza a página e tenta novamente.';updateVisitorCounter();}
+if(sb){
+  sb.auth.getSession().then(async({data})=>{
+    user=data.session?.user||null;
+    const legacyUser=!!user&&!user.is_anonymous;
+    if(legacyUser){
+      await load();
+      await sb.auth.signOut();
+      user=null;
+    }
+    if(!user)await ensureAnonymousSession();
+    if(!legacyUser)await load();
+  }).catch(error=>{
+    console.warn('Sessão técnica indisponível:',error);
+    user=null;
+    $('appNotice').textContent='As ferramentas de pesquisa estão temporariamente indisponíveis. A coleção local continua acessível neste dispositivo.';
+    load();
+  });
+}else{
+  user=null;
+  $('appNotice').textContent='As ferramentas de pesquisa estão temporariamente indisponíveis. A coleção local continua acessível neste dispositivo.';
+  load();
+}
 document.querySelectorAll('[data-photo]').forEach(i=>i.addEventListener('change',()=>{const f=i.files[0];if(!f)return;const idx=+i.dataset.photo;if(photoPreviewUrls[idx])URL.revokeObjectURL(photoPreviewUrls[idx]);const url=URL.createObjectURL(f);photoPreviewUrls[idx]=url;photos[idx]='';photoFiles[idx]=f;const l=i.parentElement;l.textContent='';const img=document.createElement('img');img.src=url;img.alt=['Fotografia da frente','Fotografia do verso','Fotografia de detalhe'][idx]||'Fotografia Hot Wheels';l.append(img);l.append(i);$('aiStatus').textContent=tr('Fotografia carregada. Já podes identificar o carro com esta foto; as outras vistas são opcionais.');}));
-$('addWatch')?.addEventListener('click',async()=>{const name=$('wanted').value.trim();if(!name)return;if(!user)return alert(tr('askLogin'));db.watch.unshift({id:crypto.randomUUID(),name,max:+$('limit').value||0,date:new Date().toISOString()});$('wanted').value='';$('limit').value='';await save();render()});
+$('addWatch')?.addEventListener('click',async()=>{const name=$('wanted').value.trim();if(!name)return;db.watch.unshift({id:crypto.randomUUID(),name,max:+$('limit').value||0,date:new Date().toISOString()});$('wanted').value='';$('limit').value='';await save();render()});
 
 async function callFunction(name,body){
   if(!sb)throw new Error('O serviço de análise não carregou. Atualiza a página e tenta novamente.');let {data:{session}}=await sb.auth.getSession();
@@ -288,11 +346,7 @@ async function callFunction(name,body){
     try{if(error.context&&typeof error.context.json==='function')payload=await error.context.json()}catch(e){}
     if(payload?.quota)updateQuota(payload.quota);
     if(payload?.error==='quota_exceeded'){
-      guestBackup();
-      $('authTitle').textContent='As 3 pesquisas gratuitas terminaram';
-      $('authIntro').textContent=payload.message||'Cria uma conta ou inicia sessão para continuar.';
-      showGate(true);
-      status(payload.message||'Cria uma conta ou inicia sessão para continuar.');
+      status(payload.message||'Atingiste o limite diário de pesquisas gratuitas. Volta amanhã para continuar.');
       throw new Error(payload.message||'Limite de pesquisas atingido.');
     }
     if(payload?.message)throw new Error(payload.message);
@@ -347,7 +401,7 @@ function appendSaveAnalysisButton(analysis,soldOut){
  const note=document.createElement('p');note.className='note';note.textContent='Guarda a ficha e os dados de mercado. As fotografias usadas na identificação não são guardadas.';
  const button=document.createElement('button');button.type='button';button.className='btn primary';button.id='saveAnalysisToCollection';button.textContent=tr('saveAnalysis');
  button.addEventListener('click',async()=>{
-  if(!user){showGate(true);status('Inicia sessão para guardar a coleção.');return}
+  
   let item;
   try{item=makeCollectionAnalysisItem(analysis,soldOut)}catch(error){status(error.message);return}
   db.items=db.items||[];db.items.unshift(item);button.disabled=true;button.textContent='A guardar…';
@@ -579,78 +633,7 @@ function buildAccountActivity(limit){
   if(!rows.length)return '<div class="account-empty">Ainda não há atividade guardada. Guarda uma análise ou adiciona um modelo à lista “À procura” para começar.</div>';
   return rows.map(item=>'<article class="account-activity-item"><span class="account-activity-icon">'+item.icon+'</span><span class="account-activity-copy"><strong>'+safe(item.title)+'</strong><small>'+safe(item.detail)+'</small></span><time class="account-activity-date">'+(item.date?accountDate(item.date,true):'Registo antigo')+'</time></article>').join('');
 }
-function renderAccount(){
-  if(!user||user.is_anonymous)return;
-  const words=ACCOUNT_I18N[lang]||ACCOUNT_I18N.pt;
-  const meta=user.user_metadata||{},displayName=meta.display_name||meta.full_name||user.email?.split('@')[0]||'Colecionador';
-  const items=db.items||[],watch=db.watch||[];
-  $('accountDisplayName').textContent=displayName;
-  $('accountEmailSummary').textContent=user.email||'';
-  $('accountOverviewName').textContent=displayName;
-  $('accountOverviewEmail').textContent=user.email||'—';
-  $('accountProfileEmail').value=user.email||'';
-  $('accountSecurityEmail').textContent=user.email||'—';
-  $('accountSecurityVerified').textContent=(user.email_confirmed_at||user.confirmed_at)?'Confirmado':'Pendente';
-  $('accountCreatedAt').textContent=accountDate(user.created_at,false);
-  $('accountCollectionValue').textContent=items.length+' '+(items.length===1?'modelo':'modelos');
-  $('accountWatchValue').textContent=watch.length+' na lista “À procura”';
-  const quota=latestQuota,isPremium=quota?.tier==='premium';
-  $('accountPlanValue').textContent=isPremium?'Premium':'Gratuito';
-  $('accountPlanNote').textContent=isPremium
-    ? (quota.expires_at?'Ativo até '+accountDate(quota.expires_at,false):'Acesso permanente')
-    : 'Plano gratuito ativo';
-  const planPill=$('accountPlanPill');
-  planPill.textContent=isPremium
-    ? (quota.expires_at?'★ PREMIUM ATIVO':'★ PREMIUM PERMANENTE')
-    : '● CONTA ATIVA';
-  planPill.classList.toggle('premium',isPremium);
-  if(isPremium&&quota.unlimited){
-    $('accountQuotaValue').textContent='Ilimitadas';
-    $('accountQuotaNote').textContent='Sem limite diário · Premium ativo';
-  }else if(quota&&typeof quota.limit==='number'){
-    $('accountQuotaValue').textContent=(quota.remaining!==undefined?quota.remaining+' restantes':quota.used+' / '+quota.limit);
-    $('accountQuotaNote').textContent=(quota.used||0)+' utilizadas hoje · limite '+quota.limit;
-  }else{
-    $('accountQuotaValue').textContent='10 / dia';
-    $('accountQuotaNote').textContent='Limite atual do plano gratuito';
-  }
-
-  const billingTitle=$('premiumBillingTitle');
-  const billingDescription=$('premiumBillingDescription');
-  const requestLink=$('premiumRequestLink');
-  const donationLink=$('supportDonationLink');
-  const manageButton=$('premiumManageBtn');
-  const isMonthlyPremium=isPremium&&!!quota.expires_at;
-  if(isPremium&&!quota.expires_at){
-    billingTitle.textContent='Premium permanente';
-    billingDescription.textContent='Esta conta recebeu acesso Premium permanente por atribuição da equipa. Não existe pagamento nem renovação.';
-    requestLink?.classList.add('hidden');
-    donationLink?.classList.remove('hidden');
-    manageButton?.classList.add('hidden');
-  }else if(isMonthlyPremium){
-    billingTitle.textContent=words.premiumActive;
-    const endDate=accountDate(quota.expires_at,false);
-    billingDescription.textContent=billingDetails?.cancel_at_period_end
-      ? words.renewalCancelled(endDate)
-      : 'Esta é uma subscrição anterior. Não são aceites novas subscrições; podes gerir ou cancelar a renovação através do portal existente.';
-    requestLink?.classList.add('hidden');
-    donationLink?.classList.remove('hidden');
-    manageButton?.classList.remove('hidden');
-    manageButton.textContent=words.manage;
-  }else{
-    billingTitle.textContent='Premium por atribuição';
-    billingDescription.textContent='O acesso Premium é atribuído gratuitamente, por convite ou decisão da equipa. Um eventual donativo é sempre voluntário e não dá direito a funcionalidades.';
-    requestLink?.classList.remove('hidden');
-    donationLink?.classList.remove('hidden');
-    manageButton?.classList.add('hidden');
-  }
-
-  if(document.activeElement!==$('accountProfileName'))$('accountProfileName').value=meta.display_name||meta.full_name||'';
-  $('accountLanguage').value=lang;
-  $('accountAppearance').value=document.body.classList.contains('theme-light')?'light':'dark';
-  $('accountRecentActivity').innerHTML=buildAccountActivity(3);
-  $('accountFullActivity').innerHTML=buildAccountActivity(30);
-}
+function renderAccount(){}
 function setAccountSection(name){
   document.querySelectorAll('[data-account-section]').forEach(btn=>btn.classList.toggle('active',btn.dataset.accountSection===name));
   document.querySelectorAll('[data-account-panel]').forEach(panel=>panel.classList.toggle('active',panel.dataset.accountPanel===name));
@@ -783,19 +766,6 @@ $('accountSecurityLogout')?.addEventListener('click',async()=>{if(confirm('Quere
 $('search')?.addEventListener('input',render);
 $('export')?.addEventListener('click',()=>{const rows=[['Modelo','Ano','Classificação','Estado','Preço de compra (€)','Portes pagos (€)','Valor mínimo estimado (€)','Mediana de vendas','Moeda','N.º de vendas','Decisão'],...db.items.map(x=>[x.model,x.year,x.classification,x.condition,x.ask,x.shipping,x.min,x.marketEvidence?.median,x.marketEvidence?.currency,x.marketEvidence?.salesCount,x.decision])];const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\n');const a=document.createElement('a');a.href=window.URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));a.download='hw-price-check.csv';a.click()});
 
-$('newsletterForm')?.addEventListener('submit',async e=>{
- e.preventDefault();
- const email=$('newsletterEmail').value.trim().toLowerCase(),button=$('newsletterSubmit'),status=$('newsletterStatus');
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){status.textContent='Indica um endereço de email válido.';return}
- if(!sb){status.textContent='Serviço indisponível. Tenta novamente mais tarde.';return}
- button.disabled=true;button.textContent='A subscrever…';
- try{
-  const {error}=await sb.from('newsletter_subscribers').insert({email});
-  if(error&&error.code==='23505'){status.textContent='Este email já está inscrito.'}
-  else if(error)throw error;
-  else{status.textContent='Registo concluído. Obrigado!';$('newsletterEmail').value=''}
- }catch(err){console.error('Newsletter:',err);status.textContent='Não foi possível concluir a subscrição. Tenta novamente.'}
- finally{button.disabled=false;button.textContent='Subscrever'}
-});
+
 
 window.HWPC_MAIN_READY=true;translate();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
