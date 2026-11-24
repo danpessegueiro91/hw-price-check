@@ -266,10 +266,30 @@ body input[type="reset"] {
   <div class="footer-col"><b>Navegação</b><a href="#top" id="footerHome">Início</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="#appWorkspace" data-page="collection">Coleções</a><a href="#guidesSection">Guias</a><a href="./guias/index.html">Guias de coleccionador</a><a href="./metodologia-precos.html">De onde vêm os preços?</a><a href="./modelos/index.html">Arquivo de modelos TH / STH</a><a href="#blogPage" id="footerBlog">Blog</a></div>
   <div class="footer-col"><b>Ajuda</b><a href="#guidesSection">Perguntas Frequentes (FAQ)</a><a href="/como-funciona">Como Funciona</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="mailto:hwpricecheck@gmail.com" id="contactLink">Contactar Suporte</a></div>
   <div class="newsletter-box"><div class="newsletter-title">✉ Contacto</div><p>Sem registo por email ou newsletter. Para questões sobre o projecto, contacta <a href="mailto:hwpricecheck@gmail.com">hwpricecheck@gmail.com</a>.</p></div>
-  <div class="footer-col"><b>Sobre</b><a href="#aboutSection">Quem Somos</a><a href="/termos" id="termsLink">Termos de Utilização</a><a href="/privacidade" id="privacyLink">Política de Privacidade</a><a href="/cookies" id="cookiesLink">Política de Cookies</a></div>
+  <div class="footer-col"><b>Sobre</b><a href="#aboutSection">Quem Somos</a><a href="/termos" id="termsLink">Termos de Utilização</a><a href="/privacidade" id="privacyLink">Política de Privacidade</a><a href="/cookies" id="cookiesLink">Política de Cookies</a><button type="button" id="openAdminLogin" class="footer-admin-link">Acesso de administração</button></div>
   
   <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span>Estimativas informativas · v1.1.0</span></div>
 </footer>
+<div id="hwpcAdminModal" class="hwpc-admin-modal hidden" aria-hidden="true">
+  <section class="hwpc-admin-dialog" role="dialog" aria-modal="true" aria-labelledby="hwpcAdminTitle">
+    <button type="button" id="hwpcAdminClose" class="hwpc-admin-close" aria-label="Fechar">×</button>
+    <div class="eyebrow">HW PRICE CHECK · ÁREA PRIVADA</div>
+    <h2 id="hwpcAdminTitle">Acesso de administrador</h2>
+    <p class="muted">Esta área é exclusiva da conta de administração autorizada. Não existem registos públicos.</p>
+    <form id="hwpcAdminForm">
+      <label class="field"><span>Email</span><input id="hwpcAdminEmail" type="email" autocomplete="username" required></label>
+      <label class="field"><span>Palavra-passe</span><input id="hwpcAdminPassword" type="password" autocomplete="current-password" required></label>
+      <button id="hwpcAdminSubmit" class="btn primary" type="submit">Entrar como administrador</button>
+    </form>
+    <button type="button" id="hwpcAdminLogout" class="btn hidden">Terminar sessão de administrador</button>
+    <p id="hwpcAdminStatus" class="note" role="status">Acesso reservado à conta de administrador autorizada.</p>
+  </section>
+</div>
+<style>
+.footer-admin-link{border:0;background:none;color:#7f91a9;text-align:left;padding:0;font-size:12px;cursor:pointer}.footer-admin-link:hover{color:#ffd400;text-decoration:underline}
+.hwpc-admin-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:#020711e8;backdrop-filter:blur(9px)}.hwpc-admin-modal.hidden{display:none!important}.hwpc-admin-dialog{position:relative;width:min(440px,100%);padding:30px;border:1px solid #385678;border-radius:20px;background:linear-gradient(145deg,#14243a,#091321);box-shadow:0 24px 90px #000b}.hwpc-admin-dialog h2{margin:9px 0}.hwpc-admin-dialog .field{display:grid;gap:7px;margin:14px 0}.hwpc-admin-dialog .field span{font-size:13px;color:#d4dfed;font-weight:700}.hwpc-admin-dialog .btn{width:100%;margin-top:9px}.hwpc-admin-close{position:absolute;top:10px;right:12px;border:1px solid #49617e;border-radius:50%;width:36px;height:36px;background:#101d30;color:white;font-size:24px}
+</style>
+
 
 <style id="landing-rebuild">
 :root{--bg:#050d1a;--panel:#0d1b2e;--line:#29405d;--muted:#b6c5d9;--text:#f4f7fb;--yellow:#ffd400;--orange:#ff7825;--green:#35db80;--purple:#a58bff}
