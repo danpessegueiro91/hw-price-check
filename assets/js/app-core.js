@@ -9,7 +9,7 @@ de:{headline:'Entdecke den Wert deiner Hot Wheels',subhead:'Prüfe Modelle und v
 it:{headline:'Scopri il valore delle tue Hot Wheels',subhead:'Analizza i modelli e gestisci la collezione. I prezzi richiesti non sono vendite concluse.',analyse:'Analizza',collection:'Collezione',watch:'Da cercare',photo:'Foto',photoHelp:'Una sola foto nitida è sufficiente per iniziare. Le foto del retro e dei dettagli sono facoltative e aumentano solo la sicurezza.',details:'Dati del modello',model:'Modello / nome *',year:'Anno / serie / riferimento',type:'Classificazione',condition:'Condizioni',assessment:'Valutazione acquisto',ask:'Prezzo richiesto (€)',shipping:'Spedizione e costi (€)',purchasePrice:'Prezzo di acquisto (€)',purchaseShipping:'Spedizione pagata (€)',saveAnalysis:'Salva nella collezione',analysisSaved:'Salvato nella collezione.',min:'Valore minimo (€)',max:'Valore massimo (€)',sold:'Vendite comparabili concluse',certainty:'Conferma TH/STH',evidence:'Prove / link vendite',notes:'Note e motivazione',evaluate:'Valuta opportunità',clear:'Pulisci',limits:'Nessuna ricerca eBay/Vinted o conferma TH/STH automatica.',items:'Articoli',invested:'Investito',value:'Valore stimato',collectionTitle:'La mia collezione',search:'Cerca modello…',empty:'Nessun modello salvato.',export:'Esporta CSV',watchTitle:'Lista desideri',wanted:'Modello cercato',limit:'Prezzo massimo (€)',add:'Aggiungi',watchEmpty:'Lista vuota.',login:'Accedi',signup:'Crea account',authIntro:'Accedi per sincronizzare la tua collezione.',pw:'Password',saved:'Salvato e sincronizzato.',buy:'COMPRA',pass:'PASSA',check:'VERIFICA',total:'Costo totale',range:'Rivendita stimata',margin:'Margine stimato',reason:'Decisione basata sui dati inseriti.',askLogin:'Accedi prima.'},
 nl:{headline:'Ontdek de waarde van je Hot Wheels',subhead:'Controleer modellen en beheer je collectie. Vraagprijzen zijn geen afgeronde verkopen.',analyse:'Controleren',collection:'Collectie',watch:'Gezocht',photo:'Foto’s',photoHelp:'Eén duidelijke foto is genoeg om te beginnen. Foto’s van de achterkant en details zijn optioneel en verhogen alleen de zekerheid.',details:'Modelgegevens',model:'Model / naam *',year:'Jaar / serie / referentie',type:'Classificatie',condition:'Staat',assessment:'Aankoopbeoordeling',ask:'Vraagprijs (€)',shipping:'Verzending en kosten (€)',purchasePrice:'Aankoopprijs (€)',purchaseShipping:'Betaalde verzending (€)',saveAnalysis:'Opslaan in collectie',analysisSaved:'Opgeslagen in collectie.',min:'Minimumwaarde (€)',max:'Maximumwaarde (€)',sold:'Vergelijkbare verkopen',certainty:'TH/STH-bevestiging',evidence:'Bewijs / verkooplinks',notes:'Notities en reden',evaluate:'Beoordeel',clear:'Wissen',limits:'Geen automatische eBay/Vinted-zoektocht of TH/STH-bevestiging zonder bewijs.',items:'Items',invested:'Geïnvesteerd',value:'Geschatte waarde',collectionTitle:'Mijn collectie',search:'Zoek model…',empty:'Nog geen modellen opgeslagen.',export:'CSV exporteren',watchTitle:'Zoeklijst',wanted:'Gezocht model',limit:'Maximumprijs (€)',add:'Toevoegen',watchEmpty:'Lijst leeg.',login:'Inloggen',signup:'Account maken',authIntro:'Log in om je collectie te synchroniseren.',pw:'Wachtwoord',saved:'Opgeslagen en gesynchroniseerd.',buy:'KOPEN',pass:'OVERSLAAN',check:'CONTROLEREN',total:'Totale kosten',range:'Geschatte doorverkoop',margin:'Geschatte marge',reason:'Beslissing op basis van ingevoerde gegevens.',askLogin:'Log eerst in.'},
 br:{headline:'Descubra o valor dos seus Hot Wheels',subhead:'Analise modelos e acompanhe sua coleção. Preços anunciados não são vendas concluídas.',analyse:'Analisar',collection:'Coleção',watch:'Procurando',photo:'Fotos',photoHelp:'Uma única foto nítida é suficiente para começar. Fotos do verso e dos detalhes são opcionais e apenas aumentam a confiança.',details:'Dados do modelo',model:'Modelo / nome *',year:'Ano / série / referência',type:'Classificação',condition:'Estado',assessment:'Avaliação de compra',ask:'Preço anunciado (€)',shipping:'Frete e taxas (€)',purchasePrice:'Preço de compra (€)',purchaseShipping:'Frete pago (€)',saveAnalysis:'Salvar na coleção',analysisSaved:'Salvo na coleção.',min:'Valor mínimo de revenda (€)',max:'Valor máximo de revenda (€)',sold:'Vendas comparáveis concluídas',certainty:'Confirmação TH/STH',evidence:'Evidências / links de vendas',notes:'Notas e justificativa',evaluate:'Avaliar oportunidade',clear:'Limpar',limits:'Sem busca automática no eBay/Vinted ou confirmação TH/STH sem evidências.',items:'Itens',invested:'Investido',value:'Valor estimado',collectionTitle:'Minha coleção',search:'Buscar modelo…',empty:'Ainda não há modelos salvos.',export:'Exportar CSV',watchTitle:'Lista de desejos',wanted:'Modelo procurado',limit:'Preço máximo (€)',add:'Adicionar',watchEmpty:'Lista vazia.',login:'Entrar',signup:'Criar conta',authIntro:'Entre para sincronizar sua coleção.',pw:'Senha',saved:'Salvo e sincronizado.',buy:'COMPRAR',pass:'PASSAR',check:'CONFIRMAR',total:'Custo total',range:'Revenda estimada',margin:'Margem estimada',reason:'Decisão baseada nos dados informados.',askLogin:'Entre primeiro.'}};
-let lang='pt',user=null,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],photoPreviewUrls=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
+let lang='pt',user=null,adminSession=false,db={items:[],watch:[]},photos=['','',''],photoFiles=[null,null,null],photoPreviewUrls=[null,null,null],lastEval=null,latestQuota=null,billingDetails=null;
 const GUEST_BACKUP_KEY='hwpc_guest_backup_v1';
 const LOCAL_DATA_KEY='hwpc_local_collection_v1';
 // Remove legacy browser identifiers and guest preferences; preferences now live in memory or account metadata.
@@ -57,6 +57,49 @@ $('language')?.addEventListener('change',e=>{lang=e.target.value;translate()});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){const target=$('authStatus')||$('aiStatus')||$('appNotice');if(target)target.textContent=s}
 function showGate(v){const gate=$('authGate');if(!gate)return;gate.classList.toggle('hidden',!v);gate.setAttribute('aria-hidden',String(!v))}
+function showAdminLogin(){
+  const modal=$('hwpcAdminModal');if(!modal)return;
+  const form=$('hwpcAdminForm'),status=$('hwpcAdminStatus'),logout=$('hwpcAdminLogout');
+  if(adminSession){form?.classList.add('hidden');logout?.classList.remove('hidden');if(status)status.textContent='Sessão de administrador ativa. Podes gerir as fotografias do catálogo.'}
+  else{form?.classList.remove('hidden');logout?.classList.add('hidden');if(status)status.textContent='Acesso reservado à conta de administrador autorizada.'}
+  modal.classList.remove('hidden');modal.setAttribute('aria-hidden','false');
+  if(!adminSession)$('hwpcAdminEmail')?.focus();
+}
+window.hwpcShowAdminLogin=showAdminLogin;
+$('openAdminLogin')?.addEventListener('click',showAdminLogin);
+$('hwpcAdminClose')?.addEventListener('click',()=>{$('hwpcAdminModal')?.classList.add('hidden');$('hwpcAdminModal')?.setAttribute('aria-hidden','true')});
+$('hwpcAdminModal')?.addEventListener('click',e=>{if(e.target===$('hwpcAdminModal'))$('hwpcAdminClose')?.click()});
+$('hwpcAdminForm')?.addEventListener('submit',async e=>{
+  e.preventDefault();
+  if(!sb){$('hwpcAdminStatus').textContent='O serviço de autenticação não está disponível.';return}
+  const button=$('hwpcAdminSubmit');button.disabled=true;button.textContent='A verificar…';
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email:$('hwpcAdminEmail').value.trim(),password:$('hwpcAdminPassword').value});
+    if(error)throw error;
+    const {data:allowed,error:permissionError}=await sb.rpc('is_catalog_image_admin');
+    if(permissionError||allowed!==true){
+      await sb.auth.signOut();user=null;adminSession=false;await ensureAnonymousSession();
+      throw new Error('Esta conta não está autorizada a administrar o catálogo.');
+    }
+    user=data.user;adminSession=true;
+    $('hwpcAdminPassword').value='';
+    $('hwpcAdminStatus').textContent='Sessão iniciada. Já podes carregar fotografias.';
+    window.dispatchEvent(new Event('hwpc:auth-updated'));
+    showAdminLogin();
+  }catch(error){$('hwpcAdminStatus').textContent=error?.message||'Não foi possível iniciar sessão.'}
+  finally{button.disabled=false;button.textContent='Entrar como administrador'}
+});
+$('hwpcAdminLogout')?.addEventListener('click',async()=>{
+  const button=$('hwpcAdminLogout');button.disabled=true;
+  try{
+    const {error}=await sb.auth.signOut();if(error)throw error;
+    user=null;adminSession=false;await ensureAnonymousSession();
+    window.dispatchEvent(new Event('hwpc:auth-updated'));
+    $('hwpcAdminModal')?.classList.add('hidden');
+  }catch(error){$('hwpcAdminStatus').textContent=error?.message||'Não foi possível terminar sessão.'}
+  finally{button.disabled=false}
+});
+
 async function refreshBillingDetails(){
   if(!sb||!user||user.is_anonymous){billingDetails=null;return}
   const {data,error}=await sb.from('hw_billing_subscriptions')
@@ -174,9 +217,16 @@ if(sb){
     user=data.session?.user||null;
     const legacyUser=!!user&&!user.is_anonymous;
     if(legacyUser){
-      await load();
-      await sb.auth.signOut();
-      user=null;
+      const {data:allowed,error:permissionError}=await sb.rpc('is_catalog_image_admin');
+      adminSession=!permissionError&&allowed===true;
+      if(adminSession){
+        await load();
+        window.dispatchEvent(new Event('hwpc:auth-updated'));
+      }else{
+        await load();
+        await sb.auth.signOut();
+        user=null;
+      }
     }
     if(!user)await ensureAnonymousSession();
     if(!legacyUser)await load();
