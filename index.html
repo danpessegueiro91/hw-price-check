@@ -147,7 +147,7 @@ body input[type="reset"] {
 </style>
 
 </head><body>
-<div id="authGate" class="hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="authTitle"><button id="authClose" class="auth-close auth-gate-close" type="button" aria-label="Fechar janela de conta" title="Fechar">×</button><div class="auth"><div class="brand">HW <b>PRICE CHECK</b></div><h2 id="authTitle">Entrar na tua conta</h2><p class="muted" id="authIntro">Podes experimentar sem conta. Depois das 3 pesquisas gratuitas, cria uma conta ou inicia sessão para continuar.</p><div class="field"><label>Email</label><input id="email" type="email" autocomplete="email"></div><div class="field"><label id="pwLabel">Palavra-passe</label><input id="password" type="password" minlength="8" autocomplete="current-password"></div><div class="actions"><button class="btn primary" id="login">Entrar</button><button class="btn" id="signup">Criar conta</button></div><button class="btn" id="forgotPassword" type="button" style="margin-top:10px;width:100%">Esqueci-me da palavra-passe</button><p class="note" id="authStatus">Os teus dados ficam privados na tua conta.</p></div></div>
+
 
 <header class="top site-header hwpc-topbar" id="top">
   <a class="brand brand-lockup" href="./" aria-label="HW Price Check - página inicial" title="Ir para a página inicial"><img class="site-logo" src="./assets/hwpc-logo-original.png?v=20261123-2" alt="HW Price Check — logótipo com gato preto e chama"></a>
@@ -164,8 +164,8 @@ body input[type="reset"] {
   <div class="header-actions">
     <select id="language" class="lang" aria-label="Idioma"><option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option><option value="fr">FR</option><option value="de">DE</option><option value="it">IT</option><option value="nl">NL</option><option value="br">PT-BR</option></select>
     <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">☾</button>
-    <button class="icon-action" id="account" aria-label="A minha conta" title="A minha conta"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21c.5-4.2 3-6.5 7.5-6.5s7 2.3 7.5 6.5"></path></svg></button>
-    <button class="btn primary" id="signupTop"><span>Criar conta</span></button>
+    
+    
   </div>
 </header>
 <main>
@@ -196,10 +196,9 @@ body input[type="reset"] {
       <div class="benefit"><b>♜</b><span><strong>Guias de Colecionador</strong><small>TH, STH, séries e dicas úteis</small></span></div>
     </div>
     <div class="free-plan-strip">
-      <div class="free-intro"><span class="plan-icon plan-speed" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.8 17.5a8.2 8.2 0 1 1 14.4 0"/><path d="M12 13.2 16.1 9"/><path d="M7.2 17.5h9.6"/><path d="M12 5.2v1.2M5.9 9l.9.8M18.1 9l-.9.8"/></svg></span><span><strong>Experimenta grátis!</strong><small id="quotaNotice">Faz até 3 pesquisas sem criar conta.</small></span></div>
-      <div class="plan-detail"><span class="plan-icon plan-car" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 13 1.5-4.2A2.7 2.7 0 0 1 8 7h8a2.7 2.7 0 0 1 2.5 1.8L20 13v4h-2v-1H6v1H4v-4Z"/><path d="M5 13h14M7.5 10h9"/><circle cx="7.5" cy="14" r="1"/><circle cx="16.5" cy="14" r="1"/></svg></span><span><strong>Com conta gratuita:</strong><small>10 pesquisas por dia</small></span></div>
-      <div class="plan-detail pro-detail"><span class="plan-icon plan-flag" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 5h13l-2.2 3L18 11H5"/><path d="M8 6.5h3v2H8zm6 0h2v2h-2zm-3 3h3v1.5h-3z"/></svg></span><span><strong>Em breve: Plano Pro</strong><small>Mais pesquisas, histórico e funcionalidades exclusivas.</small></span></div>
-      <button class="btn primary free-signup" id="signupHero"><svg class="signup-car-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 13 1.5-4.2A2.7 2.7 0 0 1 8 7h8a2.7 2.7 0 0 1 2.5 1.8L20 13v4h-2v-1H6v1H4v-4Z"/><path d="M5 13h14M7.5 10h9"/><circle cx="7.5" cy="14" r="1"/><circle cx="16.5" cy="14" r="1"/></svg><span>Criar Conta Gratuitamente</span></button>
+      <div class="free-intro"><span class="plan-icon plan-speed" aria-hidden="true">🏁</span><span><strong>Pesquisa gratuita, sem registo</strong><small id="quotaNotice">Até 10 pedidos gratuitos por dia, sem email ou palavra-passe.</small></span></div>
+      <div class="plan-detail"><span class="plan-icon plan-car" aria-hidden="true">🚗</span><span><strong>A tua coleção fica contigo</strong><small>Guardada apenas neste dispositivo; sem sincronização na nuvem.</small></span></div>
+      <div class="plan-detail pro-detail"><span class="plan-icon plan-flag" aria-hidden="true">📁</span><span><strong>Faz uma cópia de segurança</strong><small>Usa a opção Exportar CSV para guardar uma cópia da coleção.</small></span></div>
       <p id="appNotice" class="app-notice"></p>
     </div>
   </div>
@@ -237,129 +236,14 @@ body input[type="reset"] {
   <section class="about-preview" id="aboutSection"><div><div class="section-kicker">SOBRE O PROJECTO</div><h2>Uma ferramenta independente para colecionadores.</h2></div><p>HW Price Check ajuda-te a identificar modelos, organizar a coleção e tomar decisões de compra com informação mais clara. As estimativas são indicativas e não garantem valorização.</p></section>
 </section>
 <section id="appWorkspace" class="wrap hidden">
-<nav class="tabs"><button class="tab active" data-view="analyse" id="tabAnalyse">Analisar</button><button class="tab" data-view="collection" id="tabCollection">Coleção</button><button class="tab" data-view="watch" id="tabWatch">À procura</button><button class="tab" data-view="accountPage" id="tabAccount">🏁 A Minha Conta</button></nav>
+<nav class="tabs"><button class="tab active" data-view="analyse" id="tabAnalyse">Analisar</button><button class="tab" data-view="collection" id="tabCollection">Coleção</button><button class="tab" data-view="watch" id="tabWatch">À procura</button></nav>
 <section id="analyse" class="view"><div class="grid"><div class="card"><h2 id="photoTitle">Fotografias</h2><p class="muted" id="photoHelp">Envia fotografias nítidas da frente, verso e detalhes. A IA ajuda a identificar o modelo; confirma sempre os pormenores.</p><div class="photos"><label class="photo">＋<br>Frente<input hidden type="file" accept="image/*" capture="environment" data-photo="0"></label><label class="photo">＋<br>Verso<input hidden type="file" accept="image/*" capture="environment" data-photo="1"></label><label class="photo">＋<br>Detalhe<input hidden type="file" accept="image/*" capture="environment" data-photo="2"></label></div><div class="field sold-market-picker"><label id="soldSiteLabel">Mercado eBay</label><select id="soldSite"><option value="EBAY_DE">Alemanha · EUR</option><option value="EBAY_GB">Reino Unido · GBP</option><option value="EBAY_US">Estados Unidos · USD</option></select><p class="note">Os dados de mercado são fornecidos por serviços terceiros (Soldgraph e SoldComps). O HW Price Check não é afiliado, patrocinado ou aprovado pelo eBay ou pela Mattel. <a href="./metodologia-precos.html">Saber como funciona</a>.</p></div><div class="actions"><button class="btn primary" id="identify">Identificar carro</button></div><p class="note" id="aiStatus">As fotografias são utilizadas para sugerir a identificação do modelo. A confirmação depende da qualidade das imagens e das evidências visíveis.</p><div id="aiResult"></div></div>
 <div class="card"><h2 id="detailsTitle">Dados do modelo</h2><div class="field"><label id="modelLabel">Modelo / nome *</label><input id="model" placeholder="Nissan Skyline GT-R"></div><div class="field"><label id="yearLabel">Ano / série / referência</label><input id="year" placeholder="2024 · Mainline · 123/250"></div><div class="field"><label id="typeLabel">Classificação</label><select id="type"><option value="unknown">Por confirmar</option><option value="mainline">Mainline</option><option value="th">TH — por confirmar</option><option value="sth">STH — por confirmar</option><option value="premium">Premium / especial</option></select></div><div class="field"><label id="conditionLabel">Estado</label><select id="condition"><option value="mint">Blister impecável</option><option value="good">Bom estado</option><option value="damaged">Blister danificado</option><option value="loose">Sem blister</option></select></div><div class="field"><label id="purchasePriceLabel">Preço de compra (€)</label><input id="purchasePrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div><div class="field"><label id="purchaseShippingLabel">Portes pagos (€)</label><input id="purchaseShipping" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div></div></div>
 </section>
 <section id="collection" class="view hidden"><div class="stats"><div class="stat"><small id="itemsLabel">Itens</small><strong id="count">0</strong></div><div class="stat"><small id="investedLabel">Investido</small><strong id="invested">0 €</strong></div><div class="stat"><small id="valueLabel">Valor estimado</small><strong id="worth">0 €</strong></div></div><div class="card" style="margin-top:14px"><h2 id="collectionTitle">A minha coleção</h2><input id="search" placeholder="Pesquisar modelo…"><div id="items" class="empty">Ainda não tens modelos guardados.</div><div class="actions"><button class="btn" id="export">Exportar cópia CSV</button></div></div></section>
 <section id="watch" class="view hidden"><div class="card"><h2 id="watchTitle">Lista de procura</h2><div class="field"><label id="wantedLabel">Modelo procurado</label><input id="wanted" placeholder="Porsche 911 GT3 RS"></div><div class="field"><label id="limitLabel">Preço máximo (€)</label><input id="limit" type="number" min="0" step=".01"></div><button class="btn primary" id="addWatch">Adicionar</button><div id="watchItems" class="empty">Lista vazia.</div></div></section>
 
-<section id="accountPage" class="view hidden">
-  <div class="account-page">
-    <header class="account-hero">
-      <div class="account-hero-copy">
-        <div class="account-kicker">PIT LANE · ÁREA DO COLECIONADOR</div>
-        <h1>A Minha Conta</h1>
-        <p>O teu espaço pessoal para gerir o perfil, proteger o acesso e acompanhar a tua garagem de miniaturas.</p>
-      </div>
-      <div class="account-user-chip">
-        <div class="account-avatar">♟</div>
-        <div><strong id="accountDisplayName">Colecionador</strong><small id="accountEmailSummary">—</small></div>
-      </div>
-    </header>
-    <div class="account-layout">
-      <aside class="account-sidebar" aria-label="Menu da conta">
-        <div class="account-sidebar-brand"><span class="account-sidebar-mark">🏁</span><div><b>HWPC GARAGE</b><small>PAINEL DO COLECIONADOR</small></div></div>
-        <button class="account-side-link active" type="button" data-account-section="overview"><span>🏁</span>Visão geral</button>
-        <button class="account-side-link" type="button" data-account-section="profile"><span>🏎️</span>Perfil</button>
-        <button class="account-side-link" type="button" data-account-section="security"><span>🔐</span>Segurança</button>
-        <button class="account-side-link" type="button" data-account-section="preferences"><span>⚙️</span>Preferências</button>
-        <button class="account-side-link" type="button" data-account-section="activity"><span>🏆</span>Atividade</button>
-        <button class="account-side-link logout" type="button" id="accountLogout"><span>↪</span>Terminar sessão</button>
-      </aside>
-      <div class="account-main">
-        <p id="accountStatus" class="account-status" role="status" aria-live="polite"></p>
-
-        <section class="account-panel active" data-account-panel="overview">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">O TEU PAINEL</div><h2>Estado da garagem</h2><p>Um resumo rápido da tua conta e atividade de colecionador.</p></div><span class="account-plan-pill" id="accountPlanPill">● CONTA ATIVA</span></div>
-          <div class="account-kpis">
-            <article class="account-kpi"><div class="account-kpi-top"><span>Plano atual</span><span class="account-kpi-icon">🏁</span></div><strong id="accountPlanValue">Gratuito</strong><small id="accountPlanNote">Acesso de colecionador</small></article>
-            <article class="account-kpi"><div class="account-kpi-top"><span>Pesquisas diárias</span><span class="account-kpi-icon">⚡</span></div><strong id="accountQuotaValue">10 / dia</strong><small id="accountQuotaNote">Limite do plano gratuito</small></article>
-            <article class="account-kpi"><div class="account-kpi-top"><span>Na tua garagem</span><span class="account-kpi-icon">🚘</span></div><strong id="accountCollectionValue">0 modelos</strong><small id="accountWatchValue">0 na lista “À procura”</small></article>
-          </div>
-          <div class="account-overview-grid">
-            <article class="account-card"><h3><span>▰</span> Dados da conta</h3>
-              <div class="account-detail-row"><span>Nome de perfil</span><strong id="accountOverviewName">—</strong></div>
-              <div class="account-detail-row"><span>Email</span><strong id="accountOverviewEmail">—</strong></div>
-              <div class="account-detail-row"><span>Membro desde</span><strong id="accountCreatedAt">—</strong></div>
-              <div class="account-detail-row"><span>Estado do email</span><strong id="accountEmailState">—</strong></div>
-              <button class="account-shortcut" type="button" data-account-section="profile">✎ Editar perfil</button>
-            </article>
-            <article class="account-card"><h3><span>🏆</span> Atividade recente</h3>
-              <div id="accountRecentActivity" class="account-activity-list"><div class="account-empty">Ainda não há atividade guardada.</div></div>
-              <button class="account-shortcut" type="button" data-account-section="activity">Ver atividade completa →</button>
-            </article>
-          </div>
-          <div class="account-form-card premium-billing-card" id="premiumBillingCard">
-            <h3 id="premiumBillingTitle">HW Price Check Premium</h3>
-            <p id="premiumBillingDescription">O Premium é atribuído gratuitamente, por convite ou decisão da equipa. Não está à venda.</p>
-            <a class="account-action" id="premiumRequestLink" href="mailto:hwpricecheck@gmail.com?subject=Pedido%20de%20acesso%20Premium">Pedir acesso Premium</a>
-            <a class="account-action account-secondary-action" id="supportDonationLink" href="mailto:hwpricecheck@gmail.com?subject=Apoio%20volunt%C3%A1rio%20ao%20HW%20Price%20Check">Apoiar voluntariamente o projecto</a>
-            <button class="account-action account-secondary-action hidden" type="button" id="premiumManageBtn">Gerir subscrição anterior</button>
-            <p class="account-footnote">Qualquer apoio é voluntário e não compra, desbloqueia nem garante acesso Premium. O acesso Premium é atribuído separadamente.</p>
-          </div>
-        </section>
-
-        <section class="account-panel" data-account-panel="profile">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">IDENTIDADE DO PILOTO</div><h2>Perfil</h2><p>Atualiza o nome apresentado na tua área pessoal.</p></div></div>
-          <div class="account-form-card">
-            <h3>Informação pessoal</h3><p>O nome de perfil fica associado à tua conta HW Price Check.</p>
-            <div class="account-form-grid">
-              <div class="account-field"><label for="accountProfileName">Nome de perfil</label><input id="accountProfileName" type="text" maxlength="60" placeholder="Como te devemos chamar?"></div>
-              <div class="account-field"><label for="accountProfileEmail">Email atual</label><input id="accountProfileEmail" type="email" readonly></div>
-            </div>
-            <button class="account-action" type="button" id="accountProfileSave">✓ Guardar perfil</button>
-          </div>
-          <div class="account-form-card">
-            <h3>Alterar endereço de email</h3><p>O Supabase poderá enviar confirmações para o endereço atual e para o novo endereço, de acordo com a segurança da conta.</p>
-            <div class="account-field"><label for="accountNewEmail">Novo endereço de email</label><input id="accountNewEmail" type="email" autocomplete="email" placeholder="novo@email.com"></div>
-            <button class="account-action account-secondary-action" type="button" id="accountEmailSave">Enviar pedido de alteração</button>
-          </div>
-        </section>
-
-        <section class="account-panel" data-account-panel="security">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">PROTEÇÃO DA CONTA</div><h2>Segurança</h2><p>Atualiza a palavra-passe usada para entrar no HW Price Check.</p></div></div>
-          <div class="account-form-card">
-            <h3>Alterar palavra-passe</h3><p>Escolhe uma palavra-passe com pelo menos 8 caracteres. Não reutilizes a palavra-passe do teu email.</p>
-            <div class="account-form-grid">
-              <div class="account-field"><label for="accountNewPassword">Nova palavra-passe</label><input id="accountNewPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Mínimo de 8 caracteres"></div>
-              <div class="account-field"><label for="accountConfirmPassword">Confirmar palavra-passe</label><input id="accountConfirmPassword" type="password" minlength="8" autocomplete="new-password" placeholder="Repete a nova palavra-passe"></div>
-            </div>
-            <button class="account-action" type="button" id="accountPasswordSave">🔐 Atualizar palavra-passe</button>
-          </div>
-          <div class="account-form-card">
-            <h3>Sessão atual</h3><p>Esta sessão está protegida pelo serviço de autenticação do Supabase.</p>
-            <div class="account-detail-row"><span>Conta autenticada</span><strong id="accountSecurityEmail">—</strong></div>
-            <div class="account-detail-row"><span>Email confirmado</span><strong id="accountSecurityVerified">—</strong></div>
-            <button class="account-shortcut" type="button" id="accountSecurityLogout">↪ Terminar sessão neste dispositivo</button>
-          </div>
-        </section>
-
-        <section class="account-panel" data-account-panel="preferences">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">AFINA A TUA EXPERIÊNCIA</div><h2>Preferências</h2><p>Personaliza a apresentação do HW Price Check.</p></div></div>
-          <div class="account-form-card">
-            <h3>Idioma e aparência</h3><p>As preferências ficam guardadas nesta conta e neste dispositivo.</p>
-            <div class="account-form-grid">
-              <div class="account-field"><label for="accountLanguage">Idioma da aplicação</label><select id="accountLanguage"><option value="pt">Português (Portugal)</option><option value="en">English</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="nl">Nederlands</option><option value="br">Português (Brasil)</option></select></div>
-              <div class="account-field"><label for="accountAppearance">Aparência</label><select id="accountAppearance"><option value="dark">Escuro · Garage</option><option value="light">Claro</option></select></div>
-            </div>
-            <button class="account-action" type="button" id="accountPreferencesSave">✓ Guardar preferências</button>
-          </div>
-          <p class="account-footnote">O idioma escolhido é aplicado à interface. Os nomes oficiais dos modelos e das séries Hot Wheels mantêm-se no idioma original.</p>
-        </section>
-
-        <section class="account-panel" data-account-panel="activity">
-          <div class="account-panel-head"><div><div class="account-mini-kicker">REGISTO DA GARAGEM</div><h2>Atividade</h2><p>Consulta as análises que guardaste e os modelos adicionados à lista de procura.</p></div></div>
-          <div class="account-form-card">
-            <h3>Movimentos recentes</h3>
-            <div id="accountFullActivity" class="account-activity-list"><div class="account-empty">Ainda não há atividade guardada.</div></div>
-          </div>
-          <p class="account-footnote">Este histórico reflete os itens guardados na tua coleção e lista de procura. Não representa um registo de acessos ou sessões.</p>
-        </section>
-      </div>
-    </div>
-  </div>
-</section></section>
+</section>
 </main>
 <div id="catalogDetail" class="catalog-dialog-overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="catalogDetailTitle">
   <article class="catalog-dialog" role="document">
@@ -380,14 +264,10 @@ body input[type="reset"] {
 <footer class="site-footer">
   <div class="footer-brand"><div class="footer-brand-logo"><img class="site-logo" src="./assets/hwpc-logo-original.png?v=20261123-2" alt="HW Price Check — logótipo com gato preto e chama"></div><p>Ferramenta independente para colecionadores de carros à escala.</p><small>Não afiliada, patrocinada ou aprovada pela Mattel.</small><div class="social-row" aria-label="Redes sociais"><span class="social-icon youtube" role="img" aria-label="YouTube">▶</span><span class="social-icon instagram" role="img" aria-label="Instagram">◎</span><span class="social-icon facebook" role="img" aria-label="Facebook">f</span></div></div>
   <div class="footer-col"><b>Navegação</b><a href="#top" id="footerHome">Início</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="#appWorkspace" data-page="collection">Coleções</a><a href="#guidesSection">Guias</a><a href="./guias/index.html">Guias de coleccionador</a><a href="./metodologia-precos.html">De onde vêm os preços?</a><a href="./modelos/index.html">Arquivo de modelos TH / STH</a><a href="#blogPage" id="footerBlog">Blog</a></div>
-  <div class="footer-col"><b>Ajuda</b><a href="#guidesSection">Perguntas Frequentes (FAQ)</a><a href="/como-funciona">Como Funciona</a><a href="#appWorkspace" data-page="analyse">Planos e Limites</a><a href="mailto:hwpricecheck@gmail.com" id="contactLink">Contactar Suporte</a></div>
+  <div class="footer-col"><b>Ajuda</b><a href="#guidesSection">Perguntas Frequentes (FAQ)</a><a href="/como-funciona">Como Funciona</a><a href="#appWorkspace" data-page="analyse">Pesquisar</a><a href="mailto:hwpricecheck@gmail.com" id="contactLink">Contactar Suporte</a></div>
+  <div class="newsletter-box"><div class="newsletter-title">✉ Contacto</div><p>Sem registo por email ou newsletter. Para questões sobre o projecto, contacta <a href="mailto:hwpricecheck@gmail.com">hwpricecheck@gmail.com</a>.</p></div>
   <div class="footer-col"><b>Sobre</b><a href="#aboutSection">Quem Somos</a><a href="/termos" id="termsLink">Termos de Utilização</a><a href="/privacidade" id="privacyLink">Política de Privacidade</a><a href="/cookies" id="cookiesLink">Política de Cookies</a></div>
-  <form class="newsletter-box" id="newsletterForm">
-    <div class="newsletter-title">✉ Recebe novidades</div>
-    <p>Dicas, novos recursos e atualizações do HW Price Check.</p>
-    <div class="newsletter-fields"><input id="newsletterEmail" type="email" placeholder="O teu email" autocomplete="email" required maxlength="254"><button class="btn primary" id="newsletterSubmit" type="submit">Subscrever</button></div>
-    <small id="newsletterStatus" aria-live="polite">Inscreve-te para receber novidades e actualizações do projecto. O teu email é guardado para gerir a subscrição.</small>
-  </form>
+  
   <div class="footer-bottom"><span>© 2026 HW Price Check. Projecto independente, não afiliado à Mattel.</span><span>Estimativas informativas · v1.1.0</span></div>
 </footer>
 
@@ -584,7 +464,7 @@ body.theme-light .hero-stage{background-color:#061020}
 </style>
 <script src="./assets/js/app-core.js"></script>
 <script src="./assets/js/photo-viewer.js"></script><script src="./assets/js/catalog.js"></script>
-<script src="./assets/js/auth-dialog.js"></script>
+
 <style id="HWPC_HERO_FINAL_ALIGNMENT_20261109">
 @import url("https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap");
 /* Cabeçalho: logótipo à esquerda, texto alinhado à direita. */
