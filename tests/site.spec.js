@@ -61,33 +61,35 @@ test('all eight languages update the document locale, labels and form hints', as
   }
 });
 
-test('account renderer separates voluntary support from manually granted Premium', async () => {
-  const fs = require('node:fs');
-  const path = require('node:path');
-  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
-  const renderer = source.match(/function renderAccount\(\)\s*\{([\s\S]*?)\n\}/);
-  expect(renderer, 'renderAccount function should exist').not.toBeNull();
-  expect(renderer[1]).toMatch(/const words\s*=\s*ACCOUNT_I18N\[lang\]\s*\|\|\s*ACCOUNT_I18N\.pt/);
-  expect(renderer[1]).toContain('premiumRequestLink');
-  expect(renderer[1]).toContain('supportDonationLink');
-  expect(renderer[1]).toContain('donativo é sempre voluntário');
-  expect(renderer[1]).toContain('words.renewalCancelled');
-  expect(renderer[1]).toContain('words.manage');
-  expect(source).not.toContain('premiumSubscribeBtn');
-});
-
-test('account dialog can be opened and closed', async ({ page }) => {
-  // Isolate this UI test from Supabase/network availability: an unavailable auth SDK
-  // leaves the app in its signed-out state, which is the state this dialog serves.
+test('site no longer exposes registration, login, account or newsletter forms', async ({ page }) => {
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
   await page.goto('/');
-  await page.locator('#account').click();
-  await expect(page.locator('#authGate')).toBeVisible();
-  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'false');
-  await expect(page.locator('#authClose')).toBeVisible();
-  await page.locator('#authClose').click();
-  await expect(page.locator('#authGate')).toBeHidden();
-  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'true');
+  for (const id of ['#authGate', '#account', '#signupTop', '#signupHero', '#tabAccount', '#accountPage', '#newsletterForm', '#newsletterEmail']) {
+    await expect(page.locator(id)).toHaveCount(0);
+  }
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const appSource = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  expect(appSource).not.toContain('auth.signUp');
+  expect(appSource).not.toContain('signInWithPassword');
+  expect(appSource).toContain('signInAnonymously');
+});
+
+test('collection and watchlist persist locally without a user account', async ({ page }) => {
+  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await page.locator('[data-view="watch"]').click();
+  await page.locator('#wanted').fill('Nissan Skyline GT-R');
+  await page.locator('#limit').fill('5');
+  await page.locator('#addWatch').click();
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('hwpc_local_collection_v1') || '{}'));
+  expect(stored.watch).toHaveLength(1);
+  expect(stored.watch[0].name).toBe('Nissan Skyline GT-R');
+  await page.reload();
+  await page.locator('#heroAnalyse').click();
+  await page.locator('[data-view="watch"]').click();
+  await expect(page.locator('#watchItems')).toContainText('Nissan Skyline GT-R');
 });
 
 test('homepage remains within a mobile viewport', async ({ page }) => {
@@ -111,15 +113,10 @@ test('translation dictionary has no duplicate source keys', async () => {
   expect(duplicates).toEqual([]);
 });
 
-test('newsletter rejects invalid email addresses', async ({ page }) => {
+test('newsletter and email capture controls are absent', async ({ page }) => {
   await page.goto('/');
-  const email = page.locator('#newsletterEmail');
-  await email.evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
-  await email.fill('invalid');
-  await page.locator('#newsletterForm').evaluate(form =>
-    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
-  );
-  await expect(page.locator('#newsletterStatus')).toHaveText('Indica um endereço de email válido.');
+  await expect(page.locator('#newsletterForm')).toHaveCount(0);
+  await expect(page.locator('#newsletterEmail')).toHaveCount(0);
 });
 
 test('catalog interface translates but Hot Wheels model names stay unchanged', async ({ page }) => {
@@ -142,14 +139,14 @@ test('catalog controls localize across all eight languages without changing mode
   await expect(page.locator('#catalogPage')).toBeVisible();
 
   const languages = [
-    { code: 'pt', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci-me da palavra-passe' },
-    { code: 'en', detail: 'View details', photos: 'HW Price Check archive', forgot: 'Forgot Password' },
-    { code: 'es', detail: 'Ver ficha', photos: 'Archivo HW Price Check', forgot: 'Olvidé mi contraseña' },
-    { code: 'fr', detail: 'Voir la fiche', photos: 'Archives HW Price Check', forgot: 'Mot de passe oublié' },
-    { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv', forgot: 'Passwort vergessen' },
-    { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check', forgot: 'Password dimenticata' },
-    { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief', forgot: 'Wachtwoord vergeten' },
-    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci minha senha' },
+    { code: 'pt', detail: 'Ver ficha', photos: 'Arquivo HW Price Check' },
+    { code: 'en', detail: 'View details', photos: 'HW Price Check archive' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Archivo HW Price Check' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Archives HW Price Check' },
+    { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check' },
+    { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief' },
+    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
@@ -159,7 +156,6 @@ test('catalog controls localize across all eight languages without changing mode
     await page.locator('#language').selectOption(language.code);
     await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
     await expect(firstCard.locator('.catalog-local-source')).toContainText(language.photos);
-    await expect(page.locator('#forgotPassword')).toHaveText(language.forgot);
     await expect(firstCard.locator('h3')).toHaveText(modelName);
     await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
 
@@ -214,15 +210,16 @@ test('guest language and appearance preferences are not persisted in browser sto
   await expect(page.locator('body')).toHaveClass(/theme-light/);
 });
 
-test('visitor counter reuses the authenticated Supabase UUID without a separate browser identifier', async () => {
+test('collection persistence is local and the save path does not write user data to Supabase', async () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
-  const match = source.match(/async function updateVisitorCounter\(\)\s*\{([\s\S]*?)\n\}/);
-  expect(match, 'visitor counter function should exist').not.toBeNull();
-  expect(match[1]).toContain('session?.user?.id');
-  expect(match[1]).not.toMatch(/localStorage\.(getItem|setItem|removeItem)\s*\(/);
-  expect(match[1]).not.toContain('crypto.randomUUID');
+  expect(source).toContain("const LOCAL_DATA_KEY='hwpc_local_collection_v1'");
+  const save = source.match(/async function save\(\)\s*\{([\s\S]*?)\n\}/);
+  expect(save, 'save function should exist').not.toBeNull();
+  expect(save[1]).toContain('localStorage.setItem(LOCAL_DATA_KEY');
+  expect(save[1]).not.toContain('user_data');
+  expect(save[1]).not.toContain('.upsert(');
 });
 
 test('photo previews clear their label without interpreting HTML', async () => {
@@ -379,7 +376,7 @@ test('AI identification can be saved to the collection without storing the submi
               if (name === 'hw-sold-comps') return { error: null, data: {
                 provider: 'SoldComps · eBay completed sales',
                 stats: { median: 12, p25: 9, p75: 15, currency: 'GBP', excluded: 1 },
-                count: 12, items: [], quota: { remaining: 2, used: 1, limit: 3, tier: 'guest' }
+                count: 12, items: [], quota: { remaining: 9, used: 1, limit: 10, tier: 'guest' }
               } };
               if (name === 'hw-marketplace-search' && body.action === 'history') return { error: null, data: { history: [] } };
               if (name === 'hw-marketplace-search') return { error: null, data: { status: 'complete', active: [], sold: [], credits: { charged: 0 } } };
@@ -403,7 +400,7 @@ test('AI identification can be saved to the collection without storing the submi
   await expect(page.locator('#saveAnalysisToCollection')).toBeVisible();
   await page.locator('#saveAnalysisToCollection').click();
   await expect(page.locator('#saveAnalysisToCollection')).toHaveText('Guardado na coleção.');
-  const saved = await page.evaluate(() => window.__savedPayloads.at(-1));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('hwpc_local_collection_v1') || '{}'));
   expect(saved.items).toHaveLength(1);
   expect(saved.items[0]).toMatchObject({
     model: 'Porsche 911 GT3 RS',
