@@ -534,3 +534,16 @@ test('model archive page translates navigation and inner content in all language
     }
   }
 });
+
+test('translation removes Markdown heading and emphasis markers from visible text', async ({ page }) => {
+  await page.goto('/metodologia-precos.html');
+  await page.evaluate(() => {
+    const heading = document.createElement('h2');
+    heading.id = 'markdownTranslationRegression';
+    heading.textContent = '# *De onde vêm os preços?*';
+    document.querySelector('main').prepend(heading);
+  });
+  await page.locator('#language').selectOption('es');
+  await expect(page.locator('#markdownTranslationRegression')).toHaveText('¿De dónde vienen los precios?');
+  await expect(page.locator('body')).not.toContainText('# *¿De dónde vienen los precios?');
+});
