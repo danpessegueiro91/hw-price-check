@@ -182,7 +182,7 @@
   if(!file||!["image/jpeg","image/png","image/webp","image/avif"].includes(file.type)){alert("Escolhe uma imagem JPG, PNG, WebP ou AVIF.");return}
   if(file.size>5*1024*1024){alert("A imagem tem de ter até 5 MB.");return}
   const {data:sessionData}=await sb.auth.getSession();
-  if(!sessionData?.session){showGate(true);alert("Inicia sessão com a conta autorizada para gerir fotografias.");return}
+  if(!sessionData?.session){window.hwpcShowAdminLogin?.();alert("Inicia sessão com a conta autorizada para gerir fotografias.");return}
   if(!canManageCatalogPhotos){alert("Esta conta não tem permissões para gerir fotografias do catálogo.");return}
   const path=item.year+"/"+item.kind+"/"+slugify(item.name)+"."+({"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/avif":"avif"}[file.type]);
   const {error:uploadError}=await sb.storage.from("hw-catalog").upload(path,file,{upsert:true,contentType:file.type,cacheControl:"3600"});
@@ -210,7 +210,7 @@
    const files=Array.from(event.target.files||[]),status=panel.querySelector('#catalogBulkStatus');
    if(!files.length){status.textContent='Nenhum ficheiro seleccionado.';return}
    const {data:{session}}=await sb.auth.getSession();
-   if(!session||session.user?.is_anonymous){showGate(true);status.textContent='Inicia sessão com a conta de administrador.';return}
+   if(!session||session.user?.is_anonymous){window.hwpcShowAdminLogin?.();status.textContent='Inicia sessão com a conta de administrador.';return}
    const {data:adminFlag,error:adminError}=await sb.rpc('is_catalog_image_admin');
    if(adminError||adminFlag!==true){status.textContent='A conta não tem permissões de administração.';return}
    let uploaded=0,skipped=0,failed=0;
@@ -291,7 +291,7 @@
   grid.querySelectorAll("[data-catalog-login]").forEach(button=>button.addEventListener("click",async()=>{
    if(!sb){alert("O serviço de conta não está disponível. Atualiza a página e tenta novamente.");return}
    const {data:{session}}=await sb.auth.getSession();
-   if(!session||session.user?.is_anonymous){showGate(true);status("Entra com a conta autorizada para gerir as fotografias. Depois volta a clicar em Adicionar foto.");return}
+   if(!session||session.user?.is_anonymous){window.hwpcShowAdminLogin?.();status("Entra com a conta autorizada para gerir as fotografias. Depois volta a clicar em Adicionar foto.");return}
    const {data:adminFlag,error}=await sb.rpc("is_catalog_image_admin");
    if(error){alert("Não foi possível verificar as permissões: "+error.message);return}
    canManageCatalogPhotos=adminFlag===true;
