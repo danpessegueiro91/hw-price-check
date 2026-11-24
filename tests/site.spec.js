@@ -376,7 +376,7 @@ test('AI identification can be saved to the collection without storing the submi
               if (name === 'hw-sold-comps') return { error: null, data: {
                 provider: 'SoldComps · eBay completed sales',
                 stats: { median: 12, p25: 9, p75: 15, currency: 'GBP', excluded: 1 },
-                count: 12, items: [], quota: { remaining: 2, used: 1, limit: 3, tier: 'guest' }
+                count: 12, items: [], quota: { remaining: 9, used: 1, limit: 10, tier: 'guest' }
               } };
               if (name === 'hw-marketplace-search' && body.action === 'history') return { error: null, data: { history: [] } };
               if (name === 'hw-marketplace-search') return { error: null, data: { status: 'complete', active: [], sold: [], credits: { charged: 0 } } };
@@ -400,7 +400,7 @@ test('AI identification can be saved to the collection without storing the submi
   await expect(page.locator('#saveAnalysisToCollection')).toBeVisible();
   await page.locator('#saveAnalysisToCollection').click();
   await expect(page.locator('#saveAnalysisToCollection')).toHaveText('Guardado na coleção.');
-  const saved = await page.evaluate(() => window.__savedPayloads.at(-1));
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('hwpc_local_collection_v1') || '{}'));
   expect(saved.items).toHaveLength(1);
   expect(saved.items[0]).toMatchObject({
     model: 'Porsche 911 GT3 RS',
