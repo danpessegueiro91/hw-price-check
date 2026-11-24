@@ -482,8 +482,8 @@ test('TH/STH archive loads historical model photos with source attribution', asy
 test('price sources page has working language switching and refreshed collector branding', async ({ page }) => {
   await page.goto('/metodologia-precos.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('.brand-mark')).toHaveText('HW');
-  await expect(page.locator('.brand-type')).toContainText('PRICE CHECK');
+  await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
+  await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
     ['en', 'Where do prices come from?', 'How we calculate the reference'],
     ['es', '¿De dónde vienen los precios?', 'Cómo calculamos la referencia'],
@@ -505,7 +505,8 @@ test('price sources page has working language switching and refreshed collector 
 test('model archive page translates navigation and inner content in all languages', async ({ page }) => {
   await page.goto('/modelos/index.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('.brand-mark')).toHaveText('HW');
+  await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
+  await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
     ['en', 'Model archive', 'How to read the archive'],
     ['es', 'Archivo de modelos', 'Cómo interpretar el archivo'],
