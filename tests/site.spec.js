@@ -61,17 +61,27 @@ test('all eight languages update the document locale, labels and form hints', as
   }
 });
 
-test('site no longer exposes registration, login, account or newsletter forms', async ({ page }) => {
+test('site keeps public registration disabled and exposes only the private admin login', async ({ page }) => {
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
   await page.goto('/');
   for (const id of ['#authGate', '#account', '#signupTop', '#signupHero', '#tabAccount', '#accountPage', '#newsletterForm', '#newsletterEmail']) {
     await expect(page.locator(id)).toHaveCount(0);
   }
+  await expect(page.locator('#openAdminLogin')).toBeVisible();
+  await expect(page.locator('#hwpcAdminModal')).toHaveCount(1);
+  await expect(page.locator('#hwpcAdminModal')).toBeHidden();
+  await page.locator('#openAdminLogin').click();
+  await expect(page.locator('#hwpcAdminModal')).toBeVisible();
+  await expect(page.locator('#hwpcAdminForm')).toBeVisible();
+  await expect(page.locator('#hwpcAdminEmail')).toHaveAttribute('type', 'email');
+  await expect(page.locator('#hwpcAdminPassword')).toHaveAttribute('type', 'password');
+
   const fs = require('node:fs');
   const path = require('node:path');
   const appSource = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
   expect(appSource).not.toContain('auth.signUp');
-  expect(appSource).not.toContain('signInWithPassword');
+  expect(appSource).toContain('signInWithPassword');
+  expect(appSource).toContain("sb.rpc('is_catalog_image_admin')");
   expect(appSource).toContain('signInAnonymously');
 });
 
