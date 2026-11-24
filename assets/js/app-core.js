@@ -84,7 +84,7 @@ function updateQuota(q){
   if(!q)return;
   latestQuota=q;
   const label='Pedidos gratuitos hoje: '+q.remaining+' de '+(q.limit||10)+' restantes.';
-  $('quotaNotice').textContent=label+' Cada identificação ou pesquisa de vendas conta como 1 utilização.';
+  $('quotaNotice').textContent=label+' Cada pedido a um serviço conta como 1 utilização; uma análise completa pode consumir várias.';
   renderAccount();
 }
 function guestBackup(){
