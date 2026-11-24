@@ -140,7 +140,7 @@ Deno.serve(async (req: Request) => {
     const quota = await consumeQuota(req);
     if (!quota?.allowed) return json({
       error: "quota_exceeded", quota,
-      message: "Atingiste o limite de pesquisas disponível para a tua conta."
+      message: "Atingiste o limite diário de 10 pedidos gratuitos. Volta amanhã para continuar."
     }, 402);
 
     // Initial coverage prioritises marketplaces useful to Portugal/Europe.
