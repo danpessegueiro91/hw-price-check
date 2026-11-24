@@ -67,6 +67,12 @@ test('site no longer exposes registration, login, account or newsletter forms', 
   for (const id of ['#authGate', '#account', '#signupTop', '#signupHero', '#tabAccount', '#accountPage', '#newsletterForm', '#newsletterEmail']) {
     await expect(page.locator(id)).toHaveCount(0);
   }
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const appSource = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
+  expect(appSource).not.toContain('auth.signUp');
+  expect(appSource).not.toContain('signInWithPassword');
+  expect(appSource).toContain('signInAnonymously');
 });
 
 test('collection and watchlist persist locally without a user account', async ({ page }) => {
@@ -133,14 +139,14 @@ test('catalog controls localize across all eight languages without changing mode
   await expect(page.locator('#catalogPage')).toBeVisible();
 
   const languages = [
-    { code: 'pt', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci-me da palavra-passe' },
-    { code: 'en', detail: 'View details', photos: 'HW Price Check archive', forgot: 'Forgot Password' },
-    { code: 'es', detail: 'Ver ficha', photos: 'Archivo HW Price Check', forgot: 'Olvidé mi contraseña' },
-    { code: 'fr', detail: 'Voir la fiche', photos: 'Archives HW Price Check', forgot: 'Mot de passe oublié' },
-    { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv', forgot: 'Passwort vergessen' },
-    { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check', forgot: 'Password dimenticata' },
-    { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief', forgot: 'Wachtwoord vergeten' },
-    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check', forgot: 'Esqueci minha senha' },
+    { code: 'pt', detail: 'Ver ficha', photos: 'Arquivo HW Price Check' },
+    { code: 'en', detail: 'View details', photos: 'HW Price Check archive' },
+    { code: 'es', detail: 'Ver ficha', photos: 'Archivo HW Price Check' },
+    { code: 'fr', detail: 'Voir la fiche', photos: 'Archives HW Price Check' },
+    { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv' },
+    { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check' },
+    { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief' },
+    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
@@ -150,7 +156,6 @@ test('catalog controls localize across all eight languages without changing mode
     await page.locator('#language').selectOption(language.code);
     await expect(firstCard.locator('.catalog-view-detail')).toHaveText(language.detail);
     await expect(firstCard.locator('.catalog-local-source')).toContainText(language.photos);
-    await expect(page.locator('#forgotPassword')).toHaveText(language.forgot);
     await expect(firstCard.locator('h3')).toHaveText(modelName);
     await expect(firstCard.locator('h3')).toHaveAttribute('data-no-translate', 'true');
 
