@@ -150,7 +150,7 @@ jobs:
 
   verify-production:
     needs: deploy
-    name: Verify production homepage
+    name: Verify production pages
     runs-on: ubuntu-latest
     steps:
       - name: Verify the public homepage serves the deployed release
@@ -170,3 +170,29 @@ jobs:
             exit 1
           fi
           echo "PRODUCTION HOMEPAGE OK: $GITHUB_SHA"
+
+          while IFS='|' read -r path expected; do
+            body="$(mktemp)"
+            status="$(curl --silent --show-error --location --retry 5 --retry-delay 3 \
+              --header 'Cache-Control: no-cache' \
+              --output "$body" --write-out '%{http_code}' \
+              "https://hwpricecheck.pages.dev/$path?release=$GITHUB_SHA")"
+            if [ "$status" != "200" ]; then
+              echo "::error::Public route failed: /$path (HTTP $status)"
+              cat "$body"
+              rm -f "$body"
+              exit 1
+            fi
+            if ! grep -Fq "$expected" "$body"; then
+              echo "::error::Public route /$path returned 200 but the expected page content is missing"
+              rm -f "$body"
+              exit 1
+            fi
+            rm -f "$body"
+            echo "PUBLIC ROUTE OK: /$path"
+          done <<'ROUTES'
+          privacidade|Política de Privacidade
+          termos|Termos de Utilização
+          cookies|Política de Cookies
+          como-funciona|Como Funciona
+          ROUTES
