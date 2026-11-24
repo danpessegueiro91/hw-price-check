@@ -72,10 +72,10 @@ Deno.serve(async (req: Request) => {
         reason: quota.reason,
         quota,
         message: quota.reason === "guest_limit"
-          ? "Já utilizaste as 3 pesquisas gratuitas. Cria uma conta ou inicia sessão para continuar."
+          ? "Atingiste o limite diário de 10 pedidos gratuitos. Volta amanhã para continuar."
           : quota.tier === "premium"
             ? "Atingiste o limite diário definido para este plano Premium."
-            : "Já utilizaste as 10 pesquisas gratuitas de hoje. Volta amanhã ou consulta as opções Premium quando estiverem disponíveis."
+            : "Atingiste o limite diário de 10 pedidos gratuitos. Volta amanhã para continuar."
       }, 402);
     }
 
@@ -107,7 +107,7 @@ Deno.serve(async (req: Request) => {
     return json({ ...payload, quota });
   } catch (e) {
     const message = String(e);
-    if (message.includes("authentication_required")) return json({ error: "authentication_required", message: "Não foi possível iniciar a sessão gratuita. Ativa os acessos anónimos no Supabase Auth." }, 401);
+    if (message.includes("authentication_required")) return json({ error: "authentication_required", message: "Não foi possível iniciar a sessão técnica anónima. Atualiza a página e tenta novamente." }, 401);
     return json({ error: "request_failed", message }, 500);
   }
 });
