@@ -482,6 +482,7 @@ test('TH/STH archive loads historical model photos with source attribution', asy
 test('price sources page has working language switching and refreshed collector branding', async ({ page }) => {
   await page.goto('/metodologia-precos.html');
   await expect(page.locator('#language')).toBeVisible();
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\\.js\\?v=20261124-3/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
@@ -509,6 +510,7 @@ test('price sources page has working language switching and refreshed collector 
 test('model archive page translates navigation and inner content in all languages', async ({ page }) => {
   await page.goto('/modelos/index.html');
   await expect(page.locator('#language')).toBeVisible();
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\\.js\\?v=20261124-3/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
