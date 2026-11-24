@@ -248,8 +248,8 @@ const initialLanguage=languageSelect();
 if(initialLanguage&&!validLanguages.includes(initialLanguage.value))initialLanguage.value='pt';
 const dictionaryKeys=Object.keys(D).sort((a,b)=>b.length-a.length);
 const cleanMarkdownArtifacts=value=>value
- .replace(/^(\\s{0,3})#{1,6}\\s+/, '$1')
- .replace(/^(\\s*)\\*{1,3}(.+?)\\*{1,3}(\\s*)$/, '$1$2$3');
+ .replace(/^(\s{0,3})#{1,6}\s+/, '$1')
+ .replace(/^(\s*)\*{1,3}(.+?)\*{1,3}(\s*)$/, '$1$2$3');
 const translateValue=(raw,L,col)=>{
  raw=cleanMarkdownArtifacts(raw);
  if(L==='pt')return raw;
