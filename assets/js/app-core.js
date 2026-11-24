@@ -54,7 +54,7 @@ const $=id=>document.getElementById(id),tr=k=>T[lang][k]||T.pt[k],money=n=>new I
 const fields={soldSiteLabel:'market',headline:'headline',subhead:'subhead',tabAnalyse:'analyse',tabCollection:'collection',tabWatch:'watch',photoTitle:'photo',photoHelp:'photoHelp',detailsTitle:'details',modelLabel:'model',yearLabel:'year',typeLabel:'type',conditionLabel:'condition',purchasePriceLabel:'purchasePrice',purchaseShippingLabel:'purchaseShipping',itemsLabel:'items',investedLabel:'invested',valueLabel:'value',collectionTitle:'collectionTitle',export:'export',watchTitle:'watchTitle',wantedLabel:'wanted',limitLabel:'limit',addWatch:'add',limits:'limits',authIntro:'authIntro',pwLabel:'pw',login:'login',signup:'signup'};
 function translate(){for(const [id,k] of Object.entries(fields)){const el=$(id);if(!el)continue;if(id==='headline'){const value=tr(k),parts=value.split(/(Hot Wheels)/i);el.replaceChildren();for(const part of parts){if(!part)continue;if(/^Hot Wheels$/i.test(part)){const emphasis=document.createElement('em');emphasis.textContent=part;el.append(emphasis)}else el.append(document.createTextNode(part))}}else el.textContent=id==='soldSiteLabel'?soldTr('market'):tr(k)}const language=$('language');if(language)language.value=lang;const authTitle=$('authTitle');if(authTitle)authTitle.textContent=tr('login');const search=$('search');if(search)search.placeholder=tr('search');const authHeading=$('authGate')?.querySelector('h2');if(authHeading)authHeading.textContent=tr('login');const tabAccount=$('tabAccount');if(tabAccount)tabAccount.textContent=({pt:'🏁 A Minha Conta',en:'🏁 My Account',es:'🏁 Mi cuenta',fr:'🏁 Mon compte',de:'🏁 Mein Konto',it:'🏁 Il mio account',nl:'🏁 Mijn account',br:'🏁 Minha conta'}[lang]||'🏁 A Minha Conta');updateAccountButton();if(lastSoldOut)renderSoldHistory(lastSoldOut,'aiResult')}
 $('language')?.addEventListener('change',e=>{lang=e.target.value;translate()});
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{if(b.dataset.view==='accountPage'&&(!user||user.is_anonymous)){openAuth('login');return}document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==b.dataset.view));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));render();if(b.dataset.view==='accountPage')renderAccount()});
 function status(s){const target=$('authStatus')||$('aiStatus')||$('appNotice');if(target)target.textContent=s}
 function showGate(v){const gate=$('authGate');if(!gate)return;gate.classList.toggle('hidden',!v);gate.setAttribute('aria-hidden',String(!v))}
 async function refreshBillingDetails(){
@@ -168,146 +168,7 @@ async function save(){
     return false;
   }
 }
-// Verifica palavras-passe expostas usando HIBP k-anonymity.
-// A palavra-passe e o hash completo nunca saem do browser.
-async function checkPwnedPassword(password){
-  if(!password)throw new Error('Introduz uma palavra-passe.');
-  if(!globalThis.crypto?.subtle)throw new Error('Este navegador não suporta a verificação segura. Atualiza o navegador.');
-  const bytes=new TextEncoder().encode(password);
-  const digest=await crypto.subtle.digest('SHA-1',bytes);
-  const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('').toUpperCase();
-  const prefix=hash.slice(0,5),suffix=hash.slice(5);
-  const controller=new AbortController();
-  const timeout=setTimeout(()=>controller.abort(),8000);
-  let response;
-  try{
-    response=await fetch('https://api.pwnedpasswords.com/range/'+prefix,{
-      method:'GET',
-      headers:{'Add-Padding':'true'},
-      signal:controller.signal,
-      cache:'no-store'
-    });
-  }catch(error){
-    throw new Error(error?.name==='AbortError'?'A verificação de segurança demorou demasiado. Tenta novamente.':'Não foi possível contactar o serviço de verificação de palavras-passe. Tenta novamente.');
-  }finally{clearTimeout(timeout)}
-  if(!response.ok)throw new Error('O serviço de verificação de segurança está indisponível. Tenta novamente mais tarde.');
-  const rows=(await response.text()).split(/\r?\n/);
-  for(const row of rows){
-    const [candidate,countText]=row.trim().split(':');
-    if(candidate?.toUpperCase()===suffix)return Number.parseInt(countText,10)||1;
-  }
-  return 0;
-}
-async function requireSafePassword(password){
-  const occurrences=await checkPwnedPassword(password);
-  if(occurrences>0)throw new Error('Esta palavra-passe foi encontrada em fugas de dados conhecidas ('+occurrences.toLocaleString('pt-PT')+' ocorrências). Escolhe outra que nunca tenhas utilizado.');
-}
-$('forgotPassword')?.addEventListener('click',async()=>{
-  if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');
-  const email=$('email').value.trim();
-  if(!email)return status('Introduz primeiro o endereço de email da tua conta.');
-  const button=$('forgotPassword');button.disabled=true;button.textContent='A enviar…';
-  try{
-    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://hwpricecheck.pages.dev/'});
-    if(error)throw error;
-    status('Se existir uma conta associada a este email, receberás uma mensagem com uma ligação para criar uma nova palavra-passe. Verifica também o Spam.');
-  }catch(error){status('Não foi possível pedir a recuperação: '+(error.message||error))}
-  finally{button.disabled=false;button.textContent=({pt:'Esqueci-me da palavra-passe',en:'Forgot Password',es:'Olvidé mi contraseña',fr:'Mot de passe oublié',de:'Passwort vergessen',it:'Password dimenticata',nl:'Wachtwoord vergeten',br:'Esqueci minha senha'}[lang]||'Esqueci-me da palavra-passe')}
-});
-function showPasswordRecovery(){
-  let panel=document.getElementById('passwordRecoveryPanel');
-  if(!panel){
-    panel=document.createElement('div');panel.id='passwordRecoveryPanel';
-    panel.style.cssText='position:fixed;inset:0;z-index:1000;background:#050a12ef;display:grid;place-items:center;padding:18px';
-    panel.innerHTML='<form id="passwordRecoveryForm" style="width:min(420px,100%);background:#102036;border:1px solid #3b587b;border-radius:18px;padding:26px;color:#fff"><h2 style="margin-top:0">Criar nova palavra-passe</h2><p>Define uma nova palavra-passe para a tua conta HW Price Check.</p><label for="recoveryPassword">Nova palavra-passe</label><input id="recoveryPassword" type="password" minlength="8" autocomplete="new-password" required style="display:block;width:100%;box-sizing:border-box;margin:8px 0 14px;padding:12px;border-radius:8px"><label for="recoveryPasswordConfirm">Confirmar palavra-passe</label><input id="recoveryPasswordConfirm" type="password" minlength="8" autocomplete="new-password" required style="display:block;width:100%;box-sizing:border-box;margin:8px 0 14px;padding:12px;border-radius:8px"><p id="recoveryStatus" role="status"></p><button class="btn primary" id="saveRecoveredPassword" type="submit" style="width:100%">Guardar nova palavra-passe</button></form>';
-    document.body.append(panel);
-    panel.querySelector('form').addEventListener('submit',async event=>{
-      event.preventDefault();
-      const password=document.getElementById('recoveryPassword').value;
-      const confirmation=document.getElementById('recoveryPasswordConfirm').value;
-      const message=document.getElementById('recoveryStatus');
-      const button=document.getElementById('saveRecoveredPassword');
-      if(password.length<8){message.textContent='A palavra-passe deve ter pelo menos 8 caracteres.';return}
-      if(password!==confirmation){message.textContent='As palavras-passe não coincidem.';return}
-      button.disabled=true;button.textContent='A guardar…';
-      try{
-        await requireSafePassword(password);
-        const {error}=await sb.auth.updateUser({password});
-        if(error)throw error;
-        panel.remove();
-        user=(await sb.auth.getUser()).data.user||user;
-        applyAccountPreferences();updateAccountButton();showGate(false);await load();renderAccount();
-        status('Palavra-passe atualizada. Já podes entrar normalmente.');
-      }catch(error){message.textContent='Não foi possível atualizar a palavra-passe: '+(error.message||error)}
-      finally{if(document.body.contains(button)){button.disabled=false;button.textContent='Guardar nova palavra-passe'}}
-    });
-  }
-  panel.style.display='grid';
-  document.getElementById('recoveryPassword')?.focus();
-}
-$('login')?.addEventListener('click',async()=>{if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');guestBackup();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error)return status(error.message);user=data.user;applyAccountPreferences();updateAccountButton();showGate(false);window.dispatchEvent(new Event('hwpc:auth-updated'));await load();mergeGuestBackup();renderAccount()});
-$('signup')?.addEventListener('click',async()=>{
-  const button=$('signup');
-  if(button.disabled)return;
-  if(!sb)return status('O serviço de pesquisa não carregou. Atualiza a página e tenta novamente.');
-  const email=$('email').value.trim(),password=$('password').value;
-  if(!email||!password)return status('Preenche o email e a palavra-passe.');
-  if(password.length<8)return status('A palavra-passe deve ter pelo menos 8 caracteres.');
-  if(password.length>256)return status('A palavra-passe não pode ultrapassar 256 caracteres.');
-  button.disabled=true;
-  const originalText=button.textContent;
-  button.textContent='A enviar…';
-  try{
-    await requireSafePassword(password);
-    guestBackup();
-    if(user?.is_anonymous)await sb.auth.signOut();
-    const {data,error}=await sb.auth.signUp({
-      email,
-      password,
-      options:{emailRedirectTo:'https://hwpricecheck.pages.dev/'}
-    });
-    if(error){
-      await ensureAnonymousSession();
-      status(error.message);
-      return;
-    }
-    if(data.session){
-      user=data.user;
-      applyAccountPreferences();updateAccountButton();
-      showGate(false);
-      await load();
-      mergeGuestBackup();
-      updateAccountButton();renderAccount();
-      return;
-    }
-    user=null;updateAccountButton();
-    if(Array.isArray(data.user?.identities)&&data.user.identities.length===0){
-      const {error:resendError}=await sb.auth.resend({
-        type:'signup',
-        email,
-        options:{emailRedirectTo:'https://hwpricecheck.pages.dev/'}
-      });
-      if(resendError){
-        const msg=resendError.message||'Erro desconhecido.';
-        if(/already confirmed/i.test(msg)){
-          status('Esta conta já está confirmada. Usa “Entrar” para iniciar sessão.');
-        }else{
-          status('Esta conta já existe, mas não foi possível reenviar a confirmação: '+msg);
-        }
-        return;
-      }
-      status('Esta conta já estava criada. Pedi um novo email de confirmação. Verifica também o Spam/Correio não solicitado.');
-      return;
-    }
-    status('Conta criada. Foi pedido um email de confirmação. Verifica também o Spam/Correio não solicitado.');
-  }catch(e){
-    status('Não foi possível concluir o registo: '+(e?.message||e));
-  }finally{
-    button.disabled=false;
-    button.textContent=originalText;
-  }
-});
-function openAuth(mode='login'){const creating=mode==='signup';const authTitle=$('authTitle'),authIntro=$('authIntro'),login=$('login'),signup=$('signup'),password=$('password');if(authTitle)authTitle.textContent=creating?'Criar conta gratuita':'Entrar na tua conta';if(authIntro)authIntro.textContent=creating?'Cria uma conta para guardar e sincronizar a tua coleção em vários dispositivos.':'Inicia sessão para aceder à tua coleção e às tuas pesquisas.';login?.classList.toggle('hidden',creating);signup?.classList.toggle('hidden',!creating);if(password)password.autocomplete=creating?'new-password':'current-password';showGate(true)}function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();if(view==='accountPage')renderAccount();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('menuToggle')?.addEventListener('click',()=>{const header=$('top');const open=header.classList.toggle('nav-open');$('menuToggle').setAttribute('aria-expanded',String(open));$('menuToggle').setAttribute('aria-label',open?'Fechar menu':'Abrir menu')});document.querySelectorAll('#primaryNav [data-page]').forEach(b=>b.addEventListener('click',()=>{$('top')?.classList.remove('nav-open');$('menuToggle')?.setAttribute('aria-expanded','false')}));$('headerSearchForm')?.addEventListener('submit',e=>{e.preventDefault();const q=$('headerSearchInput').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.'}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.'}$('model').focus()});$('signupTop')?.addEventListener('click',()=>openAuth('signup'));$('signupHero')?.addEventListener('click',()=>openAuth('signup'));$('account')?.addEventListener('click',()=>{if(!user||user.is_anonymous){openAuth('login');return}openWorkspace('accountPage')});$('heroAnalyse')?.addEventListener('click',()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'});$('heroCamera')?.addEventListener('click',()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'});$('heroSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection')?.addEventListener('click',()=>openWorkspace('collection'));$('footerHome')?.addEventListener('click',e=>{e.preventDefault();showHome()});document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');$('themeToggle').textContent=light?'☀':'☾'});
+function showHome(){ $('appWorkspace').classList.add('hidden');$('homePage').classList.remove('hidden');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page==='home'));window.scrollTo({top:0,behavior:'smooth'}); } function openWorkspace(view){ $('homePage').classList.add('hidden');$('appWorkspace').classList.remove('hidden');const tab=document.querySelector('[data-view="'+view+'"]');if(tab)tab.click();if(view==='accountPage')renderAccount();document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===view));$('appWorkspace').scrollIntoView({behavior:'smooth',block:'start'}); } $('menuToggle')?.addEventListener('click',()=>{const header=$('top');const open=header.classList.toggle('nav-open');$('menuToggle').setAttribute('aria-expanded',String(open));$('menuToggle').setAttribute('aria-label',open?'Fechar menu':'Abrir menu')});document.querySelectorAll('#primaryNav [data-page]').forEach(b=>b.addEventListener('click',()=>{$('top')?.classList.remove('nav-open');$('menuToggle')?.setAttribute('aria-expanded','false')}));$('headerSearchForm')?.addEventListener('submit',e=>{e.preventDefault();const q=$('headerSearchInput').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.'}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.'}$('model').focus()});$('heroAnalyse')?.addEventListener('click',()=>{const q=$('heroSearch').value.trim();openWorkspace('analyse');if(q){$('model').value=q;$('aiStatus').textContent='Modelo preenchido. Adiciona uma fotografia e carrega em “Identificar carro” para confirmar os detalhes.';$('model').focus()}else{$('aiStatus').textContent='Escreve o nome do modelo ou adiciona uma fotografia para começar.';$('model').focus()}$('heroSearchFeedback').textContent=q?'Modelo enviado para a área de análise.':'Abri a análise — escreve um modelo ou escolhe uma fotografia.'});$('heroCamera')?.addEventListener('click',()=>{const p=document.querySelector('[data-photo="0"]');if(!p){$('heroSearchFeedback').textContent='Não foi possível abrir a seleção de fotografias.';return}openWorkspace('analyse');const label=p.closest('label');if(label)label.click();else p.click();$('heroSearchFeedback').textContent='Escolhe uma fotografia da frente, verso ou detalhe do modelo.'});$('heroSearch')?.addEventListener('keydown',e=>{if(e.key==='Enter')$('heroAnalyse').click()});$('heroCollection')?.addEventListener('click',()=>openWorkspace('collection'));$('footerHome')?.addEventListener('click',e=>{e.preventDefault();showHome()});document.querySelectorAll('[data-page]').forEach(b=>{if(b.id==='heroCollection')return;b.onclick=()=>{const page=b.dataset.page;if(page==='home')showHome();else if(page==='analyse'||page==='collection'||page==='watch')openWorkspace(page);else{showHome();const target=page==='about'?'aboutSection':'guidesSection';document.getElementById(target).scrollIntoView({behavior:'smooth'});}}});document.getElementById('themeToggle')?.addEventListener('click',()=>{document.body.classList.toggle('theme-light');const light=document.body.classList.contains('theme-light');$('themeToggle').textContent=light?'☀':'☾'});
 if(sb){
   sb.auth.getSession().then(async({data})=>{
     user=data.session?.user||null;
