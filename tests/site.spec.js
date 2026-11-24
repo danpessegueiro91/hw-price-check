@@ -477,3 +477,49 @@ test('TH/STH archive loads historical model photos with source attribution', asy
   await expect(audi.locator('.catalog-local-source')).toContainText('FindMyHW');
   await expect.poll(() => audi.locator('.catalog-thumb img').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
 });
+
+
+test('price sources page has working language switching and refreshed collector branding', async ({ page }) => {
+  await page.goto('/metodologia-precos.html');
+  await expect(page.locator('#language')).toBeVisible();
+  await expect(page.locator('.brand-mark')).toHaveText('HW');
+  await expect(page.locator('.brand-type')).toContainText('PRICE CHECK');
+  const languages = [
+    ['en', 'Where do prices come from?', 'How we calculate the reference'],
+    ['es', '¿De dónde vienen los precios?', 'Cómo calculamos la referencia'],
+    ['fr', 'D’où viennent les prix ?', 'Comment calculons-nous la référence'],
+    ['de', 'Woher kommen die Preise?', 'So berechnen wir den Richtwert'],
+    ['it', 'Da dove provengono i prezzi?', 'Come calcoliamo il riferimento'],
+    ['nl', 'Waar komen de prijzen vandaan?', 'Hoe we de richtprijs berekenen'],
+    ['br', 'De onde vêm os preços?', 'Como calculamos a referência'],
+    ['pt', 'De onde vêm os preços?', 'Como calculamos a referência'],
+  ];
+  for (const [code, title, section] of languages) {
+    await page.locator('#language').selectOption(code);
+    await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
+    await expect(page.locator('main h1')).toHaveText(title);
+    await expect(page.locator('main h2').filter({ hasText: section })).toHaveText(section);
+  }
+});
+
+test('model archive page translates navigation and inner content in all languages', async ({ page }) => {
+  await page.goto('/modelos/index.html');
+  await expect(page.locator('#language')).toBeVisible();
+  await expect(page.locator('.brand-mark')).toHaveText('HW');
+  const languages = [
+    ['en', 'Model archive', 'How to read the archive'],
+    ['es', 'Archivo de modelos', 'Cómo interpretar el archivo'],
+    ['fr', 'Archives des modèles', 'Comment lire les archives'],
+    ['de', 'Modellarchiv', 'So liest man das Archiv'],
+    ['it', 'Archivio modelli', 'Come leggere l’archivio'],
+    ['nl', 'Modellenarchief', 'Het archief lezen'],
+    ['br', 'Arquivo de modelos', 'Como interpretar o arquivo'],
+    ['pt', 'Arquivo de modelos', 'Como interpretar o arquivo'],
+  ];
+  for (const [code, navLabel, section] of languages) {
+    await page.locator('#language').selectOption(code);
+    await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
+    await expect(page.locator('nav a').last()).toHaveText(navLabel);
+    await expect(page.locator('main h2')).toHaveText(section);
+  }
+});
