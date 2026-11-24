@@ -169,7 +169,7 @@ jobs:
             echo "::error::Production homepage is serving stale or obsolete content"
             exit 1
           fi
-echo "PRODUCTION HOMEPAGE OK: $GITHUB_SHA"
+          echo "PRODUCTION HOMEPAGE OK: $GITHUB_SHA"
 
           while IFS='|' read -r path expected; do
             body="$(mktemp)"
