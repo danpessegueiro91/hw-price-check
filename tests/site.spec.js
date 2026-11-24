@@ -61,33 +61,29 @@ test('all eight languages update the document locale, labels and form hints', as
   }
 });
 
-test('account renderer separates voluntary support from manually granted Premium', async () => {
-  const fs = require('node:fs');
-  const path = require('node:path');
-  const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
-  const renderer = source.match(/function renderAccount\(\)\s*\{([\s\S]*?)\n\}/);
-  expect(renderer, 'renderAccount function should exist').not.toBeNull();
-  expect(renderer[1]).toMatch(/const words\s*=\s*ACCOUNT_I18N\[lang\]\s*\|\|\s*ACCOUNT_I18N\.pt/);
-  expect(renderer[1]).toContain('premiumRequestLink');
-  expect(renderer[1]).toContain('supportDonationLink');
-  expect(renderer[1]).toContain('donativo é sempre voluntário');
-  expect(renderer[1]).toContain('words.renewalCancelled');
-  expect(renderer[1]).toContain('words.manage');
-  expect(source).not.toContain('premiumSubscribeBtn');
-});
-
-test('account dialog can be opened and closed', async ({ page }) => {
-  // Isolate this UI test from Supabase/network availability: an unavailable auth SDK
-  // leaves the app in its signed-out state, which is the state this dialog serves.
+test('site no longer exposes registration, login, account or newsletter forms', async ({ page }) => {
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
   await page.goto('/');
-  await page.locator('#account').click();
-  await expect(page.locator('#authGate')).toBeVisible();
-  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'false');
-  await expect(page.locator('#authClose')).toBeVisible();
-  await page.locator('#authClose').click();
-  await expect(page.locator('#authGate')).toBeHidden();
-  await expect(page.locator('#authGate')).toHaveAttribute('aria-hidden', 'true');
+  for (const id of ['#authGate', '#account', '#signupTop', '#signupHero', '#tabAccount', '#accountPage', '#newsletterForm', '#newsletterEmail']) {
+    await expect(page.locator(id)).toHaveCount(0);
+  }
+});
+
+test('collection and watchlist persist locally without a user account', async ({ page }) => {
+  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', route => route.abort());
+  await page.goto('/');
+  await page.locator('#heroAnalyse').click();
+  await page.locator('[data-view="watch"]').click();
+  await page.locator('#wanted').fill('Nissan Skyline GT-R');
+  await page.locator('#limit').fill('5');
+  await page.locator('#addWatch').click();
+  const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('hwpc_local_collection_v1') || '{}'));
+  expect(stored.watch).toHaveLength(1);
+  expect(stored.watch[0].name).toBe('Nissan Skyline GT-R');
+  await page.reload();
+  await page.locator('#heroAnalyse').click();
+  await page.locator('[data-view="watch"]').click();
+  await expect(page.locator('#watchItems')).toContainText('Nissan Skyline GT-R');
 });
 
 test('homepage remains within a mobile viewport', async ({ page }) => {
@@ -111,15 +107,10 @@ test('translation dictionary has no duplicate source keys', async () => {
   expect(duplicates).toEqual([]);
 });
 
-test('newsletter rejects invalid email addresses', async ({ page }) => {
+test('newsletter and email capture controls are absent', async ({ page }) => {
   await page.goto('/');
-  const email = page.locator('#newsletterEmail');
-  await email.evaluate(input => { input.removeAttribute('required'); input.type = 'text'; });
-  await email.fill('invalid');
-  await page.locator('#newsletterForm').evaluate(form =>
-    form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
-  );
-  await expect(page.locator('#newsletterStatus')).toHaveText('Indica um endereço de email válido.');
+  await expect(page.locator('#newsletterForm')).toHaveCount(0);
+  await expect(page.locator('#newsletterEmail')).toHaveCount(0);
 });
 
 test('catalog interface translates but Hot Wheels model names stay unchanged', async ({ page }) => {
@@ -214,15 +205,16 @@ test('guest language and appearance preferences are not persisted in browser sto
   await expect(page.locator('body')).toHaveClass(/theme-light/);
 });
 
-test('visitor counter reuses the authenticated Supabase UUID without a separate browser identifier', async () => {
+test('collection persistence is local and the save path does not write user data to Supabase', async () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const source = fs.readFileSync(path.join(__dirname, '../assets/js/app-core.js'), 'utf8');
-  const match = source.match(/async function updateVisitorCounter\(\)\s*\{([\s\S]*?)\n\}/);
-  expect(match, 'visitor counter function should exist').not.toBeNull();
-  expect(match[1]).toContain('session?.user?.id');
-  expect(match[1]).not.toMatch(/localStorage\.(getItem|setItem|removeItem)\s*\(/);
-  expect(match[1]).not.toContain('crypto.randomUUID');
+  expect(source).toContain("const LOCAL_DATA_KEY='hwpc_local_collection_v1'");
+  const save = source.match(/async function save\(\)\s*\{([\s\S]*?)\n\}/);
+  expect(save, 'save function should exist').not.toBeNull();
+  expect(save[1]).toContain('localStorage.setItem(LOCAL_DATA_KEY');
+  expect(save[1]).not.toContain('user_data');
+  expect(save[1]).not.toContain('.upsert(');
 });
 
 test('photo previews clear their label without interpreting HTML', async () => {
