@@ -520,7 +520,7 @@ test('model archive page translates navigation and inner content in all language
   ];
   for (const [code, navLabel, section] of languages) {
     await page.locator('#language').selectOption(code);
-    await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
+    await expect(page.locator('html')).toHaveAttribute('lang', code === 'pt' ? 'pt-PT' : code);
     await expect(page.locator('nav a').last()).toHaveText(navLabel);
     await expect(page.locator('main h2')).toHaveText(section);
     if (code === 'en') {
@@ -578,7 +578,7 @@ test('footer content translates in every supported language', async ({ page }) =
     await page.locator('#language').selectOption(code);
     for (const phrase of phrases) await expect(page.locator('footer.site-footer')).toContainText(phrase);
     await expect(page.locator('footer.site-footer')).not.toContainText('Ferramenta independente para colecionadores de carros à escala.');
-    if (code !== 'br') await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
+    await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
   }
 });
 
