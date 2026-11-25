@@ -568,3 +568,23 @@ test('main interface translates key public sections in every supported language'
     await expect(page.locator('body')).not.toContainText('Pesquisa gratuita, sem registo');
   }
 });
+
+
+test('footer content translates in every supported language', async ({ page }) => {
+  await page.goto('/');
+  const footerChecks = [
+    ['en', 'Independent tool for die-cast car collectors.', 'Navigation', 'Help', 'About Us', 'Terms of Use', 'Privacy Policy', 'Cookie Policy', 'Informational estimates'],
+    ['es', 'Herramienta independiente para coleccionistas de coches a escala.', 'Navegación', 'Ayuda', 'Quiénes somos', 'Términos de uso', 'Política de privacidad', 'Política de cookies', 'Estimaciones informativas'],
+    ['fr', 'Outil indépendant pour les collectionneurs de voitures miniatures.', 'Navigation', 'Aide', 'Qui sommes-nous', 'Conditions d’utilisation', 'Politique de confidentialité', 'Politique relative aux cookies', 'Estimations informatives'],
+    ['de', 'Unabhängiges Tool für Sammler von Modellautos.', 'Navigation', 'Hilfe', 'Über uns', 'Nutzungsbedingungen', 'Datenschutzerklärung', 'Cookie-Richtlinie', 'Unverbindliche Schätzungen'],
+    ['it', 'Strumento indipendente per collezionisti di auto in scala.', 'Navigazione', 'Aiuto', 'Chi siamo', 'Termini di utilizzo', 'Informativa sulla privacy', 'Informativa sui cookie', 'Stime informative'],
+    ['nl', "Onafhankelijke tool voor verzamelaars van schaalmodelauto's.", 'Navigatie', 'Help', 'Over ons', 'Gebruiksvoorwaarden', 'Privacybeleid', 'Cookiebeleid', 'Informatieve schattingen'],
+    ['br', 'Ferramenta independente para colecionadores de carros em miniatura.', 'Navegação', 'Ajuda', 'Quem somos', 'Termos de uso', 'Política de privacidade', 'Política de cookies', 'Estimativas informativas'],
+  ];
+  for (const [code, ...phrases] of footerChecks) {
+    await page.locator('#language').selectOption(code);
+    for (const phrase of phrases) await expect(page.locator('footer.site-footer')).toContainText(phrase);
+    await expect(page.locator('footer.site-footer')).not.toContainText('Ferramenta independente para colecionadores de carros à escala.');
+    await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
+  }
+});
