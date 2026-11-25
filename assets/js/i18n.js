@@ -307,12 +307,27 @@ Object.assign(D,{
 const idx={en:0,es:1,fr:2,de:3,it:4,nl:5};
 const originals=new WeakMap(),attrs=new WeakMap();
 const validLanguages=['pt','en','es','fr','de','it','nl'];
-// Resolve the selector at the moment of use. This also survives pages that
-// replace or rebuild their language control after this script is loaded.
+const languageStorageKey='hwpc-language-v1';
+const readSavedLanguage=()=>{
+ try{
+  const saved=localStorage.getItem(languageStorageKey);
+  return validLanguages.includes(saved)?saved:null;
+ }catch(_){return null}
+};
+const saveLanguage=value=>{
+ if(!validLanguages.includes(value))return;
+ try{localStorage.setItem(languageStorageKey,value)}catch(_){}
+};
+// Resolve the selector at the moment of use. The saved choice is restored on
+// every page and survives navigation between sections of the site.
 const languageSelect=()=>document.getElementById('language');
-const lang=()=>languageSelect()?.value||'pt';
 const initialLanguage=languageSelect();
-if(initialLanguage&&!validLanguages.includes(initialLanguage.value))initialLanguage.value='pt';
+const savedLanguage=readSavedLanguage();
+if(initialLanguage){
+ if(savedLanguage)initialLanguage.value=savedLanguage;
+ else if(!validLanguages.includes(initialLanguage.value))initialLanguage.value='pt';
+}
+const lang=()=>languageSelect()?.value||readSavedLanguage()||'pt';
 const dictionaryKeys=Object.keys(D).sort((a,b)=>b.length-a.length);
 const cleanMarkdownArtifacts=value=>value
  .replace(/^(\s{0,3})#{1,6}\s+/, '$1')
@@ -380,6 +395,7 @@ let queued=false;const run=()=>{if(queued)return;queued=true;requestAnimationFra
 // replaces its header. Apply the chosen language immediately on user input.
 document.addEventListener('change',event=>{
  if(event.target?.id==='language'){
+  saveLanguage(event.target.value);
   queued=false;
   translateText();
  }
