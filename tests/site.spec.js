@@ -510,13 +510,13 @@ test('model archive page translates navigation and inner content in all language
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
-    ['en', 'Model archive', 'How to read the archive'],
-    ['es', 'Archivo de modelos', 'Cómo interpretar el archivo'],
-    ['fr', 'Archives des modèles', 'Comment lire les archives'],
-    ['de', 'Modellarchiv', 'So liest man das Archiv'],
-    ['it', 'Archivio modelli', 'Come leggere l’archivio'],
-    ['nl', 'Modellenarchief', 'Het archief lezen'],
-    ['pt', 'Arquivo de modelos', 'Como interpretar o arquivo'],
+    ['en', 'Models', 'How to read the archive'],
+    ['es', 'Modelos', 'Cómo interpretar el archivo'],
+    ['fr', 'Modèles', 'Comment lire les archives'],
+    ['de', 'Modelle', 'So liest man das Archiv'],
+    ['it', 'Modelli', 'Come leggere l’archivio'],
+    ['nl', 'Modellen', 'Het archief lezen'],
+    ['pt', 'Modelos', 'Como interpretar o arquivo'],
   ];
   for (const [code, navLabel, section] of languages) {
     await page.locator('#language').selectOption(code);
