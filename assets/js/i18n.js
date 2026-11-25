@@ -276,6 +276,12 @@ const protectedContent='[data-no-translate], [contenteditable="true"], .catalog-
 const isProtectedNode=node=>!!node?.parentElement?.closest(protectedContent);
 const translateText=()=>{
  const L=lang(),col=idx[L];
+ const pageTitle=document.querySelector('head title');
+ if(pageTitle){
+  if(!originals.has(pageTitle))originals.set(pageTitle,pageTitle.textContent);
+  const translatedTitle=translateValue(originals.get(pageTitle),L,col);
+  if(pageTitle.textContent!==translatedTitle)pageTitle.textContent=translatedTitle;
+ }
  let cachedTranslations={};
  try{cachedTranslations=JSON.parse(localStorage.getItem('hwpc-mymemory-cache-v1')||'{}')}catch(_){}
  const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);
@@ -286,10 +292,10 @@ const translateText=()=>{
   const translated=known!==raw?known:(cachedTranslations[L+'|'+raw]||raw);
   if(n.nodeValue!==translated)n.nodeValue=translated;
  }
- document.querySelectorAll('[placeholder],[aria-label],[title]').forEach(el=>{
+ document.querySelectorAll('[placeholder],[aria-label],[title],meta[name="description"],meta[property="og:title"],meta[property="og:description"]').forEach(el=>{
   if(el.closest(protectedContent))return;
   let saved=attrs.get(el);if(!saved){saved={};attrs.set(el,saved)}
-  ['placeholder','aria-label','title'].forEach(attr=>{
+  ['placeholder','aria-label','title','content'].forEach(attr=>{
    const current=el.getAttribute(attr);
    if(!(attr in saved)&&current!==null)saved[attr]=current;
    const original=saved[attr];
