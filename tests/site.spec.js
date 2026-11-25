@@ -479,7 +479,7 @@ test('TH/STH archive loads historical model photos with source attribution', asy
 test('price sources page has working language switching and refreshed collector branding', async ({ page }) => {
   await page.goto('/metodologia-precos.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-3/);
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-4/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
@@ -506,7 +506,7 @@ test('price sources page has working language switching and refreshed collector 
 test('model archive page translates navigation and inner content in all languages', async ({ page }) => {
   await page.goto('/modelos/index.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-3/);
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-4/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
@@ -614,4 +614,21 @@ test('Portuguese is labelled PT-PT and Brazilian Portuguese is not offered', asy
     await expect(selector.locator('option[value="br"]')).toHaveCount(0);
     await expect(selector.locator('option')).toHaveCount(7);
   }
+});
+
+test('selected language persists when navigating between Guides and Models', async ({ page }) => {
+  await page.goto('/guias/index.html');
+  await page.locator('#language').selectOption('en');
+  await expect(page.locator('#language')).toHaveValue('en');
+  await expect(page.locator('h1')).toContainText('Hot Wheels Guides');
+
+  await page.locator('nav a[href="../modelos/index.html"]').click();
+  await expect(page).toHaveURL(/modelos\/index\.html/);
+  await expect(page.locator('#language')).toHaveValue('en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+
+  await page.locator('nav a[href="../guias/index.html"]').click();
+  await expect(page).toHaveURL(/guias\/index\.html/);
+  await expect(page.locator('#language')).toHaveValue('en');
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
 });
