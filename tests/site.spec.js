@@ -603,3 +603,15 @@ test('all collector guide pages expose the same language selector and translate 
     }
   }
 });
+
+
+test('Portuguese is labelled PT-PT and Brazilian Portuguese is not offered', async ({ page }) => {
+  for (const path of ['/', '/metodologia-precos.html', '/modelos/index.html']) {
+    await page.goto(path);
+    const selector = page.locator('#language');
+    await expect(selector).toBeVisible();
+    await expect(selector.locator('option[value="pt"]')).toHaveText('PT-PT');
+    await expect(selector.locator('option[value="br"]')).toHaveCount(0);
+    await expect(selector.locator('option')).toHaveCount(7);
+  }
+});
