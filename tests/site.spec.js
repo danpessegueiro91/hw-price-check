@@ -46,7 +46,6 @@ test('all eight languages update the document locale, labels and form hints', as
     { code: 'de', locale: 'de', placeholder: 'Nach einem Hot-Wheels-Modell suchen...', ariaLabel: 'Modell suchen', cameraTitle: 'Nach Foto suchen' },
     { code: 'it', locale: 'it', placeholder: 'Cerca un modello Hot Wheels...', ariaLabel: 'Cerca modello', cameraTitle: 'Cerca per foto' },
     { code: 'nl', locale: 'nl', placeholder: 'Zoek een Hot Wheels-model...', ariaLabel: 'Zoek model', cameraTitle: 'Zoeken op foto' },
-    { code: 'br', locale: 'pt-BR', placeholder: 'Pesquise um modelo Hot Wheels...', ariaLabel: 'Pesquisar modelo', cameraTitle: 'Pesquisar por foto' },
   ];
 
   for (const language of languages) {
@@ -156,7 +155,6 @@ test('catalog controls localize across all eight languages without changing mode
     { code: 'de', detail: 'Details ansehen', photos: 'HW Price Check-Archiv' },
     { code: 'it', detail: 'Vedi scheda', photos: 'Archivio HW Price Check' },
     { code: 'nl', detail: 'Bekijk details', photos: 'HW Price Check-archief' },
-    { code: 'br', detail: 'Ver ficha', photos: 'Arquivo HW Price Check' },
   ];
 
   const firstCard = page.locator('.catalog-card').first();
@@ -279,7 +277,6 @@ test('catalog detail labels follow all selected languages', async ({ page }) => 
     ['de', 'Marktschätzung', 'Foto aus dem HW Price Check-Archiv'],
     ['it', 'Stima di mercato', 'Foto dall’archivio HW Price Check'],
     ['nl', 'Marktschatting', 'Foto uit het HW Price Check-archief'],
-    ['br', 'Estimativa de mercado', 'Fotografia do arquivo HW Price Check'],
   ];
   for (const [code, estimate, source] of languages) {
     await page.locator('#language').selectOption(code);
@@ -482,7 +479,7 @@ test('TH/STH archive loads historical model photos with source attribution', asy
 test('price sources page has working language switching and refreshed collector branding', async ({ page }) => {
   await page.goto('/metodologia-precos.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261124-3/);
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-3/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
@@ -492,12 +489,11 @@ test('price sources page has working language switching and refreshed collector 
     ['de', 'Woher kommen die Preise?', 'So berechnen wir den Richtwert'],
     ['it', 'Da dove provengono i prezzi?', 'Come calcoliamo il riferimento'],
     ['nl', 'Waar komen de prijzen vandaan?', 'Hoe we de richtprijs berekenen'],
-    ['br', 'De onde vêm os preços?', 'Como calculamos a referência'],
     ['pt', 'De onde vêm os preços?', 'Como calculamos a referência'],
   ];
   for (const [code, title, section] of languages) {
     await page.locator('#language').selectOption(code);
-    await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
+    await expect(page.locator('html')).toHaveAttribute('lang', code === 'pt' ? 'pt-PT' : code);
     await expect(page.locator('main h1')).toHaveText(title);
     await expect(page.locator('main h2').filter({ hasText: section })).toHaveText(section);
     if (code === 'en') {
@@ -510,7 +506,7 @@ test('price sources page has working language switching and refreshed collector 
 test('model archive page translates navigation and inner content in all languages', async ({ page }) => {
   await page.goto('/modelos/index.html');
   await expect(page.locator('#language')).toBeVisible();
-  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261124-3/);
+  await expect(page.locator('script[src*="i18n.js"]')).toHaveAttribute('src', /i18n\.js\?v=20261125-3/);
   await expect(page.locator('.brand .site-logo')).toHaveAttribute('src', /assets\/hwpc-logo-original\.png/);
   await expect.poll(() => page.locator('.brand .site-logo').evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   const languages = [
@@ -520,12 +516,11 @@ test('model archive page translates navigation and inner content in all language
     ['de', 'Modellarchiv', 'So liest man das Archiv'],
     ['it', 'Archivio modelli', 'Come leggere l’archivio'],
     ['nl', 'Modellenarchief', 'Het archief lezen'],
-    ['br', 'Arquivo de modelos', 'Como interpretar o arquivo'],
     ['pt', 'Arquivo de modelos', 'Como interpretar o arquivo'],
   ];
   for (const [code, navLabel, section] of languages) {
     await page.locator('#language').selectOption(code);
-    await expect(page.locator('html')).toHaveAttribute('lang', code === 'br' ? 'pt-BR' : code === 'pt' ? 'pt-PT' : code);
+    await expect(page.locator('html')).toHaveAttribute('lang', code === 'pt' ? 'pt-PT' : code);
     await expect(page.locator('nav a').last()).toHaveText(navLabel);
     await expect(page.locator('main h2')).toHaveText(section);
     if (code === 'en') {
@@ -558,7 +553,6 @@ test('main interface translates key public sections in every supported language'
     ['de', 'Kostenlose Suche, ohne Registrierung', 'Deine Sammlung bleibt bei dir', 'So funktioniert es'],
     ['it', 'Ricerca gratuita, senza registrazione', 'La tua collezione resta con te', 'Come funziona'],
     ['nl', 'Gratis zoeken, zonder registratie', 'Je verzameling blijft bij jou', 'Hoe het werkt'],
-    ['br', 'Pesquisa gratuita, sem cadastro', 'Sua coleção fica com você', 'Como funciona'],
   ];
   for (const [code, free, collection, how] of languages) {
     await page.locator('#language').selectOption(code);
@@ -579,12 +573,45 @@ test('footer content translates in every supported language', async ({ page }) =
     ['de', 'Unabhängiges Tool für Sammler von Modellautos.', 'Navigation', 'Hilfe', 'Über uns', 'Nutzungsbedingungen', 'Datenschutzerklärung', 'Cookie-Richtlinie', 'Unverbindliche Schätzungen'],
     ['it', 'Strumento indipendente per collezionisti di auto in scala.', 'Navigazione', 'Aiuto', 'Chi siamo', 'Termini di utilizzo', 'Informativa sulla privacy', 'Informativa sui cookie', 'Stime informative'],
     ['nl', "Onafhankelijke tool voor verzamelaars van schaalmodelauto's.", 'Navigatie', 'Help', 'Over ons', 'Gebruiksvoorwaarden', 'Privacybeleid', 'Cookiebeleid', 'Informatieve schattingen'],
-    ['br', 'Ferramenta independente para colecionadores de carros em miniatura.', 'Navegação', 'Ajuda', 'Quem somos', 'Termos de uso', 'Política de privacidade', 'Política de cookies', 'Estimativas informativas'],
   ];
   for (const [code, ...phrases] of footerChecks) {
     await page.locator('#language').selectOption(code);
     for (const phrase of phrases) await expect(page.locator('footer.site-footer')).toContainText(phrase);
     await expect(page.locator('footer.site-footer')).not.toContainText('Ferramenta independente para colecionadores de carros à escala.');
-    if (code !== 'br') await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
+    await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
+  }
+});
+
+
+test('all collector guide pages expose the same language selector and translate headings', async ({ page }) => {
+  const guidePages = [
+    ['/guias/index.html', ['Hot Wheels Guides', 'Guías Hot Wheels', 'Guides Hot Wheels', 'Hot-Wheels-Ratgeber', 'Guide Hot Wheels', 'Hot Wheels-gidsen']],
+    ['/guias/identificar-th-e-sth.html', ['How to identify TH and STH', 'Cómo identificar TH y STH', 'Comment identifier les TH et STH', 'TH und STH erkennen', 'Come identificare TH e STH', 'TH en STH herkennen']],
+    ['/guias/avaliar-precos-hot-wheels.html', ['How to value a Hot Wheels car', 'Cómo valorar un Hot Wheels', 'Comment estimer le prix d’une Hot Wheels', 'Den Wert eines Hot-Wheels-Modells einschätzen', 'Come valutare il prezzo di una Hot Wheels', 'De waarde van een Hot Wheels bepalen']],
+    ['/guias/estado-blister-hot-wheels.html', ['How to assess the condition of the blister pack', 'Cómo evaluar el estado del blíster', 'Comment évaluer l’état du blister', 'Den Zustand der Blisterverpackung beurteilen', 'Come valutare le condizioni del blister', 'De staat van de blisterverpakking beoordelen']],
+  ];
+  const languages = ['en', 'es', 'fr', 'de', 'it', 'nl'];
+  for (const [path, titles] of guidePages) {
+    await page.goto(path);
+    const selector = page.locator('#language');
+    await expect(selector).toBeVisible();
+    await expect(selector.locator('option')).toHaveCount(7);
+    await expect(selector.locator('option[value="br"]')).toHaveCount(0);
+    for (let i = 0; i < languages.length; i++) {
+      await selector.selectOption(languages[i]);
+      await expect(page.locator('main h1')).toHaveText(titles[i]);
+    }
+  }
+});
+
+
+test('Portuguese is labelled PT-PT and Brazilian Portuguese is not offered', async ({ page }) => {
+  for (const path of ['/', '/metodologia-precos.html', '/modelos/index.html']) {
+    await page.goto(path);
+    const selector = page.locator('#language');
+    await expect(selector).toBeVisible();
+    await expect(selector.locator('option[value="pt"]')).toHaveText('PT-PT');
+    await expect(selector.locator('option[value="br"]')).toHaveCount(0);
+    await expect(selector.locator('option')).toHaveCount(7);
   }
 });
