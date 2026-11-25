@@ -588,7 +588,7 @@ test('all collector guide pages expose the same language selector and translate 
     ['/guias/index.html', ['Hot Wheels Guides', 'Guías Hot Wheels', 'Guides Hot Wheels', 'Hot-Wheels-Ratgeber', 'Guide Hot Wheels', 'Hot Wheels-gidsen']],
     ['/guias/identificar-th-e-sth.html', ['How to identify TH and STH', 'Cómo identificar TH y STH', 'Comment identifier les TH et STH', 'TH und STH erkennen', 'Come identificare TH e STH', 'TH en STH herkennen']],
     ['/guias/avaliar-precos-hot-wheels.html', ['How to value a Hot Wheels car', 'Cómo valorar un Hot Wheels', 'Comment estimer le prix d’une Hot Wheels', 'Den Wert eines Hot-Wheels-Modells einschätzen', 'Come valutare il prezzo di una Hot Wheels', 'De waarde van een Hot Wheels bepalen']],
-    ['/guias/estado-blister-hot-wheels.html', ['How to assess blister condition', 'Cómo evaluar el estado del blíster', 'Comment évaluer l’état du blister', 'Den Zustand des Blisters beurteilen', 'Come valutare le condizioni del blister', 'De staat van de blister beoordelen']],
+    ['/guias/estado-blister-hot-wheels.html', ['How to assess the condition of the blister pack', 'Cómo evaluar el estado del blíster', 'Comment évaluer l’état du blister', 'Den Zustand der Blisterverpackung beurteilen', 'Come valutare le condizioni del blister', 'De staat van de blisterverpakking beoordelen']],
   ];
   const languages = ['en', 'es', 'fr', 'de', 'it', 'nl'];
   for (const [path, titles] of guidePages) {
