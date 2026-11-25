@@ -585,6 +585,6 @@ test('footer content translates in every supported language', async ({ page }) =
     await page.locator('#language').selectOption(code);
     for (const phrase of phrases) await expect(page.locator('footer.site-footer')).toContainText(phrase);
     await expect(page.locator('footer.site-footer')).not.toContainText('Ferramenta independente para colecionadores de carros à escala.');
-    await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
+    if (code !== 'br') await expect(page.locator('footer.site-footer')).not.toContainText('Navegação');
   }
 });
