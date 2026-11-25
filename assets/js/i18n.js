@@ -305,9 +305,9 @@ Object.assign(D,{
 "Fotografia da base apenas quando a peça estiver solta ou já aberta.":["A photo of the base only when the item is loose or already opened.","Fotografía de la base solo cuando la pieza esté suelta o ya abierta.","Photo du dessous uniquement si la pièce est en vrac ou déjà ouverte.","Ein Foto der Unterseite nur, wenn das Modell lose oder bereits geöffnet ist.","Fotografia della base solo se il pezzo è sfuso o già aperto.","Een foto van de onderkant alleen als het model los of al geopend is.","Fotografia da base apenas quando a peça estiver solta ou já aberta."],
 "Compara unidades em condição semelhante. Consulta o guia de avaliação de preços e a metodologia de mercado.":["Compare items in similar condition. See the price valuation guide and market methodology.","Compara unidades en condiciones similares. Consulta la guía de valoración de precios y la metodología de mercado.","Comparez des exemplaires dans un état similaire. Consultez le guide d’évaluation des prix et la méthodologie du marché.","Vergleiche Stücke in ähnlichem Zustand. Lies den Preisratgeber und die Marktmethodik.","Confronta esemplari in condizioni simili. Consulta la guida alla valutazione dei prezzi e la metodologia di mercato.","Vergelijk exemplaren in vergelijkbare staat. Bekijk de gids voor prijsbepaling en de marktmethodologie.","Compara unidades em condição semelhante. Consulta o guia de avaliação de preços e a metodologia de mercado."]
 });
-const idx={en:0,es:1,fr:2,de:3,it:4,nl:5,br:6};
+const idx={en:0,es:1,fr:2,de:3,it:4,nl:5};
 const originals=new WeakMap(),attrs=new WeakMap();
-const validLanguages=['pt','en','es','fr','de','it','nl','br'];
+const validLanguages=['pt','en','es','fr','de','it','nl'];
 // Resolve the selector at the moment of use. This also survives pages that
 // replace or rebuild their language control after this script is loaded.
 const languageSelect=()=>document.getElementById('language');
