@@ -547,3 +547,24 @@ test('translation removes Markdown heading and emphasis markers from visible tex
   await expect(page.locator('#markdownTranslationRegression')).toHaveText('¿De dónde vienen los precios?');
   await expect(page.locator('body')).not.toContainText('# *¿De dónde vienen los precios?');
 });
+
+
+test('main interface translates key public sections in every supported language', async ({ page }) => {
+  await page.goto('/');
+  const languages = [
+    ['en', 'Free search, no registration', 'Your collection stays with you', 'How it works'],
+    ['es', 'Búsqueda gratuita, sin registro', 'Tu colección se queda contigo', 'Cómo funciona'],
+    ['fr', 'Recherche gratuite, sans inscription', 'Votre collection reste avec vous', 'Comment ça marche'],
+    ['de', 'Kostenlose Suche, ohne Registrierung', 'Deine Sammlung bleibt bei dir', 'So funktioniert es'],
+    ['it', 'Ricerca gratuita, senza registrazione', 'La tua collezione resta con te', 'Come funziona'],
+    ['nl', 'Gratis zoeken, zonder registratie', 'Je verzameling blijft bij jou', 'Hoe het werkt'],
+    ['br', 'Pesquisa gratuita, sem cadastro', 'Sua coleção fica com você', 'Como funciona'],
+  ];
+  for (const [code, free, collection, how] of languages) {
+    await page.locator('#language').selectOption(code);
+    await expect(page.locator('body')).toContainText(free);
+    await expect(page.locator('body')).toContainText(collection);
+    await expect(page.locator('body')).toContainText(how);
+    await expect(page.locator('body')).not.toContainText('Pesquisa gratuita, sem registo');
+  }
+});
