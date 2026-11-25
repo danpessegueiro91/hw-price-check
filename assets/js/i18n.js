@@ -371,7 +371,7 @@ const translateText=()=>{
   heroSearch.setAttribute('placeholder',translateValue('Pesquisa um modelo Hot Wheels...',L,col));
   heroSearch.setAttribute('aria-label',translateValue('Pesquisar modelo',L,col));
  }
- document.documentElement.lang=({pt:'pt-PT',br:'pt-BR',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
+ document.documentElement.lang=({pt:'pt-PT',en:'en',es:'es',fr:'fr',de:'de',it:'it',nl:'nl'})[L]||'pt-PT';
  // Language stays in the active UI; authenticated users sync it through account metadata.
  // All interface translations are local and deterministic; no external translation request is required.
 
